@@ -1,6 +1,8 @@
-#!/usr/bin/env python
+#! /usr/bin/env python3
+#! _*_ coding: utf-8 _*_
 
-from iot_wand import helpers as _h
+import iot_wand
+import yaml
 
 if __name__ == '__main__':
-	pass
+	print("works")
