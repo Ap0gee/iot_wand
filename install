@@ -1,0 +1,25 @@
+if [ -z "${DEFAULTPATH}" ]; then
+  DEFAULTPATH="${PATH}"
+  export DEFAULTPATH
+fi
+
+PYENV="$HOME/Documents/iot_wand/env/bin"
+export PYENV
+
+py3="${PYENV}/python3"
+export py3
+
+pip3="${py3} -m pip"
+export pip3
+
+SOURCEIOTWAND="$HOME/Documents:$HOME/Docuements/iot_wand:$HOME/Documents/iot_wand/iot_wand"
+export SOURCEIOTWAND
+
+SOURCES="${SOURCEIOTWAND}"
+export SOURCES
+
+PYTHONPATH="${PYENV}:${SOURCES}"
+export PYTHONPATH
+
+PATH="${PYTHONPATH}:${DEFAULTPATH}"
+export PATH
