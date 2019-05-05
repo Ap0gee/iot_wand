@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from iot_wand.mqtt_connections import GestureClient
 import iot_wand.helpers as _h
 import argparse
