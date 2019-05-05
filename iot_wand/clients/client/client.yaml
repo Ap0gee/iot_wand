@@ -1,0 +1,14 @@
+broker:
+  hostname: 10.0.0.39
+  port: 1883
+  keepalive: 60
+  bind_address: ""
+
+profile:
+  led:
+    'on': True
+    'color': '#41f4e8'
+
+  vibrate:
+    'on': True
+    'pattern': 3

@@ -1,0 +1,28 @@
+broker:
+  hostname: 10.0.0.39
+  port: 1883
+  keepalive: 60
+  bind_address: ""
+
+spells:
+  stupefy:
+    gesture: ['DL', 'R', 'DL']
+    profile:
+      led:
+        color: '#41f4e8'
+        on: True
+
+      vibrate:
+        pattern: 3
+        on: True
+
+  wingardium_leviosa:
+    gesture: ['DR', 'R', 'UR', 'D']
+    profile:
+      led:
+        'color': '#41f4e8'
+        'on': True
+
+      vibrate:
+        'pattern': 3
+        'on': True

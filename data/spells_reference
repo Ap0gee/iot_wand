@@ -1,0 +1,12 @@
+("DL", "R", "DL"): "stupefy",
+("DR", "R", "UR", "D"): "wingardium_leviosa",
+("UL", "UR"): "reducio",
+("DR", "U", "UR", "DR", "UR"): "flipendo",
+("R", "D"): "expelliarmus",
+("UR", "U", "D", "UL", "L", "DL"): "incendio",
+("UR", "U", "DR"): "lumos",
+("U", "D", "DR", "R", "L"): "locomotor",
+("DR", "DL"): "engorgio",
+("UR", "R", "DR"): "aguamenti",
+("UR", "R", "DR", "UR", "R", "DR"): "avis",
+("D", "R", "U"): "reducto"
