@@ -35,20 +35,21 @@ def async_callback(conn, debug=False):
         #input()
 
         while True:
-            if len(wands) == 0:
-                wands = [
-                    GestureInterface(device, conn).connect()
-                    for device in wand_scanner.scan()
-                ]
-            else:
-                print(wands)
-                print('checking connection')
-                if not wands[0].connected:
-                    print('clearing wands')
-                    wands.clear()
+            with lock:
+                if len(wands) == 0:
+                    wands = [
+                        GestureInterface(device, conn).connect()
+                        for device in wand_scanner.scan()
+                    ]
+                else:
                     print(wands)
+                    print('checking connection')
+                    if not wands[0].connected:
+                        print('clearing wands')
+                        wands.clear()
+                        print(wands)
 
-                time.sleep(1)
+                    time.sleep(1)
 
     except (KeyboardInterrupt, Exception) as e:
         #stop_threads = True
