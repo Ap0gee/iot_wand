@@ -49,8 +49,8 @@ def async_callback(conn, debug=False):
                 print('not connected')
 
     except (KeyboardInterrupt, Exception) as e:
-        stop_threads = True
-        _h.join_threads(*workers)
+        #stop_threads = True
+        #_h.join_threads(*workers)
         conn.disconnect()
         for wand in wands:
             wand.disconnect()

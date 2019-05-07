@@ -99,8 +99,6 @@ class WandInterface(Peripheral, DefaultDelegate):
         if self.debug:
             print("Connected to {}".format(self.name))
 
-        return self
-
     def post_connect(self):
         """Do anything necessary after connecting
         """
@@ -648,7 +646,7 @@ class GestureInterface(WandInterface):
 
     def on_position(self, x, y, pitch, roll):
 
-        self.mqtt_conn.publish_external("{x: %d, y: %d, pitch: %d, roll: %d}" % (x, y, pitch, roll))
+        #self.mqtt_conn.publish('test', ("{x: %d, y: %d, pitch: %d, roll: %d}" % (x, y, pitch, roll)))
 
         if self.pressed:
             self.positions.append(tuple([x, -1 * y]))
@@ -683,7 +681,7 @@ class GestureInterface(WandInterface):
             if closest != None:
                 self.spell = self.gestures[closest[0]]
 
-                self.mqtt_conn.publish_internal(self.spell)
+                self.mqtt_conn.publish('test', self.spell)
 
             # Print out the gesture
             print("{}: {}".format(gesture, self.spell))
