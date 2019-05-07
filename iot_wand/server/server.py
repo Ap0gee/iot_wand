@@ -21,12 +21,10 @@ def ensure_wand_connected(conn, wands, lock, stop, debug):
         
         if len(wands) == 0:
             lock.acquire()
-            [
-                wands.append(
-                    GestureInterface(device, conn).connect()
-                ) for device in wand_scanner.scan()
+            wands = [
+                GestureInterface(device, conn).connect()
+                for device in wand_scanner.scan()
             ]
-            wands.append("yest")
             print(len(wands))
             lock.release()
         else:
@@ -36,15 +34,6 @@ def ensure_wand_connected(conn, wands, lock, stop, debug):
                 ##wands.clear()
                 #lock.release()
                 print('not connected')
-
-def discovery_callback(devices, conn, wands, lock):
-    for device in devices:
-        wand = GestureInterface(device, conn)
-        lock.acquire()
-        wands.append(wand)
-        wand.connect()
-        lock.release()
-    return
 
 def async_callback(conn, debug=False):
     wands = []
@@ -63,9 +52,7 @@ def async_callback(conn, debug=False):
     try:
         _h.start_threads(*workers)
 
-        while 1:
-            print(len(wands))
-            time.sleep(1)
+        input()
 
     except (KeyboardInterrupt, Exception) as e:
         stop_threads = True
