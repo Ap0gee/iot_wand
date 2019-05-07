@@ -26,6 +26,7 @@ def ensure_wand_connected(conn, wands, lock, stop, debug):
                     GestureInterface(device, conn).connect()
                 ) for device in wand_scanner.scan()
             ]
+            wands.append("yest")
             print(len(wands))
             lock.release()
         else:
