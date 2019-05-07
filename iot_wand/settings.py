@@ -1,6 +1,6 @@
 import os
 
-DEBUG = True
+DEBUG = False
 
 DIR_BASE = os.path.abspath(os.path.dirname(__file__))
 DIR_CLIENTS = os.path.join(DIR_BASE, "clients")
