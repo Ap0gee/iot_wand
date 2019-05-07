@@ -26,6 +26,7 @@ def ensure_wand_connected(conn, wands, lock, stop, debug):
                     GestureInterface(device, conn).connect()
                 ) for device in wand_scanner.scan()
             ]
+            print(len(wands))
             lock.release()
         else:
             print('checking connection')
@@ -62,7 +63,7 @@ def async_callback(conn, debug=False):
         _h.start_threads(*workers)
 
         while 1:
-            print(wands)
+            print(len(wands))
             time.sleep(1)
 
     except (KeyboardInterrupt, Exception) as e:
