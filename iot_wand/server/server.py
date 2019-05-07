@@ -48,7 +48,7 @@ def async_callback(conn, debug=False):
                     wands.clear()
                     print(wands)
 
-            time.sleep(1)
+                time.sleep(1)
 
     except (KeyboardInterrupt, Exception) as e:
         #stop_threads = True
