@@ -10,29 +10,29 @@ import random
 def main():
     config = _h.yaml_read(_s.PATH_CONFIG)
     conn = GestureServer(config, debug=_s.DEBUG)
-    conn.start(async=True, async_callback=lambda conn: async_callback(conn))
+    conn.start(async=True, async_callback=lambda conn: async_callback(conn, debug=_s.DEBUG))
 
-def ensure_wand_connected(conn, wands, lock, stop):
-
+def ensure_wand_connected(conn, wands, lock, stop, debug):
+    wand_scanner = WandScanner(conn, GestureInterface, debug=debug)
     while True:
-        #if len(self._connected_wands) == 0:
-        #    self._connected_wands = self._wand_scanner.scan(connect=True)
-        #else:
-        #    if not self._connected_wands[0].connected:
-        #        self._connected_wands.clear()
-
-
-        conn.publish('test', 'test %d' % (random.randint(1, 100)))
-        lock.acquire()
-        wands.append('test')
-        lock.release()
-        time.sleep(1)
         if stop():
-            print('exiting')
             break
+        
+        if len(wands) == 0:
+            lock.acquire()
+            print('connecting')
+            wands = wand_scanner.scan(connect=True)
+            lock.release()
+        else:
+            if not wands[0].connected:
+                lock.acquire()    
+                wands.clear()
+                lock.release()
+        
+    
     print('out of loop')
 
-def async_callback(conn):
+def async_callback(conn, debug=False):
     wands = []
     workers = []
     stop_threads = False
@@ -42,7 +42,7 @@ def async_callback(conn):
         threading.Thread(
             name="ensure_wand_connected",
             target=ensure_wand_connected,
-            args=(conn, wands, lock, lambda: stop_threads)
+            args=(conn, wands, lock, lambda: stop_threads, debug)
         )
     )
 
