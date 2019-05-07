@@ -126,9 +126,6 @@ class ClientConnection():
     def on_log(self, client, obj, level, string):
         pass
 
-    def on_async_start(self):
-        pass
-
     def get_client(self):
         return self._mqttc
 
@@ -138,19 +135,25 @@ class ClientConnection():
     def disconnect(self):
         self._mqttc.disconnect()
 
-    def start(self, async=True):
+    def start(self, async=True, async_callback=None):
         self.connect()
-        self.loop(async)
+        self.loop(async, async_callback)
 
     def stop(self):
         self.disconnect()
 
-    def loop(self, async=True):
+    def loop(self, async=True, async_callback=None):
         if async:
             self._mqttc.loop_start()
-            self.on_async_start()
+            if (callable(async_callback)):
+                async_callback(self)
+            else:
+                self.async_callback()
         else:
             self._mqttc.loop_forever()
+
+    def async_callback(self):
+        pass
 
     def publish(self, topic, payload):
         self._mqttc.publish(topic, payload)
@@ -234,14 +237,11 @@ class ClientConnection():
         return ClientConnection.level_topic(TOPICS.SYS.value, level)
 
 class GestureServer(ClientConnection):
-    def __init__(self, config, wand_scanner, wand_interface, debug=False):
+    def __init__(self, config, debug=False):
         super(GestureServer, self).__init__(config, debug)
 
         self._client_managers = []
         self._selected_manager_index = -1
-
-        self._connected_wands = []
-        self._wand_scanner = wand_scanner(self, wand_interface, debug)
 
     def on_message(self, client, obj, msg, topic, identity):
         if topic.pattern == TOPICS.SYS.value:
@@ -299,20 +299,8 @@ class GestureServer(ClientConnection):
         index = self._mov_manager_index(-1)
         return self.profiles()[index]
 
-    def on_async_start(self):
-        try:
-            while True:
-                if len(self._connected_wands) == 0:
-                    self._connected_wands = self._wand_scanner.scan(connect=True)
-                else:
-                    if not self._connected_wands[0].connected:
-                        self._connected_wands.clear()
-
-        except (KeyboardInterrupt, Exception) as e:
-            for wand in self._connected_wands:
-                wand.disconnect()
-            self.disconnect()
-            self._connected_wands.clear()
+    def _async_callback(self):
+       pass
 
 class GestureClient(ClientConnection):
     def __init__(self, config, debug=False):

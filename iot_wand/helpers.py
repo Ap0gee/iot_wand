@@ -25,3 +25,11 @@ def elapsed(start):
 def dd(*args):
     print(*args)
     exit(0)
+
+def join_threads(*threads):
+    for thread in threads:
+        thread.join()
+
+def start_threads(*threads):
+    for thread in threads:
+        thread.start()
