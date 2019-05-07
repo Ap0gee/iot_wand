@@ -28,11 +28,12 @@ def ensure_wand_connected(conn, wands, lock, stop, debug):
             print(len(wands))
             lock.release()
         else:
+            print(wands)
             print('checking connection')
             if not wands[0].connected:
-                #lock.acquire()
-                ##wands.clear()
-                #lock.release()
+                lock.acquire()
+                wands.clear()
+                lock.release()
                 print('not connected')
 
 def async_callback(conn, debug=False):
