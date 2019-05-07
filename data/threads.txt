@@ -1,0 +1,12 @@
+ lock = threading.Lock()    
+workers = []
+    stop_threads = False
+    #workers.append(
+    #    threading.Thread(
+    #        name="ensure_wand_connected",
+    #        target=ensure_wand_connected,
+    #        args=(conn, wands, lock, lambda: stop_threads, debug)
+    #    )
+    #)
+#_h.start_threads(*workers)
+        #input()

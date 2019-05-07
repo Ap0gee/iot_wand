@@ -45,7 +45,7 @@ class PATTERN(Enum):
 
 
 class WandInterface(Peripheral, DefaultDelegate):
-    def __init__(self, device, mqtt_conn, debug=False):
+    def __init__(self, device, debug=False):
         """Create a new wand
 
         Arguments:
@@ -59,7 +59,6 @@ class WandInterface(Peripheral, DefaultDelegate):
         self.debug = debug
         self._dev = device
         self.name = device.getValueText(9)
-        self.mqtt_conn = mqtt_conn
 
         if debug:
             print("Wand: {}\n\rWand Mac: {}".format(self.name, device.addr))
@@ -328,12 +327,6 @@ class WandInterface(Peripheral, DefaultDelegate):
             self._battery_callbacks.pop(uuid)
             if len(self._battery_callbacks.values()) == 0:
                 self.unsubscribe_battery(continue_notifications=continue_notifications)
-
-        if self.debug:
-            if removed:
-                print("Removed callback {}".format(uuid))
-            else:
-                print("Could not remove callback {}".format(uuid))
 
         return removed
 
@@ -616,36 +609,89 @@ class WandInterface(Peripheral, DefaultDelegate):
             self._on_battery(data)
 
 class GestureInterface(WandInterface):
-    def __init__(self, device, mqtt_conn, *args, **kwargs):
-        super(GestureInterface, self).__init__(device, mqtt_conn, *args, **kwargs)
+    def __init__(self, device, *args, **kwargs):
+        super(GestureInterface, self).__init__(device, *args, **kwargs)
 
         self.pressed = False
         self.positions = []
         self.spell = None
         self.speed_clicks = 0
         self.press_start = self.press_end = timeit.default_timer()
+        self._post_connect_callbacks = {}
+        self._spell_callbacks = {}
+        self._quaternion_callbacks = {}
+        self._post_disconnect_callbacks = {}
 
-        self.gestures = {("DL", "R", "DL"): "stupefy",
-                         ("DR", "R", "UR", "D"): "wingardium_leviosa",
-                         ("UL", "UR"): "reducio",
-                         ("DR", "U", "UR", "DR", "UR"): "flipendo",
-                         ("R", "D"): "expelliarmus",
-                         ("UR", "U", "D", "UL", "L", "DL"): "incendio",
-                         ("UR", "U", "DR"): "lumos",
-                         ("U", "D", "DR", "R", "L"): "locomotor",
-                         ("DR", "DL"): "engorgio",
-                         ("UR", "R", "DR"): "aguamenti",
-                         ("UR", "R", "DR", "UR", "R", "DR"): "avis",
-                         ("D", "R", "U"): "reducto"}
+        self.gestures = {
+            ("DL", "R", "DL"): "stupefy",
+            ("DR", "R", "UR", "D"): "wingardium_leviosa",
+            ("UL", "UR"): "reducio",
+            ("DR", "U", "UR", "DR", "UR"): "flipendo",
+            ("R", "D"): "expelliarmus",
+            ("UR", "U", "D", "UL", "L", "DL"): "incendio",
+            ("UR", "U", "DR"): "lumos",
+            ("U", "D", "DR", "R", "L"): "locomotor",
+            ("DR", "DL"): "engorgio",
+            ("UR", "R", "DR"): "aguamenti",
+            ("UR", "R", "DR", "UR", "R", "DR"): "avis",
+            ("D", "R", "U"): "reducto"
+        }
+
+    def on(self, event, callback):
+        id = super(GestureInterface, self).on(event, callback)
+
+        if not id:
+            if event == "post_connect":
+                id = uuid.uuid4()
+                self._post_connect_callbacks[id] = callback
+
+            elif event == "spell":
+                id = uuid.uuid4()
+                self._spell_callbacks[id] = callback
+
+            elif event == "post_disconnect":
+                id = uuid.uuid4()
+                self._post_disconnect_callbacks[id] = callback
+
+        return id
+
+    def off(self, uuid, continue_notifications=False):
+        removed = super(GestureInterface, self).off(uuid, continue_notifications)
+
+        if not removed:
+            if self._post_connect_callbacks.get(uuid):
+                removed = True
+                self._post_connect_callbacks.pop(uuid)
+
+            elif self._spell_callbacks.get(uuid):
+                removed = True
+                self._spell_callbacks.pop(uuid)
+
+            elif self._post_disconnect_callbacks.get(uuid):
+                removed = True
+                self._post_disconnect_callbacks.pop(uuid)
+
+            if self.debug:
+                if removed:
+                    print("Removed callback {}".format(uuid))
+                else:
+                    print("Could not remove callback {}".format(uuid))
+
+        return removed
 
     def post_connect(self):
         self.subscribe_button()
         self.subscribe_position()
 
-    def on_position(self, x, y, pitch, roll):
+        for callback in self._post_connect_callbacks.values():
+            callback(self)
 
-        #self.mqtt_conn.publish('test', ("{x: %d, y: %d, pitch: %d, roll: %d}" % (x, y, pitch, roll)))
+    def post_disconnect(self):
+        for callback in self._post_disconnect_callbacks.values():
+            callback(self)
+        pass
 
+    def on_position(self, x, y, z, w):
         if self.pressed:
             self.positions.append(tuple([x, -1 * y]))
 
@@ -667,7 +713,7 @@ class GestureInterface(WandInterface):
             else:
                 self.speed_clicks = 0
 
-            if (self.speed_clicks >= 3):
+            if self.speed_clicks >= 3:
                 self.disconnect()
                 exit(0)
 
@@ -676,10 +722,9 @@ class GestureInterface(WandInterface):
 
             closest = moosegesture.findClosestMatchingGesture(gesture, self.gestures, maxDifference=1)
 
-            if closest != None:
+            if closest:
                 self.spell = self.gestures[closest[0]]
+                for callback in self._spell_callbacks.values():
+                    callback(gesture, self.spell)
 
-                self.mqtt_conn.publish('test', self.spell)
-
-            # Print out the gesture
             print("{}: {}".format(gesture, self.spell))

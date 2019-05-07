@@ -10,10 +10,12 @@ import timeit
 import time
 import asyncio
 
+
 class TOPICS(Enum):
     SYS = 'iot_wand/+/$SYS/+'
     SPELLS = 'iot_wand/+/spells/+'
     QUATERNIONS = 'iot_wand/+/quaternions/+'
+
 
 class SYS_LEVELS(Enum):
     SYN = "SYN"
@@ -24,15 +26,18 @@ class SYS_LEVELS(Enum):
     UP = "UP"
     DOWN = "DOWN"
 
+
 class CONN_STATUS(Enum):
     CONNECTED = 1
     DISCONNECTED = 0
+
 
 class Topic():
     def __init__(self, topic):
         self.top = ClientConnection.topic_level(topic)
         self.sig = ClientConnection.topic_level(topic, 1)
         self.pattern = ClientConnection.topic_pattern(topic)
+
 
 class Profile():
     def __init__(self, data):
@@ -44,6 +49,7 @@ class Profile():
         self.led_color = led['color']
         self.vibrate_on = vibrate['on']
         self.vibrate_pattern = vibrate['pattern']
+
 
 class ClientConnection():
     def __init__(self, config, debug=False):
@@ -69,7 +75,7 @@ class ClientConnection():
 
         self._t_conn_last = None
         self._t_msg_last = None
-
+        self._async = False
         self.status_broker_conn = CONN_STATUS.DISCONNECTED.value
 
     def __on_connect(self, client, userdata, flags, rc):
@@ -134,6 +140,8 @@ class ClientConnection():
 
     def disconnect(self):
         self._mqttc.disconnect()
+        if self._async:
+            self._mqttc.loop_stop()
 
     def start(self, async=True, async_callback=None):
         self.connect()
@@ -145,7 +153,8 @@ class ClientConnection():
     def loop(self, async=True, async_callback=None):
         if async:
             self._mqttc.loop_start()
-            if (callable(async_callback)):
+            self._async = True
+            if callable(async_callback):
                 async_callback(self)
             else:
                 self.async_callback()
@@ -172,10 +181,10 @@ class ClientConnection():
         parts.insert(1, self._client_id)
         return ''.join(parts)
 
-    def identity(self, id):
-        if type(id) == bytes:
-            id = _h.b_decode(id)
-        return id == self._client_id
+    def identity(self, _id):
+        if type(_id) == bytes:
+            _id = _h.b_decode(_id)
+        return _id == self._client_id
 
     def elapsed_up_time(self, minutes=False):
         if self._t_conn_last:
@@ -235,6 +244,7 @@ class ClientConnection():
     @staticmethod
     def level_sys_topic(level):
         return ClientConnection.level_topic(TOPICS.SYS.value, level)
+
 
 class GestureServer(ClientConnection):
     def __init__(self, config, debug=False):
@@ -301,6 +311,7 @@ class GestureServer(ClientConnection):
 
     def _async_callback(self):
        pass
+
 
 class GestureClient(ClientConnection):
     def __init__(self, config, debug=False):
