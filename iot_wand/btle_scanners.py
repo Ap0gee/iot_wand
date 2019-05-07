@@ -18,7 +18,7 @@ class WandScanner(DefaultDelegate):
         self._mac = None
         self._scanner = Scanner().withDelegate(self)
         self._devices = []
-        self.__on_discovery_callback = lambda devices: None
+        self.__on_discovery_callback = lambda devices, **kwargs: None
 
     def scan(self, name=None, prefix="Kano-Wand", mac=None, timeout=1.0, discovery_callback=None):
         """Scan for devices
