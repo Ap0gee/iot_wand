@@ -642,10 +642,6 @@ class GestureInterface(WandInterface):
         self.subscribe_button()
         self.subscribe_position()
 
-        while self.connected:
-            self.keep_alive()
-            time.sleep(30)
-
     def on_position(self, x, y, pitch, roll):
 
         #self.mqtt_conn.publish('test', ("{x: %d, y: %d, pitch: %d, roll: %d}" % (x, y, pitch, roll)))
