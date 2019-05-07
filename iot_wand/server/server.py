@@ -13,24 +13,30 @@ def main():
     conn.start(async=True, async_callback=lambda conn: async_callback(conn, debug=_s.DEBUG))
 
 def ensure_wand_connected(conn, wands, lock, stop, debug):
-    wand_scanner = WandScanner(conn, GestureInterface, debug=debug)
+    wand_scanner = WandScanner(debug=debug)
+
     while True:
         if stop():
             break
         
         if len(wands) == 0:
-            lock.acquire()
-            print('connecting')
-            wands = wand_scanner.scan(connect=True)
-            lock.release()
+            wand_scanner.scan(
+                discovery_callback=lambda devices,conn=conn, wands=wands, lock=lock:
+                    discovery_callback(devices, conn, wands, lock)
+            )
         else:
             if not wands[0].connected:
-                lock.acquire()    
+                lock.acquire()
                 wands.clear()
                 lock.release()
-        
-    
-    print('out of loop')
+
+def discovery_callback(devices, conn, wands, lock):
+    lock.acquire()
+    for device in devices:
+        wand = GestureInterface(device, conn)
+        wands.append(wand)
+        wand.connect()
+    lock.release()
 
 def async_callback(conn, debug=False):
     wands = []

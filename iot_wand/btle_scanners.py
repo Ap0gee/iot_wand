@@ -4,7 +4,7 @@ class WandScanner(DefaultDelegate):
     """A scanner class to connect to wands
     """
 
-    def __init__(self, mqtt_conn, wand_interface, debug=False):
+    def __init__(self, debug=False):
         """Create a new scanner
 
         Keyword Arguments:
@@ -18,10 +18,9 @@ class WandScanner(DefaultDelegate):
         self._mac = None
         self._scanner = Scanner().withDelegate(self)
         self._devices = []
-        self._wand_interface = wand_interface
-        self._mqtt_conn = mqtt_conn
+        self.__on_discovery_callback = lambda devices: None
 
-    def scan(self, name=None, prefix="Kano-Wand", mac=None, timeout=1.0, connect=False):
+    def scan(self, name=None, prefix="Kano-Wand", mac=None, timeout=1.0, discovery_callback=None):
         """Scan for devices
 
         Keyword Arguments:
@@ -52,14 +51,14 @@ class WandScanner(DefaultDelegate):
         elif mac is not None:
             self._mac = mac
 
-        self._interfaces = []
+        self._devices = []
+
+        if callable(discovery_callback):
+            self.__on_discovery_callback = discovery_callback
+
         self._scanner.scan(timeout)
         # after self._scanner.handleDiscovery -->
-        if connect:
-            for interface in self._interfaces:
-                #start behavior -->
-                interface.connect()
-        return self._interfaces
+        return self._devices
 
     def handleDiscovery(self, device, isNewDev, isNewData):
         """Check if the device matches
@@ -89,7 +88,8 @@ class WandScanner(DefaultDelegate):
                     found += 1
 
             if found >= mode:
-                self._interfaces.append(self._wand_interface(device, self._mqtt_conn, debug=self.debug))
+                self._devices.append(device)
+                self.__on_discovery_callback(self._devices)
 
             elif self.debug:
                 if name != "None":
