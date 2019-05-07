@@ -20,6 +20,7 @@ def async_callback(conn, debug=False):
     workers = []
     stop_threads = False
     lock = threading.Lock()
+    wand_scanner = WandScanner(debug=debug)
 
     #workers.append(
     #    threading.Thread(
@@ -34,8 +35,6 @@ def async_callback(conn, debug=False):
         #input()
 
         while True:
-            wand_scanner = WandScanner(debug=debug)
-
             if len(wands) == 0:
                 wands = [
                     GestureInterface(device, conn).connect()
@@ -45,8 +44,11 @@ def async_callback(conn, debug=False):
                 print(wands)
                 print('checking connection')
                 if not wands[0].connected:
+                    print('clearing wands')
                     wands.clear()
-                print('not connected')
+                    print(wands)
+
+            time.sleep(1)
 
     except (KeyboardInterrupt, Exception) as e:
         #stop_threads = True
