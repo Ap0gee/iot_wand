@@ -16,24 +16,20 @@ def ensure_wand_connected(conn, wands, lock, stop, debug):
     wand_scanner = WandScanner(debug=debug)
 
     while True:
-        if stop():
-            break
-        
-        if len(wands) == 0:
-            lock.acquire()
-            wands = [
-                GestureInterface(device, conn).connect()
-                for device in wand_scanner.scan()
-            ]
-            print(len(wands))
-            lock.release()
-        else:
-            print(wands)
-            print('checking connection')
-            if not wands[0].connected:
-                lock.acquire()
-                wands.clear()
-                lock.release()
+        with lock:
+            if stop():
+                break
+
+            if len(wands) == 0:
+                wands = [
+                    GestureInterface(device, conn).connect()
+                    for device in wand_scanner.scan()
+                ]
+            else:
+                print(wands)
+                print('checking connection')
+                if not wands[0].connected:
+                    wands.clear()
                 print('not connected')
 
 def async_callback(conn, debug=False):
