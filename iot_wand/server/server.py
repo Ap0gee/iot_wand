@@ -20,10 +20,9 @@ def ensure_wand_connected(conn, wands, lock, stop, debug):
             break
         
         if len(wands) == 0:
-            wand_scanner.scan(
-                discovery_callback=lambda devices,conn=conn, wands=wands, lock=lock:
-                    discovery_callback(devices, conn, wands, lock)
-            )
+            lock.acquire()
+            wands = [GestureInterface(device, conn).connect() for device in wand_scanner.scan()]
+            lock.release()
         else:
             print('checking connection')
             if not wands[0].connected:
