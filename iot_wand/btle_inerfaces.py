@@ -99,6 +99,8 @@ class WandInterface(Peripheral, DefaultDelegate):
         if self.debug:
             print("Connected to {}".format(self.name))
 
+        return self
+
     def post_connect(self):
         """Do anything necessary after connecting
         """
