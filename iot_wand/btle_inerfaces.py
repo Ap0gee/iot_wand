@@ -500,7 +500,7 @@ class WandInterface(Peripheral, DefaultDelegate):
         if self.debug:
             pitch = "Pitch: {}".format(z).ljust(16)
             roll = "Roll: {}".format(w).ljust(16)
-            #print("{}{}(x, y): ({}, {})".format(pitch, roll, x, y))
+            print("{}{}(x, y): ({}, {})".format(pitch, roll, x, y))
 
         self.on_position(x, y, z, w)
         for callback in self._position_callbacks.values():
@@ -653,7 +653,7 @@ class GestureInterface(WandInterface):
                 id = uuid.uuid4()
                 self._post_disconnect_callbacks[id] = callback
 
-        return id
+        return self
 
     def off(self, uuid, continue_notifications=False):
         removed = super(GestureInterface, self).off(uuid, continue_notifications)
@@ -677,7 +677,7 @@ class GestureInterface(WandInterface):
                 else:
                     print("Could not remove callback {}".format(uuid))
 
-        return removed
+        return self
 
     def post_connect(self):
         self.subscribe_button()
