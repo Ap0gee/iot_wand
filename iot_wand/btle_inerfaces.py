@@ -609,8 +609,8 @@ class WandInterface(Peripheral, DefaultDelegate):
             self._on_battery(data)
 
 class GestureInterface(WandInterface):
-    def __init__(self, device, *args, **kwargs):
-        super(GestureInterface, self).__init__(device, *args, **kwargs)
+    def __init__(self, device, debug=False):
+        super(GestureInterface, self).__init__(device, debug)
 
         self.pressed = False
         self.positions = []
