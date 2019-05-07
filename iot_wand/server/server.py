@@ -13,12 +13,28 @@ def main():
     conn.start(async=True, async_callback=lambda conn: async_callback(conn, debug=_s.DEBUG))
 
 def ensure_wand_connected(conn, wands, lock, stop, debug):
-    wand_scanner = WandScanner(debug=debug)
+    pass
 
-    while True:
-        with lock:
-            if stop():
-                break
+def async_callback(conn, debug=False):
+    wands = []
+    workers = []
+    stop_threads = False
+    lock = threading.Lock()
+
+    #workers.append(
+    #    threading.Thread(
+    #        name="ensure_wand_connected",
+    #        target=ensure_wand_connected,
+    #        args=(conn, wands, lock, lambda: stop_threads, debug)
+    #    )
+    #)
+
+    try:
+        #_h.start_threads(*workers)
+        #input()
+
+        while True:
+            wand_scanner = WandScanner(debug=debug)
 
             if len(wands) == 0:
                 wands = [
@@ -31,25 +47,6 @@ def ensure_wand_connected(conn, wands, lock, stop, debug):
                 if not wands[0].connected:
                     wands.clear()
                 print('not connected')
-
-def async_callback(conn, debug=False):
-    wands = []
-    workers = []
-    stop_threads = False
-    lock = threading.Lock()
-
-    workers.append(
-        threading.Thread(
-            name="ensure_wand_connected",
-            target=ensure_wand_connected,
-            args=(conn, wands, lock, lambda: stop_threads, debug)
-        )
-    )
-
-    try:
-        _h.start_threads(*workers)
-
-        input()
 
     except (KeyboardInterrupt, Exception) as e:
         stop_threads = True
