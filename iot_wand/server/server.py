@@ -21,7 +21,11 @@ def ensure_wand_connected(conn, wands, lock, stop, debug):
         
         if len(wands) == 0:
             lock.acquire()
-            wands = [GestureInterface(device, conn).connect() for device in wand_scanner.scan()]
+            [
+                wands.append(
+                    GestureInterface(device, conn).connect()
+                ) for device in wand_scanner.scan()
+            ]
             lock.release()
         else:
             print('checking connection')
