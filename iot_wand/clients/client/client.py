@@ -18,7 +18,8 @@ def main():
     conn.start(async=True, async_callback=lambda _conn: __async_callback(conn, _s.DEBUG))
 
 def __async_callback(conn, debug):
-    pass
+    print('test')
+    input()
 
 if __name__ == '__main__':
     main()
