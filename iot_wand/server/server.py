@@ -43,18 +43,15 @@ def __async_callback(conn, debug):
 
 def __on_post_connect(interface, conn, loop, lock):
     print('connected')
-    async def keep_alive():
-            with lock:
-                print('keeping_alive')
-            await asyncio.sleep(1)
 
-    loop.run_until_complete(keep_alive())
 
 def __on_post_disconnect(interface, conn):
     pass
 
+
 def __on_spell(gesture, spell, conn):
     pass
+
 
 def __on_position(x, y, w, z, conn):
     pass
