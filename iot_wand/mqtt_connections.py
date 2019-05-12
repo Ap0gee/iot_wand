@@ -363,8 +363,10 @@ class GestureClient(ClientConnection):
 
         if topic.pattern == TOPICS.QUATERNIONS.value and not identity:
             if callable(self.on_quaternion):
-                data = ClientConnection.data_decode(msg.payload, is_json=True)
-                print(data.split(" "))
+                data = ClientConnection.data_decode(msg.payload, is_json=True).split(" ")
+                self.on_quaternion(
+                    data[0], data[1], data[2], data[3]
+                )
 
 
     def elapsed_up_start(self, minutes=False):
