@@ -3,28 +3,29 @@ from iot_wand.btle_scanners import WandScanner
 from iot_wand.btle_inerfaces import GestureInterface
 import iot_wand.server.settings as _s
 import iot_wand.helpers as _h
+import asyncio
 import time
 
 def main():
     config = _h.yaml_read(_s.PATH_CONFIG)
     conn = GestureServer(config, debug=_s.DEBUG)
-    conn.start(async=True, async_callback=lambda _conn: __async_callback(conn, debug=_s.DEBUG))
+    conn.start(async=True, async_callback=lambda _conn: __async_callback(conn, _s.DEBUG))
 
-
-def __async_callback(conn, debug=False):
+def __async_callback(conn, debug):
     wands = []
     wand_scanner = WandScanner(debug=debug)
+    loop = asyncio.get_event_loop()
     run = True
 
     try:
         while run:
             if not len(wands):
                 wands = [
-                    GestureInterface(device, conn).connect()
-                    .on('post_connect', lambda interface: None)
-                    .on('spell', lambda gesture, spell: on_spell(gesture, spell))
-                    .on('position', lambda x, y, w, z: None)
-                    .on('post_disconnect', lambda interface: None)
+                    GestureInterface(device, debug=debug).connect()
+                    .on('post_connect', lambda interface: __on_post_connect(interface, conn, loop))
+                    .on('spell', lambda gesture, spell: __on_spell(gesture, spell, conn))
+                    .on('position', lambda x, y, w, z: __on_position(x, y, w, z, conn))
+                    .on('post_disconnect', lambda interface: __on_post_disconnect(interface, conn))
                     for device in wand_scanner.scan()
                 ]
             else:
@@ -39,5 +40,18 @@ def __async_callback(conn, debug=False):
         wands.clear()
 
 
-def on_spell(gesture, spell):
-    print('on_spell', gesture, spell)
+def __on_post_connect(interface, conn, loop):
+    async def keep_alive():
+            print('keeping_alive')
+            await asyncio.sleep(1)
+
+    loop.run_until_complete(keep_alive())
+
+def __on_post_disconnect(interface, conn):
+    pass
+
+def __on_spell(gesture, spell, conn):
+    pass
+
+def __on_position(x, y, w, z, conn):
+    pass
