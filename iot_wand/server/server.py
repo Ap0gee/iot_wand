@@ -1,4 +1,4 @@
-from iot_wand.mqtt_connections import GestureServer, TOPICS
+from iot_wand.mqtt_connections import GestureServer, ClientConnection, TOPICS
 from iot_wand.btle_scanners import WandScanner
 from iot_wand.btle_inerfaces import GestureInterface
 import iot_wand.server.settings as _s
@@ -51,7 +51,7 @@ def __on_post_disconnect(interface, conn):
 
 def __on_spell(gesture, spell, conn):
     print('publishing')
-    conn.signed_publish(TOPICS.SPELLS, {'gesture': gesture, 'spell': spell})
+    conn.signed_publish(TOPICS.SPELLS, ClientConnection.data_encode({'gesture': gesture, 'spell': spell}))
 
 
 def __on_position(x, y, w, z, conn):
