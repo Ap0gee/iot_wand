@@ -42,6 +42,7 @@ def __async_callback(conn, debug):
 
 
 def __on_post_connect(interface, conn, loop, lock):
+    print('connected')
     async def keep_alive():
             with lock:
                 print('keeping_alive')
