@@ -1,7 +1,6 @@
-from iot_wand.settings import DEBUG
 import os
 
-DEBUG = DEBUG
+DEBUG = False
 
 DIR_BASE = os.path.abspath(os.path.dirname(__file__))
 PATH_CONFIG = os.path.join(DIR_BASE, 'client.yaml')
