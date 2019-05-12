@@ -376,8 +376,9 @@ class GestureClient(ClientConnection):
         return 0
 
     def async_callback(self):
+        run = True
         try:
-            while True:
+            while run:
                 time.sleep(self.poll_delay)
 
                 if self.status_server_conn == CONN_STATUS.DISCONNECTED.value:
