@@ -324,14 +324,13 @@ class GestureClient(ClientConnection):
         self.pingresp = 1
         self.poll_delay = 5
 
-        self.on_spell = lambda *args: None
-        self.on_quaternion = lambda *args: None
+        self.on_spell = lambda gesture, spell: None
+        self.on_quaternion = lambda x, y, z, w: None
 
     def on_connect(self, client, userdata, flags, rc):
         self._publish_sys(SYS_LEVELS.SYN.value)
 
     def on_message(self, client, obj, msg, topic, identity):
-        print(topic.pattern)
         if topic.pattern == TOPICS.SYS.value:
             addressed = self.identity(msg.payload)
 
@@ -365,7 +364,7 @@ class GestureClient(ClientConnection):
             if callable(self.on_quaternion):
                 data = ClientConnection.data_decode(msg.payload, is_json=True)
                 self.on_quaternion(
-                    data['x'], data['y'], data['pitch'], data['roll']
+                    data['x'], data['y'], data['z'], data['w']
                 )
 
     def elapsed_up_start(self, minutes=False):

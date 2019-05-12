@@ -15,11 +15,9 @@ from behavior import on_spell, on_quaternion
 def main():
     config = _h.yaml_read(_s.PATH_CONFIG)
     conn = GestureClient(config, debug=_s.DEBUG)
+    conn.on_spell = on_spell
+    conn.on_quaternion = on_quaternion
     conn.start()
-
-def __async_callback(conn, debug):
-    print('test')
-    input()
 
 if __name__ == '__main__':
     main()
