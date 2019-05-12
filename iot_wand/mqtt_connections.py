@@ -364,9 +364,7 @@ class GestureClient(ClientConnection):
             if callable(self.on_quaternion):
                 data = ClientConnection.data_decode(msg.payload, is_json=True)
                 print(data)
-                self.on_quaternion(
-                    data['x'], data['y'], data['z'], data['w']
-                )
+
 
     def elapsed_up_start(self, minutes=False):
         if self._t_up_start:
