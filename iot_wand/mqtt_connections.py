@@ -360,6 +360,7 @@ class GestureClient(ClientConnection):
                 self.on_spell(
                     data['gesture'], data['spell']
                 )
+
         if topic.pattern == TOPICS.QUATERNIONS.value and not identity:
             if callable(self.on_quaternion):
                 data = ClientConnection.data_decode(msg.payload, is_json=True)
