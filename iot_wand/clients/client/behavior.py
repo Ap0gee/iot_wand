@@ -5,4 +5,5 @@ def on_spell(gesture, spell):
     print('spell received')
 
 def on_quaternion(x, y, z, w):
-    print(x, y, z, w)
+    #print(x, y, z, w)
+    pass

@@ -96,7 +96,7 @@ class ClientConnection():
 
         identity = self.identity(topic.sig)
 
-        #self.debug(topic.pattern, topic.top, msg.payload, identity)
+        self.debug(topic.pattern, topic.top, msg.payload, identity)
 
         self.on_message(client, obj, msg, topic, identity)
 
@@ -314,7 +314,7 @@ class GestureServer(ClientConnection):
 
 
 class GestureClient(ClientConnection):
-    def __init__(self, config, debug=False):
+    def __init__(self, config, debug=True):
         super(GestureClient, self).__init__(config, debug)
 
         self.profile_data = config['profile']
@@ -364,7 +364,7 @@ class GestureClient(ClientConnection):
         if topic.pattern == TOPICS.QUATERNIONS.value and not identity:
             if callable(self.on_quaternion):
                 data = ClientConnection.data_decode(msg.payload, is_json=True)
-                print(data)
+                print(data.split(" "))
 
 
     def elapsed_up_start(self, minutes=False):
@@ -379,6 +379,7 @@ class GestureClient(ClientConnection):
         run = True
         try:
             while run:
+                print('test')
                 time.sleep(self.poll_delay)
 
                 if self.status_server_conn == CONN_STATUS.DISCONNECTED.value:
