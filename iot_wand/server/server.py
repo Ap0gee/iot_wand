@@ -25,7 +25,7 @@ def __async_callback(conn, debug):
                     GestureInterface(device, debug=debug).connect()
                     .on('post_connect', lambda interface: __on_post_connect(interface, conn, loop, lock))
                     .on('spell', lambda gesture, spell: __on_spell(gesture, spell, conn))
-                    .on('position', lambda x, y, z, w: __on_position(x, y, z, w, conn))
+                    .on('position', lambda x, y, z, w: __on_quaternion(x, y, z, w, conn))
                     .on('post_disconnect', lambda interface: __on_post_disconnect(interface, conn))
                     for device in wand_scanner.scan()
                 ]
@@ -52,5 +52,6 @@ def __on_spell(gesture, spell, conn):
     conn.signed_publish(TOPICS.SPELLS.value, ClientConnection.data_encode({'gesture': gesture, 'spell': spell}))
 
 
-def __on_position(x, y, w, z, conn):
+def __on_quaternion(x, y, z, w, conn):
+    print('quat')
     conn.signed_publish(TOPICS.QUATERNIONS.value, ClientConnection.data_encode({'x': x, 'y': y, 'z': z, 'w': w}))
