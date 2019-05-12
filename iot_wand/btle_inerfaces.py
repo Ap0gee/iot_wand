@@ -500,7 +500,7 @@ class WandInterface(Peripheral, DefaultDelegate):
         if self.debug:
             pitch = "Pitch: {}".format(z).ljust(16)
             roll = "Roll: {}".format(w).ljust(16)
-            print("{}{}(x, y): ({}, {})".format(pitch, roll, x, y))
+            #print("{}{}(x, y): ({}, {})".format(pitch, roll, x, y))
 
         self.on_position(x, y, z, w)
         for callback in self._position_callbacks.values():

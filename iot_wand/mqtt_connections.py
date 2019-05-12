@@ -96,7 +96,7 @@ class ClientConnection():
 
         identity = self.identity(topic.sig)
 
-        self.debug(topic.pattern, topic.top, msg.payload, identity)
+        #self.debug(topic.pattern, topic.top, msg.payload, identity)
 
         self.on_message(client, obj, msg, topic, identity)
 
@@ -331,6 +331,7 @@ class GestureClient(ClientConnection):
         self._publish_sys(SYS_LEVELS.SYN.value)
 
     def on_message(self, client, obj, msg, topic, identity):
+        print(topic.pattern)
         if topic.pattern == TOPICS.SYS.value:
             addressed = self.identity(msg.payload)
 

@@ -51,7 +51,7 @@ def __on_post_disconnect(interface, conn):
 
 def __on_spell(gesture, spell, conn):
     print('publishing')
-    conn.signed_publish(TOPICS.SPELLS, ClientConnection.data_encode({'gesture': gesture, 'spell': spell}))
+    conn.signed_publish(TOPICS.SPELLS.value, ClientConnection.data_encode({'gesture': gesture, 'spell': spell}))
 
 
 def __on_position(x, y, w, z, conn):
