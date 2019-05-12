@@ -363,6 +363,7 @@ class GestureClient(ClientConnection):
         if topic.pattern == TOPICS.QUATERNIONS.value and not identity:
             if callable(self.on_quaternion):
                 data = ClientConnection.data_decode(msg.payload, is_json=True)
+                print(data)
                 self.on_quaternion(
                     data['x'], data['y'], data['z'], data['w']
                 )
