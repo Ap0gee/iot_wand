@@ -1,4 +1,4 @@
-import iot_wand.helpers as _h
+from iot_wand.iot_wand import helpers as _h
 import settings as _s
 
 def on_spell(gesture, spell):

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from iot_wand.mqtt_connections import GestureServer, GestureClient, ClientConnection, TOPICS
-import iot_wand.helpers as _h
+from iot_wand.iot_wand.mqtt_connections import GestureServer, GestureClient, ClientConnection, TOPICS
+from iot_wand.iot_wand import helpers as _h
 import argparse
 import sys
 import os

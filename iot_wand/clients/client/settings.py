@@ -1,5 +1,5 @@
 import os
-from iot_wand.settings import DEBUG
+from iot_wand.iot_wand.settings import DEBUG
 DEBUG = DEBUG
 
 DIR_BASE = os.path.abspath(os.path.dirname(__file__))
