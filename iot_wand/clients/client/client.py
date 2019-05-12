@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from iot_wand.mqtt_connections import GestureClient, GestureServer
+from iot_wand.mqtt_connections import GestureServer, GestureClient, ClientConnection, TOPICS
 import iot_wand.helpers as _h
 import argparse
 import sys
@@ -18,9 +18,7 @@ def main():
     conn.start(async=True, async_callback=lambda _conn: __async_callback(conn, _s.DEBUG))
 
 def __async_callback(conn, debug):
-  print('test')
-  input()
-
+    pass
 
 if __name__ == '__main__':
     main()

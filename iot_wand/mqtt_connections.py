@@ -309,18 +309,19 @@ class GestureServer(ClientConnection):
         index = self._mov_manager_index(-1)
         return self.profiles()[index]
 
-    def _async_callback(self):
-       pass
+    def async_callback(self):
+        pass
 
 
 class GestureClient(ClientConnection):
     def __init__(self, config, debug=False):
         super(GestureClient, self).__init__(config, debug)
+
         self.profile_data = config['profile']
 
         self._t_up_start = None
         self.status_server_conn = CONN_STATUS.DISCONNECTED.value
-        self.pingresp = True
+        self.pingresp = 1
         self.poll_delay = 5
 
         self.on_spell = lambda *args: None
@@ -374,7 +375,7 @@ class GestureClient(ClientConnection):
             return t_up
         return 0
 
-    def on_async_start(self):
+    def async_callback(self):
         try:
             while True:
                 time.sleep(self.poll_delay)
