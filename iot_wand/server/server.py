@@ -50,6 +50,7 @@ def __on_post_disconnect(interface, conn):
 
 
 def __on_spell(gesture, spell, conn):
+    print('publishing')
     conn.signed_publish(TOPICS.SPELLS, {'gesture': gesture, 'spell': spell})
 
 
