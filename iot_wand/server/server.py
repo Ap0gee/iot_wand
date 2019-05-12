@@ -15,6 +15,7 @@ def __async_callback(conn, debug):
     wands = []
     wand_scanner = WandScanner(debug=debug)
     loop = asyncio.get_event_loop()
+    lock = asyncio.Lock()
     run = True
 
     try:
@@ -22,7 +23,7 @@ def __async_callback(conn, debug):
             if not len(wands):
                 wands = [
                     GestureInterface(device, debug=debug).connect()
-                    .on('post_connect', lambda interface: __on_post_connect(interface, conn, loop))
+                    .on('post_connect', lambda interface: __on_post_connect(interface, conn, loop, lock))
                     .on('spell', lambda gesture, spell: __on_spell(gesture, spell, conn))
                     .on('position', lambda x, y, w, z: __on_position(x, y, w, z, conn))
                     .on('post_disconnect', lambda interface: __on_post_disconnect(interface, conn))
@@ -40,9 +41,10 @@ def __async_callback(conn, debug):
         wands.clear()
 
 
-def __on_post_connect(interface, conn, loop):
+def __on_post_connect(interface, conn, loop, lock):
     async def keep_alive():
-            print('keeping_alive')
+            with lock:
+                print('keeping_alive')
             await asyncio.sleep(1)
 
     loop.run_until_complete(keep_alive())
