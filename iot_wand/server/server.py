@@ -14,6 +14,7 @@ def main():
 def __async_callback(conn, debug):
     wands = []
     sec_ka = 0
+    sec_ka_max = 60
     wand_scanner = WandScanner(debug=debug)
     loop = asyncio.get_event_loop()
     lock = asyncio.Lock()
@@ -33,20 +34,23 @@ def __async_callback(conn, debug):
             else:
                 if not wands[0].connected:
                     wands.clear()
+                    sec_ka = 0
                 else:
-                    if sec_ka >= 10:
+                    if sec_ka >= sec_ka_max:
                         sec_ka = 0
                         wands[0].keep_alive()
                     else:
                         sec_ka += 1
-
-            time.sleep(1)
-
+                
+                    time.sleep(1)
+                    
+                      
     except (KeyboardInterrupt, Exception) as e:
         conn.stop()
         for wand in wands:
             wand.disconnect()
         wands.clear()
+        sec_ka = 0
 
 
 def __on_post_connect(interface, conn, loop, lock):

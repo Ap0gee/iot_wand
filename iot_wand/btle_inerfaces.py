@@ -42,6 +42,10 @@ class PATTERN(Enum):
     SHORT_LONG = 5
     SHORT_SHORT = 6
     BIG_PAUSE = 7
+    
+class MODES(Enum):
+    GESTURE_CAPTURE = 'MGC'
+    PROFILE_SELECT = 'MPS'   
 
 
 class WandInterface(Peripheral, DefaultDelegate):
@@ -202,11 +206,14 @@ class WandInterface(Peripheral, DefaultDelegate):
             print("Keeping wand alive.")
 
         with self._lock:
-            if not hasattr(self, "_alive_handle"):
-                handle = self._io_service.getCharacteristics(_IO.KEEP_ALIVE_CHAR.value)[0]
-                self._alive_handle = handle.getHandle()
-            return self.writeCharacteristic(self._alive_handle, bytes([1]), withResponse=True)
-
+            try:
+                if not hasattr(self, "_alive_handle"):
+                    handle = self._io_service.getCharacteristics(_IO.KEEP_ALIVE_CHAR.value)[0]
+                    self._alive_handle = handle.getHandle()
+                return self.writeCharacteristic(self._alive_handle, bytes([1]), withResponse=False)
+            except:
+                self.disconnect()
+                
     def vibrate(self, pattern=PATTERN.REGULAR):
         """Vibrate wand with pattern
 
@@ -222,7 +229,7 @@ class WandInterface(Peripheral, DefaultDelegate):
                 message = [pattern]
 
             if self.debug:
-                print("Setting LED to {}".format(message))
+                print("Vibrating with pattern {}".format(message))
 
             if not hasattr(self, "_vibrator_handle"):
                 handle = self._io_service.getCharacteristics(_IO.VIBRATOR_CHAR.value)[0]
@@ -621,6 +628,7 @@ class GestureInterface(WandInterface):
         self._spell_callbacks = {}
         self._quaternion_callbacks = {}
         self._post_disconnect_callbacks = {}
+        self.mode = MODES.GESTURE_CAPTURE.value
 
         self.gestures = {
             ("DL", "R", "DL"): "stupefy",
@@ -692,39 +700,53 @@ class GestureInterface(WandInterface):
         pass
 
     def on_position(self, x, y, z, w):
-        if self.pressed:
-            self.positions.append(tuple([x, -1 * y]))
+        if self.mode == MODES.GESTURE_CAPTURE.value:
+            if self.pressed:
+                self.positions.append(tuple([x, -1 * y]))
+        if self.mode == MODES.PROFILE_SELECT.value:
+                    
 
     def on_button(self, pressed):
         self.pressed = pressed
-
-        if pressed:
-            self.spell = None
-            self.press_start = timeit.default_timer()
-            if self.press_start - self.press_end > .2:
-                self.speed_clicks = 0
-        else:
-            self.press_end = timeit.default_timer()
-            if self.press_end - self.press_start < .2:
-                self.speed_clicks += 1
-                self.positions = []
-                self.reset_position()
-                print('reset')
+        
+        if self.mode == MODES.GESTURE_CAPTURE.value:
+            if pressed:
+                self.spell = None
+                self.press_start = timeit.default_timer()
+                if self.press_start - self.press_end > .2:
+                    self.speed_clicks = 0
             else:
-                self.speed_clicks = 0
+                self.press_end = timeit.default_timer()
+                
+                if self.press_end - self.press_start < .2:
+                    self.speed_clicks += 1
+                    print('reset')
+                    self.positions = []
+                    self.reset_position()    
+                                
+                else:
+                    self.speed_clicks = 0
+                    
+                if self.speed_clicks >= 3:
+                    self.disconnect()
+                    exit(0)
+                    
+                elif self.speed_clicks == 2:
+                    self.vibrate(PATTERN.BURST.value) 
+                    self.mode = MODES.PROFILE_SELECT.value    
+                        
+                gesture = moosegesture.getGesture(self.positions)
+                self.positions = []
 
-            if self.speed_clicks >= 3:
-                self.disconnect()
-                exit(0)
+                closest = moosegesture.findClosestMatchingGesture(gesture, self.gestures, maxDifference=1)
 
-            gesture = moosegesture.getGesture(self.positions)
-            self.positions = []
+                if closest:
+                    self.spell = self.gestures[closest[0]]
+                    for callback in self._spell_callbacks.values():
+                        callback(gesture, self.spell)
 
-            closest = moosegesture.findClosestMatchingGesture(gesture, self.gestures, maxDifference=1)
-
-            if closest:
-                self.spell = self.gestures[closest[0]]
-                for callback in self._spell_callbacks.values():
-                    callback(gesture, self.spell)
-
-            print("{}: {}".format(gesture, self.spell))
+                print("{}: {}".format(gesture, self.spell))
+                
+        if self.mode == MODES.PROFILE_SELECT.value:
+            
+            
