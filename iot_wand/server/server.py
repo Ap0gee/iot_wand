@@ -53,5 +53,4 @@ def __on_spell(gesture, spell, conn):
 
 
 def __on_quaternion(x, y, z, w, conn):
-    print(x, y, z, w)
-    conn.signed_publish(TOPICS.SPELLS.value, ClientConnection.data_encode({"gesture": 'test', "spell": 'test'}))
+    conn.signed_publish(TOPICS.QUATERNIONS.value, ClientConnection.data_encode({"gesture": 'test', "spell": 'test'}))
