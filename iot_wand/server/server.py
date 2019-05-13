@@ -43,6 +43,7 @@ class AsyncServerStateManager:
                         for device in wand_scanner.scan()
                     ]
                 else:
+                    print(len(wands))
                     if not wands[0].connected:
                         wands.clear()
                         sec_ka = 0
