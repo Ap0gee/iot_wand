@@ -76,6 +76,8 @@ class ServerState():
         self.interface = None
 
     def on_post_connect(self, interface):
+        interface.subscribe_button()
+        interface.subscribe_position()
         self.interface = interface
 
     def on_post_disconnect(self, interface):
