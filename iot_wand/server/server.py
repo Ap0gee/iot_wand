@@ -18,7 +18,7 @@ def main():
 class AsyncServerStateManager:
     def __init__(self, mqtt_conn, debug=False):
         self.conn = mqtt_conn
-        self._state = self.state(SERVER_STATES.GESTURE_CAPTURE.value)
+        self._state = self.set_state(SERVER_STATES.GESTURE_CAPTURE.value(self))
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self.manage_wands(debug))
 
@@ -34,10 +34,10 @@ class AsyncServerStateManager:
                 if not len(wands):
                     wands = [
                         GestureInterface(device, debug=debug).connect()
-                        .on('post_connect', lambda interface: self.state().on_post_connect(interface))
-                        .on('quaternion', lambda interface, x, y, z, w: self.state().on_quaternion(interface, x, y, z, w))
-                        .on('button_press', lambda interface, pressed: self.state().on_button_press(interface, pressed))
-                        .on('post_disconnect', lambda interface: self.state().on_post_disconnect(interface))
+                        .on('post_connect', lambda interface: self._state.on_post_connect(interface))
+                        .on('quaternion', lambda interface, x, y, z, w: self._state.on_quaternion(interface, x, y, z, w))
+                        .on('button_press', lambda interface, pressed: self._state.on_button_press(interface, pressed))
+                        .on('post_disconnect', lambda interface: self._state.on_post_disconnect(interface))
                         for device in wand_scanner.scan()
                     ]
                 else:
@@ -60,11 +60,8 @@ class AsyncServerStateManager:
             wands.clear()
             exit(1)
 
-    def state(self, state=None):
-        if state:
-            print('switching state')
-            self._state = state(self)
-
+    def set_state(self, state):
+        self._state = state
         return self._state
 
 
@@ -144,7 +141,7 @@ class GestureCaptureState(ServerState):
 
                 elif self.speed_clicks == 2:
                     interface.vibrate(PATTERN.BURST)
-                    self.switch(SERVER_STATES.PROFILE_SELECT.value)
+                    self.switch(SERVER_STATES.PROFILE_SELECT.value(self.manager))
 
                 elif self.speed_clicks == 1:
                     print('reset')
@@ -199,7 +196,7 @@ class ProfileSelectState(ServerState):
 
                 elif self.speed_clicks == 2:
                     interface.vibrate(PATTERN.BURST)
-                    self.switch(SERVER_STATES.GESTURE_CAPTURE.value)
+                    self.switch(SERVER_STATES.GESTURE_CAPTURE.value(self.manager))
 
                 elif self.speed_clicks == 1:
                     print('reset')
