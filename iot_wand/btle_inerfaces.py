@@ -336,15 +336,11 @@ class WandInterface(Peripheral, DefaultDelegate):
 
         self._position_subscribed = True
         with self._lock:
-            try:
-                if not hasattr(self, "_position_handle"):
-                    handle = self._sensor_service.getCharacteristics(_SENSOR.QUATERNIONS_CHAR.value)[0]
-                    self._position_handle = handle.getHandle()
+            if not hasattr(self, "_position_handle"):
+                handle = self._sensor_service.getCharacteristics(_SENSOR.QUATERNIONS_CHAR.value)[0]
+                self._position_handle = handle.getHandle()
 
-                self.writeCharacteristic(self._position_handle + 1, bytes([1, 0]))
-            except:
-                self._position_subscribed = False
-                self.subscribe_position()
+            self.writeCharacteristic(self._position_handle + 1, bytes([1, 0]))
 
         self._start_notification_thread()
 
@@ -374,15 +370,11 @@ class WandInterface(Peripheral, DefaultDelegate):
         self._button_subscribed = True
 
         with self._lock:
-            try:
-                if not hasattr(self, "_button_handle"):
-                    handle = self._io_service.getCharacteristics(_IO.USER_BUTTON_CHAR.value)[0]
-                    self._button_handle = handle.getHandle()
+            if not hasattr(self, "_button_handle"):
+                handle = self._io_service.getCharacteristics(_IO.USER_BUTTON_CHAR.value)[0]
+                self._button_handle = handle.getHandle()
 
-                self.writeCharacteristic(self._button_handle + 1, bytes([1, 0]))
-            except:
-                self._button_subscribed = False
-                self.subscribe_button()
+            self.writeCharacteristic(self._button_handle + 1, bytes([1, 0]))
 
         self._start_notification_thread()
 
