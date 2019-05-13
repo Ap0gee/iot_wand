@@ -11,8 +11,8 @@ class Blah2():
         self.msg = msg
 
 class TEST(Enum):
-    A =  Blah
-    B =  Blah2
+    A = Blah
+    B = Blah2
 
 def set_state(state):
     if isinstance(state, TEST):
@@ -21,7 +21,6 @@ def set_state(state):
     _state = state('test')
 
     return _state
-
 
 def main():
     x = TEST.A
