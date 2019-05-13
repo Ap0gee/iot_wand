@@ -62,7 +62,7 @@ class AsyncServerStateManager:
 
     def state(self, state=None):
         if state:
-            del self._state
+            print('switching state')
             self._state = state(self)
 
         return self._state
