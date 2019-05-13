@@ -18,9 +18,6 @@ class TOPICS(Enum):
 
 
 class SYS_LEVELS(Enum):
-    SYN = "SYN"
-    SYN_ACK = "SYN-ACK"
-    ACK = "ACK"
     PINGREQ = "PINGREQ"
     PINGRESP = "PINGRESP"
     UP = "UP"
@@ -42,10 +39,8 @@ class Topic():
 
 class Profile():
     def __init__(self, data):
-        self._profile = data['profile']
-        led = self._profile['led']
-        vibrate = self._profile['vibrate']
-        self.uuid = data['uuid']
+        led = data['led']
+        vibrate = data['vibrate']
         self.led_on = led['on']
         self.led_color = led['color']
         self.vibrate_on = vibrate['on']
@@ -273,70 +268,72 @@ class GestureServer(ClientConnection):
     def __init__(self, config, debug=False):
         super(GestureServer, self).__init__(config, debug)
 
-        self._client_manager_profiles = []
-        self._selected_manager_index = -1
+        self._client_profiles = self._client_responders = []
+
+        self._client_response_window = 1
+
+        self._selected_profile_index = 0
+
+        self._t_pingreq_start = timeit.default_timer()
 
     def on_message(self, client, obj, msg, topic, identity):
-        if topic.pattern == TOPICS.SYS.value:
-
-            if topic.top == SYS_LEVELS.PINGREQ.value and not identity:
-                self._publish_sys(SYS_LEVELS.PINGRESP.value)
-
-            if topic.top == SYS_LEVELS.SYN.value and not identity:
-                self._publish_sys(SYS_LEVELS.SYN_ACK.value, ClientConnection.addressed_payload(topic.sig))
-
-            if topic.top == SYS_LEVELS.ACK.value and not identity:
-                profile_data = ClientConnection.data_decode(msg.payload, is_json=True)
-                profile = Profile(profile_data)
-                self.add_manager_profile(profile)
+        if topic.pattern == TOPICS.SYS.values:
+            if topic.top == SYS_LEVELS.PINGRESP.value and not identity:
+                if _h.elapsed(self._t_pingreq_start) <= self._client_response_window:
+                    profile_data = ClientConnection.data_decode(msg.payload, is_json=True)
+                    profile = Profile(profile_data)
+                    self._client_responders.append(tuple([topic.sig, profile]))
 
     def on_connect(self, client, userdata, flags, rc):
-        self._publish_sys(SYS_LEVELS.PINGRESP.value)
+        self.ping_collect_clients()
 
     def on_disconnect(self, userdata, rc):
         pass
 
-    def _manager_profile_exists(self, uuid):
-        return _h.check_key(dict(self._client_manager_profiles), uuid)
+    def _profile_exists(self, uuid):
+        return _h.check_key(dict(self._client_profiles), uuid)
 
-    def add_manager_profile(self, profile):
-        if not self._manager_profile_exists(profile.uuid):
-            self._client_manager_profiles.append(tuple([profile.uuid, profile]))
+    def add_client_profile(self, uuid, profile):
+        if not self._profile_exists(uuid):
+            self._client_profiles.append(tuple([uuid, profile]))
             return True
         return False
 
     def sub_manager_profile(self, uuid):
-        if self._manager_profile_exists(uuid):
-            self._client_manager_profiles.remove(uuid)
+        if self._profile_exists(uuid):
+            self._client_profiles.remove(uuid)
             return True
         return False
 
-    def manager_profile(self, uuid):
-        return dict(self._client_manager_profiles).pop(uuid)
+    def client_profile(self, uuid):
+        return dict(self._client_profiles).pop(uuid)
 
-    def _mov_manager_index(self, dir):
+    def _mov_profile_index(self, dir):
         min = 0
-        max = len(self._client_manager_profiles)
-        self._selected_manager_index += dir
-        if self._selected_manager_index >= max:
-            self._selected_manager_index = max
-        if self._selected_manager_index <= min:
-            self._selected_manager_index = min
-        return self._selected_manager_index
+        max = len(self._client_profiles)
+        self._selected_profile_index += dir
+        if self._selected_profile_index >= max:
+            self._selected_profile_index = max
+        if self._selected_profile_index <= min:
+            self._selected_profile_index = min
+        return self._selected_profile_index
 
     def profiles(self):
-        return list(dict(self._client_manager_profiles).values())
+        return list(dict(self._client_profiles).values())
 
     def next_profile(self):
-        index = self._mov_manager_index(+1)
+        index = self._mov_profile_index(+1)
         return self.profiles()[index]
 
     def prev_profile(self):
-        index = self._mov_manager_index(-1)
+        index = self._mov_profile_index(-1)
         return self.profiles()[index]
 
-    def async_callback(self):
-        pass
+    def ping_collect_clients(self):
+        self._client_profiles = self._client_responders
+        self._client_responders = []
+        self._t_pingreq_start = timeit.default_timer()
+        self._publish_sys(SYS_LEVELS.PINGREQ.value)
 
 
 class GestureClient(ClientConnection):
@@ -346,42 +343,30 @@ class GestureClient(ClientConnection):
         self.profile_data = config['profile']
 
         self._t_up_start = None
-        self.status_server_conn = CONN_STATUS.DISCONNECTED.value
-        self.pingresp = 1
-        self.poll_delay = 1
 
         self.on_spell = lambda gesture, spell: None
         self.on_quaternion = lambda x, y, z, w: None
 
     def on_connect(self, client, userdata, flags, rc):
-        self._publish_sys(SYS_LEVELS.SYN.value)
+        self._t_up_start = timeit.default_timer()
+
+        self._publish_sys(
+            SYS_LEVELS.PINGRESP.value,
+            ClientConnection.data_encode(self.profile_data)
+        )
 
     def on_disconnect(self, userdata, rc):
-        self._publish_sys(SYS_LEVELS.STATUS.value, ClientConnection.data_encode(CONN_STATUS.DISCONNECTED.value))
+        pass
 
     def on_message(self, client, obj, msg, topic, identity):
         addressed = self.identity(ClientConnection.payload_addressed(msg.payload))
 
         if topic.pattern == TOPICS.SYS.value:
-            if topic.top == SYS_LEVELS.SYN_ACK.value and addressed:
+            if topic.top == SYS_LEVELS.PINGREQ.value and not identity:
                 self._publish_sys(
-                    SYS_LEVELS.ACK.value,
-                    ClientConnection.data_encode({
-                        'uuid': self._client_id,
-                        'profile': self.profile_data
-                    })
+                    SYS_LEVELS.PINGRESP.value,
+                    ClientConnection.data_encode(self.profile_data)
                 )
-
-                self.status_server_conn = CONN_STATUS.CONNECTED.value
-
-            if topic.top == SYS_LEVELS.PINGRESP.value:
-                self.pingresp = 1
-
-            if topic.top == SYS_LEVELS.UP.value and addressed:
-                pass
-
-            if topic.top == SYS_LEVELS.DOWN.value and addressed:
-                pass
 
         if topic.pattern == TOPICS.SPELLS.value and addressed:
             if callable(self.on_spell):
@@ -404,22 +389,3 @@ class GestureClient(ClientConnection):
                 return t_up / 60
             return t_up
         return 0
-
-    def async_callback(self):
-        run = True
-        try:
-            while run:
-                time.sleep(self.poll_delay)
-
-                if self.status_server_conn == CONN_STATUS.DISCONNECTED.value:
-                    self._publish_sys(SYS_LEVELS.SYN.value)
-
-                elif self.status_server_conn == CONN_STATUS.CONNECTED.value:
-                    if self.pingresp:
-                        self.pingresp = 0
-                        self._publish_sys(SYS_LEVELS.PINGREQ.value)
-                    else:
-                        self.status_server_conn = CONN_STATUS.DISCONNECTED.value
-
-        except (KeyboardInterrupt, Exception) as e:
-            self.disconnect()

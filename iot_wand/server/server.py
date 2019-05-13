@@ -1,4 +1,4 @@
-from iot_wand.mqtt_connections import GestureServer, ClientConnection, TOPICS
+from iot_wand.mqtt_connections import GestureServer, ClientConnection, TOPICS, SYS_LEVELS
 from iot_wand.btle_scanners import WandScanner
 from iot_wand.btle_inerfaces import GestureInterface, PATTERN
 import iot_wand.server.settings as _s
@@ -21,7 +21,7 @@ class AsyncServerStateManager:
         self._state = self.set_state(SERVER_STATES.GESTURE_CAPTURE.value)
 
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(self.manage_wands(debug))
+        loop.run_until_complete([self.manage_wands(debug), self.ping_clients_forever()])
 
     async def manage_wands(self, debug):
         wands = []
@@ -53,13 +53,23 @@ class AsyncServerStateManager:
                         else:
                             sec_ka += 1
 
-                        time.sleep(1)
+                        await asyncio.sleep(1)
 
         except (KeyboardInterrupt, Exception) as e:
             self.conn.stop()
             for wand in wands:
                 wand.disconnect()
             wands.clear()
+            exit(1)
+
+    async def ping_clients_forever(self):
+        try:
+            run = True
+            while run:
+                self.conn.ping_collect_clients()
+                await asyncio.sleep(1)
+
+        except (KeyboardInterrupt, Exception) as e:
             exit(1)
 
     def set_state(self, state):
@@ -154,7 +164,7 @@ class GestureCaptureState(ServerState):
                     interface.disconnect()
                     exit(0)
 
-                else:    
+                else:
                     gesture = moosegesture.getGesture(self.positions)
                     self.positions = []
 
@@ -197,6 +207,13 @@ class ProfileSelectState(ServerState):
                 if self.speed_clicks == 2:
                     interface.vibrate(PATTERN.BURST)
                     self.switch(SERVER_STATES.GESTURE_CAPTURE.value)
+
+            else:
+                self.speed_clicks = 0
+
+                if self.press_end - self.press_start > 7:
+                    interface.disconnect()
+                    exit(0)
 
 
 
