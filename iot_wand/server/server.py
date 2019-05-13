@@ -38,12 +38,11 @@ class AsyncServerStateManager:
                         .on('post_connect', lambda interface: self.get_state().on_post_connect(interface))
                         .on('post_disconnect', lambda interface: self.get_state().on_post_disconnect(interface))
                         .connect()
-                        .on('quaternion', lambda interface, x, y, z, w: self.get_state().on_quaternion(interface, x, y, z, w))
                         .on('button_press', lambda interface, pressed: self.get_state().on_button_press(interface, pressed))
+                        .on('quaternion', lambda interface, x, y, z, w: self.get_state().on_quaternion(interface, x, y, z, w))
                         for device in wand_scanner.scan()
                     ]
                 else:
-                    print(len(wands))
                     if not wands[0].connected:
                         wands.clear()
                         sec_ka = 0
@@ -78,6 +77,8 @@ class ServerState():
 
     def on_post_connect(self, interface):
         self.interface = interface
+        interface.subscribe_position()
+        interface.subscribe_button()
 
     def on_post_disconnect(self, interface):
         pass
