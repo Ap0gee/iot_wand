@@ -383,7 +383,6 @@ class WandInterface(Peripheral, DefaultDelegate):
             except:
                 self._button_subscribed = False
                 self.subscribe_button()
-                self.disconnect()
 
         self._start_notification_thread()
 
