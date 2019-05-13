@@ -35,11 +35,11 @@ class AsyncServerStateManager:
                 if not len(wands):
                     wands = [
                         GestureInterface(device, debug=debug)
-                        .connect()
                         .on('post_connect', lambda interface: self.get_state().on_post_connect(interface))
                         .on('post_disconnect', lambda interface: self.get_state().on_post_disconnect(interface))
                         .on('button_press', lambda interface, pressed: self.get_state().on_button_press(interface, pressed))
                         .on('quaternion', lambda interface, x, y, z, w: self.get_state().on_quaternion(interface, x, y, z, w))
+                        .connect()
                         for device in wand_scanner.scan()
                     ]
                 else:
@@ -77,8 +77,8 @@ class ServerState():
 
     def on_post_connect(self, interface):
         self.interface = interface
-        interface.subscribe_position()
         interface.subscribe_button()
+        interface.subscribe_position()
 
     def on_post_disconnect(self, interface):
         pass
