@@ -139,36 +139,34 @@ class GestureCaptureState(ServerState):
             self.press_end = timeit.default_timer()
 
             if self.press_end - self.press_start < .2:
+                self.positions = []
+                interface.reset_position()
                 self.speed_clicks += 1
 
-                if self.speed_clicks >= 3:
-                    interface.disconnect()
-                    exit(0)
-
-                elif self.speed_clicks == 2:
+                if self.speed_clicks == 2:
                     interface.vibrate(PATTERN.BURST)
                     self.switch(SERVER_STATES.PROFILE_SELECT.value)
-
-                elif self.speed_clicks == 1:
-                    print('reset')
-                    self.positions = []
-                    interface.reset_position()
 
             else:
                 self.speed_clicks = 0
 
-                gesture = moosegesture.getGesture(self.positions)
-                self.positions = []
+                if self.press_end - self.press_start > 7:
+                    interface.disconnect()
+                    exit(0)
 
-                closest = moosegesture.findClosestMatchingGesture(gesture, self.gestures, maxDifference=1)
+                else:    
+                    gesture = moosegesture.getGesture(self.positions)
+                    self.positions = []
 
-                if closest:
-                    self.spell = self.gestures[closest[0]]
-                    self.conn.signed_publish(TOPICS.SPELLS.value, ClientConnection.data_encode(
-                        ClientConnection.addressed_payload("", {"gesture": gesture, "spell": self.spell})
-                    ))
+                    closest = moosegesture.findClosestMatchingGesture(gesture, self.gestures, maxDifference=1)
 
-                print("{}: {}".format(gesture, self.spell))
+                    if closest:
+                        self.spell = self.gestures[closest[0]]
+                        self.conn.signed_publish(TOPICS.SPELLS.value, ClientConnection.data_encode(
+                            ClientConnection.addressed_payload("", {"gesture": gesture, "spell": self.spell})
+                        ))
+
+                    print("{}: {}".format(gesture, self.spell))
 
 
 class ProfileSelectState(ServerState):
@@ -192,20 +190,14 @@ class ProfileSelectState(ServerState):
             self.press_end = timeit.default_timer()
 
             if self.press_end - self.press_start < .2:
+                self.positions = []
+                interface.reset_position()
                 self.speed_clicks += 1
 
-                if self.speed_clicks >= 3:
-                    interface.disconnect()
-                    exit(0)
-
-                elif self.speed_clicks == 2:
+                if self.speed_clicks == 2:
                     interface.vibrate(PATTERN.BURST)
                     self.switch(SERVER_STATES.GESTURE_CAPTURE.value)
 
-                elif self.speed_clicks == 1:
-                    print('reset')
-                    self.positions = []
-                    interface.reset_position()
 
 
 class SERVER_STATES(Enum):
