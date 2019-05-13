@@ -35,7 +35,7 @@ class AsyncServerStateManager:
                     wands = [
                         GestureInterface(device, debug=debug).connect()
                         .on('post_connect', lambda interface: self.get_state().on_post_connect(interface))
-                        .on('quaternion', lambda interface, x, y, z, w: self.get_state().on_quaternion(interface, x, y, z, w))
+                        #.on('quaternion', lambda interface, x, y, z, w: self.get_state().on_quaternion(interface, x, y, z, w))
                         .on('button_press', lambda interface, pressed: self.get_state().on_button_press(interface, pressed))
                         .on('post_disconnect', lambda interface: self.get_state().on_post_disconnect(interface))
                         for device in wand_scanner.scan()
@@ -174,8 +174,6 @@ class ProfileSelectState(ServerState):
         self.profiles = self.conn.profiles()
 
         print("started profile select state")
-
-        self.interface.vibrate()
 
     def on_quaternion(self, interface, x, y, z, w):
         pass
