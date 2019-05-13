@@ -377,7 +377,7 @@ class WandInterface(Peripheral, DefaultDelegate):
                 self.writeCharacteristic(self._button_handle + 1, bytes([1, 0]))
             except:
                 print('subscription failed, trying again..')
-                self.subscribe_button()
+                self.disconnect()
 
         self._start_notification_thread()
 

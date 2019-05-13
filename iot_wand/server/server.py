@@ -69,6 +69,7 @@ class AsyncServerStateManager:
         return self._state
 
     def get_state(self):
+        print(self._state)
         return self._state
 
 class ServerState():
@@ -102,8 +103,6 @@ class GestureCaptureState(ServerState):
         self.spell = None
         self.speed_clicks = 0
         self.press_start = self.press_end = timeit.default_timer()
-
-        print("started capture state")
 
         self.gestures = { #TODO get from config?
             ("DL", "R", "DL"): "stupefy",
@@ -176,8 +175,6 @@ class ProfileSelectState(ServerState):
         self.pressed = False
         self.speed_clicks = 0
         self.profiles = self.conn.profiles()
-
-        print("started profile select state")
 
     def on_quaternion(self, interface, x, y, z, w):
         pass
