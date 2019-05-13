@@ -59,11 +59,12 @@ class AsyncServerStateManager:
             exit(1)
 
     def state(self, state=None):
-        if isinstance(state, SERVER_STATES):
-            self._state = state.value(self)
-        else:
-            if isinstance(state, type):
-                self._state = state(self)
+        if state:
+            if isinstance(state, SERVER_STATES):
+                self._state = state.value(self)
+            else:
+                if isinstance(state, type):
+                    self._state = state(self)
 
         return self._state
 
@@ -178,7 +179,7 @@ class ProfileSelectState(ServerState):
 
     def on_quaternion(self, interface, x, y, z, w):
         if self.pressed:
-            print(self.profiles)
+            print(x, y, z, w)
 
 
     def on_button_press(self, interface, pressed):
