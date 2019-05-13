@@ -3,10 +3,6 @@ from bluepy.btle import *
 import numpy
 import threading
 import uuid
-from iot_wand.mqtt_connections import ClientConnection
-import timeit
-import time
-import moosegesture
 
 class _INFO(Enum):
     SERVICE = '64A70010-F691-4B93-A6F4-0968F5B648F8'
@@ -42,12 +38,6 @@ class PATTERN(Enum):
     SHORT_LONG = 5
     SHORT_SHORT = 6
     BIG_PAUSE = 7
-    
-
-class MODES(Enum):
-    GESTURE_CAPTURE = 'MGC'
-    PROFILE_SELECT = 'MPS'   
-
 
 class WandInterface(Peripheral, DefaultDelegate):
     def __init__(self, device, debug=False):
@@ -621,31 +611,11 @@ class GestureInterface(WandInterface):
     def __init__(self, device, debug=False):
         super(GestureInterface, self).__init__(device, debug)
 
-        self.pressed = False
-        self.positions = []
-        self.spell = None
-        self.speed_clicks = 0
-        self.press_start = self.press_end = timeit.default_timer()
         self._post_connect_callbacks = {}
         self._spell_callbacks = {}
         self._quaternion_callbacks = {}
+        self._button_press_callbacks = {}
         self._post_disconnect_callbacks = {}
-        self.mode = MODES.GESTURE_CAPTURE.value
-
-        self.gestures = {
-            ("DL", "R", "DL"): "stupefy",
-            ("DR", "R", "UR", "D"): "wingardium_leviosa",
-            ("UL", "UR"): "reducio",
-            ("DR", "U", "UR", "DR", "UR"): "flipendo",
-            ("R", "D"): "expelliarmus",
-            ("UR", "U", "D", "UL", "L", "DL"): "incendio",
-            ("UR", "U", "DR"): "lumos",
-            ("U", "D", "DR", "R", "L"): "locomotor",
-            ("DR", "DL"): "engorgio",
-            ("UR", "R", "DR"): "aguamenti",
-            ("UR", "R", "DR", "UR", "R", "DR"): "avis",
-            ("D", "R", "U"): "reducto"
-        }
 
     def on(self, event, callback):
         id = super(GestureInterface, self).on(event, callback)
@@ -658,6 +628,16 @@ class GestureInterface(WandInterface):
             elif event == "spell":
                 id = uuid.uuid4()
                 self._spell_callbacks[id] = callback
+
+            elif event == "quaternion":
+                id = uuid.uuid4()
+                self._quaternion_callbacks[id] = callback
+                self.subscribe_position()
+
+            elif event == "button_press":
+                id = uuid.uuid4()
+                self._button_press_callbacks[id] = callback
+                self.subscribe_button()
 
             elif event == "post_disconnect":
                 id = uuid.uuid4()
@@ -677,6 +657,14 @@ class GestureInterface(WandInterface):
                 removed = True
                 self._spell_callbacks.pop(uuid)
 
+            elif self._quaternion_callbacks.get(uuid):
+                removed = True
+                self._quaternion_callbacks.pop(uuid)
+
+            elif self._button_callbacks.pop(uuid):
+                removed = True
+                self._button_callbacks.pop(uuid)
+
             elif self._post_disconnect_callbacks.get(uuid):
                 removed = True
                 self._post_disconnect_callbacks.pop(uuid)
@@ -690,64 +678,17 @@ class GestureInterface(WandInterface):
         return self
 
     def post_connect(self):
-        self.subscribe_button()
-        self.subscribe_position()
-
         for callback in self._post_connect_callbacks.values():
             callback(self)
 
     def post_disconnect(self):
         for callback in self._post_disconnect_callbacks.values():
             callback(self)
-        pass
 
     def on_position(self, x, y, z, w):
-        if self.mode == MODES.GESTURE_CAPTURE.value:
-            if self.pressed:
-                self.positions.append(tuple([x, -1 * y]))
-        if self.mode == MODES.PROFILE_SELECT.value:
-            print(z, w)
+        for callback in self._quaternion_callbacks.values():
+            callback(self, x, y, z, w)
 
     def on_button(self, pressed):
-        self.pressed = pressed
-        
-        if self.mode == MODES.GESTURE_CAPTURE.value:
-            if pressed:
-                self.spell = None
-                self.press_start = timeit.default_timer()
-                if self.press_start - self.press_end > .2:
-                    self.speed_clicks = 0
-            else:
-                self.press_end = timeit.default_timer()
-                
-                if self.press_end - self.press_start < .2:
-                    self.speed_clicks += 1
-                    print('reset')
-                    self.positions = []
-                    self.reset_position()    
-                                
-                else:
-                    self.speed_clicks = 0
-                    
-                if self.speed_clicks >= 3:
-                    self.disconnect()
-                    exit(0)
-                    
-                elif self.speed_clicks == 2:
-                    self.vibrate(PATTERN.BURST)
-                    self.mode = MODES.PROFILE_SELECT.value    
-                        
-                gesture = moosegesture.getGesture(self.positions)
-                self.positions = []
-
-                closest = moosegesture.findClosestMatchingGesture(gesture, self.gestures, maxDifference=1)
-
-                if closest:
-                    self.spell = self.gestures[closest[0]]
-                    for callback in self._spell_callbacks.values():
-                        callback(gesture, self.spell)
-
-                print("{}: {}".format(gesture, self.spell))
-                
-        if self.mode == MODES.PROFILE_SELECT.value:
-            pass
+        for callback in self._button_press_callbacks.values():
+            callback(self, pressed)

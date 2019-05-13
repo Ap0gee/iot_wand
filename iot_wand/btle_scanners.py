@@ -96,5 +96,3 @@ class WandScanner(DefaultDelegate):
                     print("Mac: {}\tCommon Name: {}".format(device.addr, name))
                 else:
                     print("Mac: {}".format(device.addr))
-
-        
