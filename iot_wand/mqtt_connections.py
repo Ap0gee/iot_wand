@@ -251,7 +251,8 @@ class GestureServer(ClientConnection):
     def __init__(self, config, debug=False):
         super(GestureServer, self).__init__(config, debug)
 
-        self._client_managers = []
+        self._client_manager_profiles = []
+        self._client_manager_connections = {}
         self._selected_manager_index = -1
 
     def on_message(self, client, obj, msg, topic, identity):
@@ -270,6 +271,7 @@ class GestureServer(ClientConnection):
 
             if topic.top == SYS_LEVELS.STATUS.value and not identity:
                 status = ClientConnection.data_decode(msg)
+                print (status)
                 if status == CONN_STATUS.DISCONNECTED.value:
                     self.sub_manager_profile(topic.sig)
 
@@ -280,30 +282,42 @@ class GestureServer(ClientConnection):
     def on_disconnect(self, userdata, rc):
         pass
 
-    def _manager_exists(self, uuid):
-        return _h.check_key(dict(self._client_managers), uuid)
+    def _manager_profile_exists(self, uuid):
+        return _h.check_key(dict(self._client_manager_profiles), uuid)
+
+    def _manager_connection_exists(self, uuid):
+        return _h.check_key(self._client_manager_connections, uuid)
 
     def add_manager_profile(self, profile):
-        if not self._manager_exists(profile.uuid):
-            self._client_managers.append(tuple([profile.uuid, profile]))
+        if not self._manager_profile_exists(profile.uuid):
+            self._client_manager_profiles.append(tuple([profile.uuid, profile]))
             return True
         return False
 
     def sub_manager_profile(self, uuid):
-        if self._manager_exists(uuid):
-            self._client_managers.remove(uuid)
+        if self._manager_profile_exists(uuid):
+            self._client_manager_profiles.remove(uuid)
+            return True
+        return False
+
+    def add_manager_connection(self, uuid):
+        if not self._manager_connection_exists(uuid):
+            self._client_manager_connections[uuid] = True
+            return True
+        return False
+
+    def sub_manager_connect(self, uuid):
+        if self._manager_connection_exists(uuid):
+            self._client_manager_connections.pop(uuid)
             return True
         return False
 
     def manager_profile(self, uuid):
-        return dict(self._client_managers).pop(uuid)
-
-    def on_client_manager_connect(self, profile):
-        self.add_manager_profile(profile)
+        return dict(self._client_manager_profiles).pop(uuid)
 
     def _mov_manager_index(self, dir):
         min = 0
-        max = len(self._client_managers)
+        max = len(self._client_manager_profiles)
         self._selected_manager_index += dir
         if self._selected_manager_index >= max:
             self._selected_manager_index = max
@@ -312,7 +326,7 @@ class GestureServer(ClientConnection):
         return self._selected_manager_index
 
     def profiles(self):
-        return list(dict(self._client_managers).values())
+        return list(dict(self._client_manager_profiles).values())
 
     def next_profile(self):
         index = self._mov_manager_index(+1)
