@@ -367,12 +367,18 @@ class WandInterface(Peripheral, DefaultDelegate):
             print("Subscribing to button notification")
 
         self._button_subscribed = True
-        with self._lock:
-            if not hasattr(self, "_button_handle"):
-                handle = self._io_service.getCharacteristics(_IO.USER_BUTTON_CHAR.value)[0]
-                self._button_handle = handle.getHandle()
 
-            self.writeCharacteristic(self._button_handle + 1, bytes([1, 0]))
+        with self._lock:
+            try:
+                if not hasattr(self, "_button_handle"):
+                    handle = self._io_service.getCharacteristics(_IO.USER_BUTTON_CHAR.value)[0]
+                    self._button_handle = handle.getHandle()
+
+                self.writeCharacteristic(self._button_handle + 1, bytes([1, 0]))
+            except:
+                print('subscription failed, trying again..')
+                self.subscribe_button()
+
         self._start_notification_thread()
 
     def unsubscribe_button(self, continue_notifications=False):
