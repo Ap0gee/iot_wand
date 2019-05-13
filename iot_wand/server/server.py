@@ -10,11 +10,17 @@ import timeit
 import time
 
 
+def main():
+    config = _h.yaml_read(_s.PATH_CONFIG)
+    conn = GestureServer(config, debug=_s.DEBUG)
+    conn.start(async=True, async_callback=lambda _conn: AsyncServerStateManager(_conn, _s.DEBUG))
+
+
 class AsyncServerStateManager:
     def __init__(self, mqtt_conn, debug=False):
         self.conn = mqtt_conn
         self._state = self.state(SERVER_STATES.GESTURE_CAPTURE)
-        print('started server state manager')
+
         wands = []
         try:
             sec_ka = 0
@@ -93,8 +99,6 @@ class GestureCaptureState(ServerState):
         self.spell = None
         self.speed_clicks = 0
         self.press_start = self.press_end = timeit.default_timer()
-
-        print("started capture state")
 
         self.gestures = { #TODO get from config?
             ("DL", "R", "DL"): "stupefy",
@@ -206,9 +210,3 @@ class ProfileSelectState(ServerState):
 class SERVER_STATES(Enum):
     GESTURE_CAPTURE = GestureCaptureState
     PROFILE_SELECT = ProfileSelectState
-
-
-def main():
-    config = _h.yaml_read(_s.PATH_CONFIG)
-    conn = GestureServer(config, debug=_s.DEBUG)
-    conn.start(async=True, async_callback=lambda _conn: AsyncServerStateManager(_conn, _s.DEBUG))
