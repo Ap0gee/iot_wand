@@ -15,12 +15,14 @@ def main():
     conn = GestureServer(config, debug=_s.DEBUG)
     conn.start(async=True, async_callback=lambda _conn: AsyncServerStateManager(_conn, _s.DEBUG))
 
-
 class AsyncServerStateManager:
     def __init__(self, mqtt_conn, debug=False):
         self.conn = mqtt_conn
         self._state = self.state(SERVER_STATES.GESTURE_CAPTURE)
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self.connectWands(debug))
 
+    async def connectWands(self, debug):
         wands = []
         try:
             sec_ka = 0
@@ -67,7 +69,7 @@ class AsyncServerStateManager:
                     self._state = state(self)
 
         return self._state
-
+    
 
 class ServerState():
     def __init__(self, manager):
