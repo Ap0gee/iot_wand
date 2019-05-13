@@ -61,15 +61,10 @@ class AsyncServerStateManager:
             exit(1)
 
     def set_state(self, state):
-        if isinstance(state, SERVER_STATES):
-            state = state.value
-
-        self._state = state(self)
-
+        self._state = state.value(self)
         return self._state
 
     def get_state(self):
-        print(self._state)
         return self._state
 
 class ServerState():
