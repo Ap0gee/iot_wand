@@ -86,7 +86,7 @@ class ServerState():
         pass
 
     def switch(self, state):
-        return self.manager.state(state)
+        return self.manager.set_state(state)
 
 
 class GestureCaptureState(ServerState):
