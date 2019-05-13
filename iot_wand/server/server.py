@@ -62,11 +62,7 @@ class AsyncServerStateManager:
 
     def state(self, state=None):
         if state:
-            if isinstance(state, SERVER_STATES):
-                self._state = state.value(self)
-            else:
-                if isinstance(state, type):
-                    self._state = state(self)
+            self._state = state(self)
 
         return self._state
 
@@ -147,7 +143,7 @@ class GestureCaptureState(ServerState):
 
                 elif self.speed_clicks == 2:
                     interface.vibrate(PATTERN.BURST)
-                    self.switch(SERVER_STATES.PROFILE_SELECT)
+                    self.switch(SERVER_STATES.PROFILE_SELECT.value)
 
                 elif self.speed_clicks == 1:
                     print('reset')
@@ -202,7 +198,7 @@ class ProfileSelectState(ServerState):
 
                 elif self.speed_clicks == 2:
                     interface.vibrate(PATTERN.BURST)
-                    self.switch(SERVER_STATES.GESTURE_CAPTURE)
+                    self.switch(SERVER_STATES.GESTURE_CAPTURE.value)
 
                 elif self.speed_clicks == 1:
                     print('reset')
