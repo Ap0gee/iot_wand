@@ -65,7 +65,6 @@ class AsyncServerStateManager:
         return self._state
 
     def get_state(self):
-        print(self._state)
         return self._state
 
 class ServerState():
