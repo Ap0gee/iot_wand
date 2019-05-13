@@ -696,6 +696,5 @@ class GestureInterface(WandInterface):
             callback(self, x, y, z, w)
 
     def on_button(self, pressed):
-        print(pressed)
         for callback in self._button_press_callbacks.values():
             callback(self, pressed)
