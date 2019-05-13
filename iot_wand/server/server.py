@@ -20,7 +20,7 @@ class AsyncServerStateManager:
     def __init__(self, mqtt_conn, debug=False):
         self.conn = mqtt_conn
         self._state = self.state(SERVER_STATES.GESTURE_CAPTURE)
-
+        print('started server state manager')
         wands = []
         try:
             sec_ka = 0
@@ -100,6 +100,8 @@ class GestureCaptureState(ServerState):
         self.speed_clicks = 0
         self.press_start = self.press_end = timeit.default_timer()
 
+        print("started capture state")
+
         self.gestures = { #TODO get from config?
             ("DL", "R", "DL"): "stupefy",
             ("DR", "R", "UR", "D"): "wingardium_leviosa",
@@ -171,6 +173,8 @@ class ProfileSelectState(ServerState):
         self.pressed = False
         self.speed_clicks = 0
         self.profiles = self.conn.profiles()
+
+        print("started capture state")
 
         self.interface.vibrate()
 
