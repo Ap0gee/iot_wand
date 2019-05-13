@@ -20,9 +20,9 @@ class AsyncServerStateManager:
         self.conn = mqtt_conn
         self._state = self.state(SERVER_STATES.GESTURE_CAPTURE)
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(self.connectWands(debug))
+        loop.run_until_complete(self.manage_wands(debug))
 
-    async def connectWands(self, debug):
+    async def manage_wands(self, debug):
         wands = []
         try:
             sec_ka = 0
@@ -69,7 +69,7 @@ class AsyncServerStateManager:
                     self._state = state(self)
 
         return self._state
-    
+
 
 class ServerState():
     def __init__(self, manager):
@@ -78,8 +78,6 @@ class ServerState():
         self.interface = None
 
     def on_post_connect(self, interface):
-        interface.subscribe_button()
-        interface.subscribe_position()
         self.interface = interface
 
     def on_post_disconnect(self, interface):
