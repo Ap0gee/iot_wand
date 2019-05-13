@@ -16,10 +16,6 @@ def main():
     conn.start(async=True, async_callback=lambda _conn: AsyncServerStateManager(_conn, _s.DEBUG))
 
 
-class SERVER_STATES(Enum):
-    GESTURE_CAPTURE = GestureCaptureState
-    PROFILE_SELECT = ProfileSelectState
-
 class AsyncServerStateManager:
     def __init__(self, mqtt_conn, debug=False):
         self.conn = mqtt_conn
@@ -207,3 +203,8 @@ class ProfileSelectState(ServerState):
                     print('reset')
                     self.positions = []
                     interface.reset_position()
+
+
+class SERVER_STATES(Enum):
+    GESTURE_CAPTURE = GestureCaptureState
+    PROFILE_SELECT = ProfileSelectState
