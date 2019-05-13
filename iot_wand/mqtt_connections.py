@@ -25,6 +25,7 @@ class SYS_LEVELS(Enum):
     PINGRESP = "PINGRESP"
     UP = "UP"
     DOWN = "DOWN"
+    STATUS = "STATUS"
 
 
 class CONN_STATUS(Enum):
@@ -267,6 +268,12 @@ class GestureServer(ClientConnection):
                 profile = Profile(profile_data)
                 self.add_manager_profile(profile)
 
+            if topic.top == SYS_LEVELS.STATUS.value and not identity:
+                status = ClientConnection.data_decode(msg)
+                if status == CONN_STATUS.DISCONNECTED.value:
+                    self.sub_manager_profile(topic.sig)
+
+
     def on_connect(self, client, userdata, flags, rc):
         self._publish_sys(SYS_LEVELS.PINGRESP.value)
 
@@ -279,6 +286,12 @@ class GestureServer(ClientConnection):
     def add_manager_profile(self, profile):
         if not self._manager_exists(profile.uuid):
             self._client_managers.append(tuple([profile.uuid, profile]))
+            return True
+        return False
+
+    def sub_manager_profile(self, uuid):
+        if self._manager_exists(uuid):
+            self._client_managers.remove(uuid)
             return True
         return False
 
@@ -329,6 +342,9 @@ class GestureClient(ClientConnection):
 
     def on_connect(self, client, userdata, flags, rc):
         self._publish_sys(SYS_LEVELS.SYN.value)
+
+    def on_disconnect(self, userdata, rc):
+        self._publish_sys(SYS_LEVELS.STATUS.value, ClientConnection.data_encode(CONN_STATUS.DISCONNECTED.value))
 
     def on_message(self, client, obj, msg, topic, identity):
         if topic.pattern == TOPICS.SYS.value:
