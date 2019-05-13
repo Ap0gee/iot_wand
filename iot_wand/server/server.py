@@ -18,7 +18,7 @@ def main():
 class AsyncServerStateManager:
     def __init__(self, mqtt_conn, debug=False):
         self.conn = mqtt_conn
-        self._state = self.set_state(SERVER_STATES.GESTURE_CAPTURE)
+        self._state = self.set_state(SERVER_STATES.GESTURE_CAPTURE.value)
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self.manage_wands(debug))
 
@@ -61,7 +61,7 @@ class AsyncServerStateManager:
             exit(1)
 
     def set_state(self, state):
-        self._state = state.value(self)
+        self._state = state(self)
         return self._state
 
     def get_state(self):
@@ -141,7 +141,7 @@ class GestureCaptureState(ServerState):
 
                 elif self.speed_clicks == 2:
                     interface.vibrate(PATTERN.BURST)
-                    self.switch(SERVER_STATES.PROFILE_SELECT)
+                    self.switch(SERVER_STATES.PROFILE_SELECT.value)
 
                 elif self.speed_clicks == 1:
                     print('reset')
@@ -192,7 +192,7 @@ class ProfileSelectState(ServerState):
 
                 elif self.speed_clicks == 2:
                     interface.vibrate(PATTERN.BURST)
-                    self.switch(SERVER_STATES.GESTURE_CAPTURE)
+                    self.switch(SERVER_STATES.GESTURE_CAPTURE.value)
 
                 elif self.speed_clicks == 1:
                     print('reset')
