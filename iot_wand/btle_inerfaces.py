@@ -336,11 +336,14 @@ class WandInterface(Peripheral, DefaultDelegate):
 
         self._position_subscribed = True
         with self._lock:
-            if not hasattr(self, "_position_handle"):
-                handle = self._sensor_service.getCharacteristics(_SENSOR.QUATERNIONS_CHAR.value)[0]
-                self._position_handle = handle.getHandle()
+            try:
+                if not hasattr(self, "_position_handle"):
+                    handle = self._sensor_service.getCharacteristics(_SENSOR.QUATERNIONS_CHAR.value)[0]
+                    self._position_handle = handle.getHandle()
 
-            self.writeCharacteristic(self._position_handle + 1, bytes([1, 0]))
+                self.writeCharacteristic(self._position_handle + 1, bytes([1, 0]))
+            except:
+                self.disconnect()
         self._start_notification_thread()
 
     def unsubscribe_position(self, continue_notifications=False):
@@ -376,7 +379,6 @@ class WandInterface(Peripheral, DefaultDelegate):
 
                 self.writeCharacteristic(self._button_handle + 1, bytes([1, 0]))
             except:
-                print('subscription failed, trying again..')
                 self.disconnect()
 
         self._start_notification_thread()
