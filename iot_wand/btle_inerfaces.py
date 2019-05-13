@@ -39,6 +39,7 @@ class PATTERN(Enum):
     SHORT_SHORT = 6
     BIG_PAUSE = 7
 
+
 class WandInterface(Peripheral, DefaultDelegate):
     def __init__(self, device, debug=False):
         """Create a new wand
@@ -260,7 +261,6 @@ class WandInterface(Peripheral, DefaultDelegate):
                 self._led_handle = handle.getHandle()
             return self.writeCharacteristic(self._led_handle, bytes(message), withResponse=True)
 
-    # SENSORS
     def on(self, event, callback):
         """Add an event listener
 
@@ -343,7 +343,9 @@ class WandInterface(Peripheral, DefaultDelegate):
 
                 self.writeCharacteristic(self._position_handle + 1, bytes([1, 0]))
             except:
-                self.disconnect()
+                self._position_subscribed = False
+                self.subscribe_position()
+
         self._start_notification_thread()
 
     def unsubscribe_position(self, continue_notifications=False):
@@ -379,6 +381,8 @@ class WandInterface(Peripheral, DefaultDelegate):
 
                 self.writeCharacteristic(self._button_handle + 1, bytes([1, 0]))
             except:
+                self._button_subscribed = False
+                self.subscribe_button()
                 self.disconnect()
 
         self._start_notification_thread()

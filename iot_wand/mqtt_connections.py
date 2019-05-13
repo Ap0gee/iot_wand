@@ -252,7 +252,6 @@ class GestureServer(ClientConnection):
         super(GestureServer, self).__init__(config, debug)
 
         self._client_manager_profiles = []
-        self._client_manager_connections = {}
         self._selected_manager_index = -1
 
     def on_message(self, client, obj, msg, topic, identity):
@@ -269,13 +268,6 @@ class GestureServer(ClientConnection):
                 profile = Profile(profile_data)
                 self.add_manager_profile(profile)
 
-            if topic.top == SYS_LEVELS.STATUS.value and not identity:
-                status = ClientConnection.data_decode(msg)
-                print (status)
-                if status == CONN_STATUS.DISCONNECTED.value:
-                    self.sub_manager_profile(topic.sig)
-
-
     def on_connect(self, client, userdata, flags, rc):
         self._publish_sys(SYS_LEVELS.PINGRESP.value)
 
@@ -284,9 +276,6 @@ class GestureServer(ClientConnection):
 
     def _manager_profile_exists(self, uuid):
         return _h.check_key(dict(self._client_manager_profiles), uuid)
-
-    def _manager_connection_exists(self, uuid):
-        return _h.check_key(self._client_manager_connections, uuid)
 
     def add_manager_profile(self, profile):
         if not self._manager_profile_exists(profile.uuid):
@@ -297,18 +286,6 @@ class GestureServer(ClientConnection):
     def sub_manager_profile(self, uuid):
         if self._manager_profile_exists(uuid):
             self._client_manager_profiles.remove(uuid)
-            return True
-        return False
-
-    def add_manager_connection(self, uuid):
-        if not self._manager_connection_exists(uuid):
-            self._client_manager_connections[uuid] = True
-            return True
-        return False
-
-    def sub_manager_connect(self, uuid):
-        if self._manager_connection_exists(uuid):
-            self._client_manager_connections.pop(uuid)
             return True
         return False
 
@@ -349,7 +326,7 @@ class GestureClient(ClientConnection):
         self._t_up_start = None
         self.status_server_conn = CONN_STATUS.DISCONNECTED.value
         self.pingresp = 1
-        self.poll_delay = 5
+        self.poll_delay = 1
 
         self.on_spell = lambda gesture, spell: None
         self.on_quaternion = lambda x, y, z, w: None
@@ -376,7 +353,7 @@ class GestureClient(ClientConnection):
                 self.status_server_conn = CONN_STATUS.CONNECTED.value
 
             if topic.top == SYS_LEVELS.PINGRESP.value:
-                self.pingresp = True
+                self.pingresp = 1
 
             if topic.top == SYS_LEVELS.UP.value and addressed:
                 pass
@@ -417,7 +394,7 @@ class GestureClient(ClientConnection):
 
                 elif self.status_server_conn == CONN_STATUS.CONNECTED.value:
                     if self.pingresp:
-                        self.pingresp = False
+                        self.pingresp = 0
                         self._publish_sys(SYS_LEVELS.PINGREQ.value)
                     else:
                         self.status_server_conn = CONN_STATUS.DISCONNECTED.value
