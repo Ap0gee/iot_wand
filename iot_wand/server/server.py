@@ -60,12 +60,12 @@ class AsyncServerStateManager:
 
     def state(self, state=None):
         if isinstance(state, SERVER_STATES):
-            self._state = state.value
+            self._state = state.value(self)
         else:
             if isinstance(state, type):
-                self._state = state
+                self._state = state(self)
 
-        return self._state(self)
+        return self._state
 
 
 class ServerState():
