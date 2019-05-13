@@ -10,12 +10,6 @@ import timeit
 import time
 
 
-def main():
-    config = _h.yaml_read(_s.PATH_CONFIG)
-    conn = GestureServer(config, debug=_s.DEBUG)
-    conn.start(async=True, async_callback=lambda _conn: AsyncServerStateManager(_conn, _s.DEBUG))
-
-
 class AsyncServerStateManager:
     def __init__(self, mqtt_conn, debug=False):
         self.conn = mqtt_conn
@@ -212,3 +206,9 @@ class ProfileSelectState(ServerState):
 class SERVER_STATES(Enum):
     GESTURE_CAPTURE = GestureCaptureState
     PROFILE_SELECT = ProfileSelectState
+
+
+def main():
+    config = _h.yaml_read(_s.PATH_CONFIG)
+    conn = GestureServer(config, debug=_s.DEBUG)
+    conn.start(async=True, async_callback=lambda _conn: AsyncServerStateManager(_conn, _s.DEBUG))
