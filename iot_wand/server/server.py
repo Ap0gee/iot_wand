@@ -103,6 +103,8 @@ class GestureCaptureState(ServerState):
         self.speed_clicks = 0
         self.press_start = self.press_end = timeit.default_timer()
 
+        print("started capture state")
+
         self.gestures = { #TODO get from config?
             ("DL", "R", "DL"): "stupefy",
             ("DR", "R", "UR", "D"): "wingardium_leviosa",
@@ -176,7 +178,7 @@ class ProfileSelectState(ServerState):
         self.speed_clicks = 0
         self.profiles = self.conn.profiles()
 
-        print("started capture state")
+        print("started profile select state")
 
         self.interface.vibrate()
 

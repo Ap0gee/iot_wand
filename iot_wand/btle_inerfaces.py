@@ -632,7 +632,7 @@ class GestureInterface(WandInterface):
             elif event == "quaternion":
                 id = uuid.uuid4()
                 self._quaternion_callbacks[id] = callback
-                self.subscribe_button()
+                self.subscribe_position()
 
             elif event == "button_press":
                 id = uuid.uuid4()
