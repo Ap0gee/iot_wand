@@ -246,6 +246,28 @@ class ClientConnection():
     def level_sys_topic(level):
         return ClientConnection.level_topic(TOPICS.SYS.value, level)
 
+    @staticmethod
+    def addressed_payload(addr, payload=None):
+        if payload:
+            if type(payload) == dict:
+                payload['addr'] = addr
+            else:
+                payload = {"addr": addr, "data": payload}
+        else:
+            payload = {"addr": addr}
+
+        payload = ClientConnection.data_encode(payload)
+
+        return payload
+
+    @staticmethod
+    def payload_addressed(payload):
+        payload = ClientConnection.data_decode(payload)
+        if type(payload) == dict:
+            if "addr" in payload.keys():
+                return payload["addr"]
+            return False
+        return False
 
 class GestureServer(ClientConnection):
     def __init__(self, config, debug=False):
@@ -261,7 +283,7 @@ class GestureServer(ClientConnection):
                 self._publish_sys(SYS_LEVELS.PINGRESP.value)
 
             if topic.top == SYS_LEVELS.SYN.value and not identity:
-                self._publish_sys(SYS_LEVELS.SYN_ACK.value, topic.sig)
+                self._publish_sys(SYS_LEVELS.SYN_ACK.value, ClientConnection.addressed_payload(topic.sig))
 
             if topic.top == SYS_LEVELS.ACK.value and not identity:
                 profile_data = ClientConnection.data_decode(msg.payload, is_json=True)
@@ -338,9 +360,9 @@ class GestureClient(ClientConnection):
         self._publish_sys(SYS_LEVELS.STATUS.value, ClientConnection.data_encode(CONN_STATUS.DISCONNECTED.value))
 
     def on_message(self, client, obj, msg, topic, identity):
-        if topic.pattern == TOPICS.SYS.value:
-            addressed = self.identity(msg.payload)
+        addressed = self.identity(ClientConnection.payload_addressed(msg.payload))
 
+        if topic.pattern == TOPICS.SYS.value:
             if topic.top == SYS_LEVELS.SYN_ACK.value and addressed:
                 self._publish_sys(
                     SYS_LEVELS.ACK.value,
@@ -361,16 +383,16 @@ class GestureClient(ClientConnection):
             if topic.top == SYS_LEVELS.DOWN.value and addressed:
                 pass
 
-        if topic.pattern == TOPICS.SPELLS.value and not identity:
+        if topic.pattern == TOPICS.SPELLS.value and addressed:
             if callable(self.on_spell):
                 data = ClientConnection.data_decode(msg.payload, is_json=True)
                 self.on_spell(
                     data['gesture'], data['spell']
                 )
 
-        if topic.pattern == TOPICS.QUATERNIONS.value and not identity:
+        if topic.pattern == TOPICS.QUATERNIONS.value and addressed:
             if callable(self.on_quaternion):
-                data = ClientConnection.data_decode(msg.payload, is_json=True).split(" ")
+                data = ClientConnection.data_decode(msg.payload, is_json=True)['data'].split(" ")
                 self.on_quaternion(
                     data[0], data[1], data[2], data[3]
                 )

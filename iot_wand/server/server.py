@@ -19,6 +19,7 @@ class AsyncServerStateManager:
     def __init__(self, mqtt_conn, debug=False):
         self.conn = mqtt_conn
         self._state = self.set_state(SERVER_STATES.GESTURE_CAPTURE.value)
+
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self.manage_wands(debug))
 
@@ -33,11 +34,12 @@ class AsyncServerStateManager:
             while run:
                 if not len(wands):
                     wands = [
-                        GestureInterface(device, debug=debug).connect()
+                        GestureInterface(device, debug=debug)
                         .on('post_connect', lambda interface: self.get_state().on_post_connect(interface))
+                        .on('post_disconnect', lambda interface: self.get_state().on_post_disconnect(interface))
                         .on('quaternion', lambda interface, x, y, z, w: self.get_state().on_quaternion(interface, x, y, z, w))
                         .on('button_press', lambda interface, pressed: self.get_state().on_button_press(interface, pressed))
-                        .on('post_disconnect', lambda interface: self.get_state().on_post_disconnect(interface))
+                        .connect()
                         for device in wand_scanner.scan()
                     ]
                 else:
@@ -118,7 +120,9 @@ class GestureCaptureState(ServerState):
         if self.pressed:
             self.positions.append(tuple([x, -1 * y]))
 
-        self.conn.signed_publish(TOPICS.QUATERNIONS.value, ClientConnection.data_encode("%d %d %d %d" % (x, y, z, w)))
+        self.conn.signed_publish(TOPICS.QUATERNIONS.value, ClientConnection.data_encode(
+            ClientConnection.addressed_payload("", "%d %d %d %d" % (x, y, z, w))
+        ))
 
     def on_button_press(self, interface, pressed):
         self.pressed = pressed
@@ -158,7 +162,9 @@ class GestureCaptureState(ServerState):
 
                 if closest:
                     self.spell = self.gestures[closest[0]]
-                    self.conn.signed_publish(TOPICS.SPELLS.value, ClientConnection.data_encode({"gesture": gesture, "spell": self.spell}))
+                    self.conn.signed_publish(TOPICS.SPELLS.value, ClientConnection.data_encode(
+                        ClientConnection.addressed_payload("", {"gesture": gesture, "spell": self.spell})
+                    ))
 
                 print("{}: {}".format(gesture, self.spell))
 
