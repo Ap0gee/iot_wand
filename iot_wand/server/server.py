@@ -90,7 +90,7 @@ class ServerState():
         pass
 
     def switch(self, state):
-         return self.manager.state(state)
+        return self.manager.state(state)
 
 
 class GestureCaptureState(ServerState):
@@ -119,6 +119,7 @@ class GestureCaptureState(ServerState):
         }
 
     def on_quaternion(self, interface, x, y, z, w):
+        print('gesture capture quat')
         if self.pressed:
             self.positions.append(tuple([x, -1 * y]))
 
@@ -180,9 +181,7 @@ class ProfileSelectState(ServerState):
         self.interface.vibrate()
 
     def on_quaternion(self, interface, x, y, z, w):
-        if self.pressed:
-            print(x, y, z, w)
-
+        print('profile select quat')
 
     def on_button_press(self, interface, pressed):
         if pressed:
