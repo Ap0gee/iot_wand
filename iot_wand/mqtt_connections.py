@@ -349,7 +349,7 @@ class GestureClient(ClientConnection):
                 self.pingresp = True
 
             if topic.top == SYS_LEVELS.UP.value and addressed:
-               pass
+                pass
 
             if topic.top == SYS_LEVELS.DOWN.value and addressed:
                 pass
@@ -368,7 +368,6 @@ class GestureClient(ClientConnection):
                     data[0], data[1], data[2], data[3]
                 )
 
-
     def elapsed_up_start(self, minutes=False):
         if self._t_up_start:
             t_up = _h.elapsed(self._t_up_start)
@@ -381,7 +380,6 @@ class GestureClient(ClientConnection):
         run = True
         try:
             while run:
-                print('test')
                 time.sleep(self.poll_delay)
 
                 if self.status_server_conn == CONN_STATUS.DISCONNECTED.value:

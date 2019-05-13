@@ -6,9 +6,7 @@ import argparse
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
-"""
-relative imports -->
-"""
+
 import settings as _s
 from behavior import on_spell, on_quaternion
 

@@ -43,6 +43,7 @@ class PATTERN(Enum):
     SHORT_SHORT = 6
     BIG_PAUSE = 7
     
+
 class MODES(Enum):
     GESTURE_CAPTURE = 'MGC'
     PROFILE_SELECT = 'MPS'   
@@ -615,6 +616,7 @@ class WandInterface(Peripheral, DefaultDelegate):
         elif cHandle == self._battery_notification_handle:
             self._on_battery(data)
 
+
 class GestureInterface(WandInterface):
     def __init__(self, device, debug=False):
         super(GestureInterface, self).__init__(device, debug)
@@ -704,7 +706,7 @@ class GestureInterface(WandInterface):
             if self.pressed:
                 self.positions.append(tuple([x, -1 * y]))
         if self.mode == MODES.PROFILE_SELECT.value:
-                    
+            print(z, w)
 
     def on_button(self, pressed):
         self.pressed = pressed
@@ -732,7 +734,7 @@ class GestureInterface(WandInterface):
                     exit(0)
                     
                 elif self.speed_clicks == 2:
-                    self.vibrate(PATTERN.BURST.value) 
+                    self.vibrate(PATTERN.BURST)
                     self.mode = MODES.PROFILE_SELECT.value    
                         
                 gesture = moosegesture.getGesture(self.positions)
@@ -748,5 +750,4 @@ class GestureInterface(WandInterface):
                 print("{}: {}".format(gesture, self.spell))
                 
         if self.mode == MODES.PROFILE_SELECT.value:
-            
-            
+            pass
