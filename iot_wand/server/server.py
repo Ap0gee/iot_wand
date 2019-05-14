@@ -21,7 +21,13 @@ class AsyncServerStateManager:
         self._state = self.set_state(SERVER_STATES.GESTURE_CAPTURE.value)
 
         loop = asyncio.get_event_loop()
-        loop.run_until_complete([self.manage_wands(debug), self.ping_clients_forever()])
+        loop.run_until_complete(self.run_async_tasks(debug))
+
+    async def run_async_tasks(self, debug):
+        await asyncio.gather(
+            self.manage_wands(debug),
+            self.ping_clients_forever()
+        )
 
     async def manage_wands(self, debug):
         wands = []
