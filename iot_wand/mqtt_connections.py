@@ -92,7 +92,7 @@ class ClientConnection():
 
         identity = self.identity(topic.sig)
 
-        #self.debug(topic.pattern, topic.top, msg.payload, identity)
+        self.debug(topic.pattern, topic.top, msg.payload, identity)
 
         self.on_message(client, obj, msg, topic, identity)
 
@@ -100,7 +100,7 @@ class ClientConnection():
         pass
 
     def __on_publish(self, client, obj, mid):
-        #self.debug('published', mid)
+        self.debug('published', mid)
         self.on_publish(client, obj, mid)
 
     def on_publish(self, client, obj, mid):
@@ -337,7 +337,7 @@ class GestureServer(ClientConnection):
 
 
 class GestureClient(ClientConnection):
-    def __init__(self, config, debug=True):
+    def __init__(self, config, debug=False):
         super(GestureClient, self).__init__(config, debug)
 
         self.profile_data = config['profile']

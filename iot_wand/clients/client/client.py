@@ -12,10 +12,10 @@ from behavior import on_spell, on_quaternion
 
 def main():
     config = _h.yaml_read(_s.PATH_CONFIG)
-    conn = GestureClient(config, debug=True)
+    conn = GestureClient(config, debug=_s.DEBUG)
     conn.on_spell = on_spell
     conn.on_quaternion = on_quaternion
-    conn.start()
+    conn.start(False)
 
 if __name__ == '__main__':
     main()
