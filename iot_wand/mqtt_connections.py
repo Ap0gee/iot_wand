@@ -290,8 +290,7 @@ class GestureServer(ClientConnection):
         self._t_pingreq_start = timeit.default_timer()
 
     def on_message(self, client, obj, msg, topic, identity):
-        self.debug(msg, topic.top, topic.sig, topic.pattern, identity)
-        if topic.pattern == TOPICS.SYS.values:
+        if topic.pattern == TOPICS.SYS.value:
             self.debug('sys message')
             if topic.top == SYS_LEVELS.PINGRESP.value and not identity:
                 self.debug('ping response')
