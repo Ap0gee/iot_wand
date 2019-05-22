@@ -167,6 +167,11 @@ class ClientConnection():
         signed_topic = self.sign_topic(topic)
         self._mqttc.publish(signed_topic, payload)
 
+    def signed_addressed_publish(self, topic, addr, payload):
+        signed_topic = self.sign_topic(topic)
+        addressed_topic = self.address_topic(signed_topic, addr)
+        self.publish(addressed_topic, payload)
+
     def _publish_sys(self, level, payload=""):
         topic = ClientConnection.level_sys_topic(level)
         signed_topic = self.sign_topic(topic)
@@ -175,6 +180,11 @@ class ClientConnection():
     def sign_topic(self, topic):
         parts = topic.split('+')
         parts.insert(1, self._client_id)
+        return ''.join(parts)
+
+    def address_topic(self, topic, addr):
+        parts = topic.split('+')
+        parts.insert(-1, addr)
         return ''.join(parts)
 
     def identity(self, _id):
@@ -263,6 +273,7 @@ class ClientConnection():
                 return payload["addr"]
             return False
         return False
+
 
 class GestureServer(ClientConnection):
     def __init__(self, config, debug=False):
@@ -359,7 +370,7 @@ class GestureClient(ClientConnection):
         pass
 
     def on_message(self, client, obj, msg, topic, identity):
-        addressed = self.identity(ClientConnection.payload_addressed(msg.payload))
+        addressed = self.identity(topic.top)
 
         if topic.pattern == TOPICS.SYS.value:
             if topic.top == SYS_LEVELS.PINGREQ.value and not identity:
