@@ -191,7 +191,7 @@ class ProfileSelectState(ServerState):
 
         self.pressed = False
         self.speed_clicks = 0
-    
+
     def on_quaternion(self, interface, x, y, z, w):
         print(self.conn.profiles())
 
