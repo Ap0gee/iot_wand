@@ -217,6 +217,8 @@ class ProfileSelectState(ServerState):
         self.quaternion_state.x = z
         self.quaternion_state.w = w
 
+        print(self.quaternion_state.w)
+
     def on_button_press(self, interface, pressed):
         if pressed:
             self.press_start = timeit.default_timer()
