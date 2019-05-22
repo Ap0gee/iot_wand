@@ -279,9 +279,7 @@ class GestureServer(ClientConnection):
     def __init__(self, config, debug=False):
         super(GestureServer, self).__init__(config, debug)
 
-        self._client_profiles = []
-
-        self._client_responders = []
+        self._client_profiles = self._client_responders = []
 
         self._client_response_window = 1
 
@@ -291,13 +289,10 @@ class GestureServer(ClientConnection):
 
     def on_message(self, client, obj, msg, topic, identity):
         if topic.pattern == TOPICS.SYS.value:
-            self.debug('sys message')
             if topic.top == SYS_LEVELS.PINGRESP.value and not identity:
-                self.debug('ping response')
                 if _h.elapsed(self._t_pingreq_start) <= self._client_response_window:
                     profile_data = ClientConnection.data_decode(msg.payload, is_json=True)
                     profile = Profile(profile_data)
-                    self.debug('adding profile', profile)
                     self._client_responders.append(tuple([topic.sig, profile]))
 
     def on_connect(self, client, userdata, flags, rc):
@@ -344,6 +339,9 @@ class GestureServer(ClientConnection):
     def prev_profile(self):
         index = self._mov_profile_index(-1)
         return self.profiles()[index]
+
+    def current_profile(self):
+        return self._client_profiles[self._selected_profile_index]
 
     def ping_collect_clients(self):
         self._client_profiles = self._client_responders

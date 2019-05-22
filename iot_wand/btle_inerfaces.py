@@ -39,7 +39,6 @@ class PATTERN(Enum):
     SHORT_SHORT = 6
     BIG_PAUSE = 7
 
-
 class WandInterface(Peripheral, DefaultDelegate):
     def __init__(self, device, debug=False):
         """Create a new wand

@@ -191,9 +191,31 @@ class ProfileSelectState(ServerState):
 
         self.pressed = False
         self.speed_clicks = 0
+        self.quaternion_state = _h.Quaternion(0, 0, 0, 0)
+
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self.run_async_tasks)
+
+    async def run_async_tasks(self):
+        await asyncio.gather(
+            self.cycle_profiles()
+        )
+
+    async def cycle_profiles(self):
+        run = True
+        while run:
+            if self.quaternion_state.w >= 500:
+                print('moving +')
+            if self.quaternion_state.w <=-500:
+                print('moving -')
+
+            await asyncio.sleep(1)
 
     def on_quaternion(self, interface, x, y, z, w):
-        print(self.conn.profiles())
+        self.quaternion_state.x = x
+        self.quaternion_state.y = y
+        self.quaternion_state.x = z
+        self.quaternion_state.w = w
 
     def on_button_press(self, interface, pressed):
         if pressed:
