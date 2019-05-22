@@ -100,7 +100,7 @@ class ClientConnection():
         pass
 
     def __on_publish(self, client, obj, mid):
-        self.debug('published', mid)
+        #self.debug('published', mid)
         self.on_publish(client, obj, mid)
 
     def on_publish(self, client, obj, mid):
@@ -291,7 +291,9 @@ class GestureServer(ClientConnection):
 
     def on_message(self, client, obj, msg, topic, identity):
         if topic.pattern == TOPICS.SYS.values:
+            self.debug('sys message')
             if topic.top == SYS_LEVELS.PINGRESP.value and not identity:
+                self.debug('ping response')
                 if _h.elapsed(self._t_pingreq_start) <= self._client_response_window:
                     profile_data = ClientConnection.data_decode(msg.payload, is_json=True)
                     profile = Profile(profile_data)
