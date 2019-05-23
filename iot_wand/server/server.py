@@ -228,7 +228,6 @@ class ProfileSelectState(ServerState):
                 self.interface.set_led('#ffffff', True)
                 self.interface.set_led('#ffffff', False)
                 self.connections_count -= 1
-                await asyncio.sleep(.5)
             else:
                 if self.quaternion_state.w >= 375:
                     self.conn.next_profile()
@@ -245,11 +244,10 @@ class ProfileSelectState(ServerState):
                     #if profile.vibrate_on:
                     #    self.interface.vibrate(profile.vibrate_pattern)
 
-                await asyncio.sleep(1)
-
         except Exception as e:
             print(e)
 
+        await asyncio.sleep(1)
 
 
     def on_button_press(self, interface, pressed):
