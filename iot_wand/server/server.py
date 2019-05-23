@@ -229,8 +229,8 @@ class ProfileSelectState(ServerState):
                 for i in range(0, len(self.conn.profiles())):
                     if profile == None:
                         self.interface.set_led('#ffffff', True)
-                        await asyncio.sleep(.5)
                         self.interface.set_led('#ffffff', False)
+                        await asyncio.sleep(.5)
 
             if self.quaternion_state.w >= 375:
                 self.conn.next_profile()
