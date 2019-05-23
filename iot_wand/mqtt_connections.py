@@ -353,6 +353,10 @@ class GestureServer(ClientConnection):
     def current_profile(self):
         return self._selected_profile
 
+    def clear_current_profile(self):
+        self._selected_profile = None
+        return self.current_profile()
+
     def ping_collect_clients(self):
         self._client_profiles = self._client_responders
         self._client_responders = []
