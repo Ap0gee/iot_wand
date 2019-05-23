@@ -41,6 +41,7 @@ class Profile():
     def __init__(self, data):
         led = data['led']
         vibrate = data['vibrate']
+        self.uuid = data['uuid']
         self.led_on = led['on']
         self.led_color = led['color']
         self.vibrate_on = vibrate['on']
@@ -361,6 +362,7 @@ class GestureClient(ClientConnection):
         super(GestureClient, self).__init__(config, debug)
 
         self.profile_data = config['profile']
+        self.profile_data['uuid'] = self._client_id
 
         self._t_up_start = None
 

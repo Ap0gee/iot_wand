@@ -217,6 +217,8 @@ class ProfileSelectState(ServerState):
         if self.quaternion_state.w <= -375:
             profile = self.conn.prev_profile()
 
+        print(profile.uuid)
+
         await asyncio.sleep(3)
 
     def on_button_press(self, interface, pressed):
