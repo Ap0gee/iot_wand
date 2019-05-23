@@ -18,6 +18,7 @@ def main():
 class AsyncServerStateManager:
     def __init__(self, mqtt_conn, debug=False):
         self.conn = mqtt_conn
+        self.interface = None
         self._state = self.set_state(SERVER_STATES.GESTURE_CAPTURE.value)
         self.run = True
 
@@ -97,9 +98,10 @@ class ServerState():
     def __init__(self, manager):
         self.manager = manager
         self.conn = manager.conn
-        self.interface = None
+        self.interface = manager.interface
 
     def on_post_connect(self, interface):
+        self.manager.interface = interface
         self.interface = interface
         interface.subscribe_button()
         interface.subscribe_position()
