@@ -325,10 +325,10 @@ class GestureServer(ClientConnection):
         max = len(self._client_profiles) - 1
         new_index = self._selected_profile_index + dir
 
-        if new_index >= max:
-            self._selected_profile_index = max
-        elif new_index <= min:
+        if new_index > max:
             self._selected_profile_index = min
+        elif new_index < min:
+            self._selected_profile_index = max
         else:
             self._selected_profile_index = new_index
 
