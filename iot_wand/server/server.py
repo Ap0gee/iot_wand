@@ -116,7 +116,7 @@ class ServerState():
         pass
 
     async def on_loop(self):
-        pass
+        await asyncio.sleep(1)
 
     def switch(self, state):
         return self.manager.set_state(state)
@@ -154,9 +154,6 @@ class GestureCaptureState(ServerState):
         self.conn.signed_publish(TOPICS.QUATERNIONS.value, ClientConnection.data_encode(
             ClientConnection.addressed_payload("", "%d %d %d %d" % (x, y, z, w))
         ))
-
-    async def on_loop(self):
-        await asyncio.sleep(1)
 
     def on_button_press(self, interface, pressed):
         self.pressed = pressed
