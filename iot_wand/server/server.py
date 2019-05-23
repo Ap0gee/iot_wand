@@ -222,15 +222,15 @@ class ProfileSelectState(ServerState):
 
             profile = self.conn.current_profile()
 
-            print('switching to', profile.uuid)
-
             if profile.uuid != self.last_profile_uuid:
-                self.last_profile_uuid = profile.uuid
+                print('switching to', profile.uuid)
 
-                self.interface.set_led(profile.led_color, profile.led_on)
+                #self.last_profile_uuid = profile.uuid
 
-                if profile.vibrate_on:
-                    self.interface.vibrate(profile.vibrate_pattern)
+                #self.interface.set_led(profile.led_color, profile.led_on)
+
+                #if profile.vibrate_on:
+                #    self.interface.vibrate(profile.vibrate_pattern)
 
         except Exception as e:
             print(e)
