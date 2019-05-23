@@ -222,8 +222,6 @@ class ProfileSelectState(ServerState):
 
     async def on_loop(self):
         try:
-            profile = self.conn.current_profile()
-
             if self.connections_count > 0:
                 self.interface.set_led('#ffffff', True)
                 self.interface.set_led('#ffffff', False)
@@ -233,6 +231,8 @@ class ProfileSelectState(ServerState):
                     self.conn.next_profile()
                 if self.quaternion_state.w <= -375:
                     self.conn.prev_profile()
+
+                profile = self.conn.current_profile()
 
                 if profile.uuid != self.last_profile_uuid:
                     print('switching to', profile.uuid)
