@@ -41,6 +41,7 @@ class Profile():
     def __init__(self, data):
         led = data['led']
         vibrate = data['vibrate']
+        self.uuid = data['uuid']
         self.led_on = led['on']
         self.led_color = led['color']
         self.vibrate_on = vibrate['on']
