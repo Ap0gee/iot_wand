@@ -157,7 +157,7 @@ class GestureCaptureState(ServerState):
 
     async def on_loop(self):
         await asyncio.sleep(1)
-    
+
     def on_button_press(self, interface, pressed):
         self.pressed = pressed
 
@@ -208,7 +208,7 @@ class ProfileSelectState(ServerState):
         self.pressed = False
         self.speed_clicks = 0
         self.quaternion_state = _h.Quaternion(0, 0, 0, 0)
-        self.last_profile = None
+        self.last_profile_uuid = None
 
     def on_quaternion(self, interface, x, y, z, w):
         self.quaternion_state.x = x
@@ -224,8 +224,9 @@ class ProfileSelectState(ServerState):
                 self.conn.prev_profile()
 
             profile = self.conn.current_profile()
-            if profile != self.last_profile:
-                self.last_profile = profile
+
+            if profile.uuid != self.last_profile_uuid:
+                self.last_profile_uuid = profile.uuid
 
                 self.interface.set_led(profile.led_color, profile.led_on)
 
