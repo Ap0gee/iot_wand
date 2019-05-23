@@ -212,7 +212,7 @@ class ProfileSelectState(ServerState):
         self.quaternion_state = _h.Quaternion(0, 0, 0, 0)
         self.last_profile_uuid = None
         self.conn.clear_current_profile()
-        self.displayed_connected = False
+        self.connections_count = len(self.conn.profiles())
 
     def on_quaternion(self, interface, x, y, z, w):
         self.quaternion_state.x = x
@@ -224,25 +224,33 @@ class ProfileSelectState(ServerState):
         try:
             profile = self.conn.current_profile()
 
-            if self.quaternion_state.w >= 375:
-                self.conn.next_profile()
-            if self.quaternion_state.w <= -375:
-                self.conn.prev_profile()
+            if self.connections_count > 0:
+                self.interface.set_led('#ffffff', True)
+                self.interface.set_led('#ffffff', False)
+                self.connections_count -= 1
+                await asyncio.sleep(.5)
+            else:
+                if self.quaternion_state.w >= 375:
+                    self.conn.next_profile()
+                if self.quaternion_state.w <= -375:
+                    self.conn.prev_profile()
 
-            if profile.uuid != self.last_profile_uuid:
-                print('switching to', profile.uuid)
+                if profile.uuid != self.last_profile_uuid:
+                    print('switching to', profile.uuid)
 
-            #self.last_profile_uuid = profile.uuid
+                    #self.last_profile_uuid = profile.uuid
 
-            #self.interface.set_led(profile.led_color, profile.led_on)
+                    #self.interface.set_led(profile.led_color, profile.led_on)
 
-            #if profile.vibrate_on:
-            #    self.interface.vibrate(profile.vibrate_pattern)
+                    #if profile.vibrate_on:
+                    #    self.interface.vibrate(profile.vibrate_pattern)
+
+                await asyncio.sleep(1)
 
         except Exception as e:
             print(e)
 
-        await asyncio.sleep(1)
+
 
     def on_button_press(self, interface, pressed):
         if pressed:
