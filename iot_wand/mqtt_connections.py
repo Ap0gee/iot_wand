@@ -365,6 +365,7 @@ class GestureClient(ClientConnection):
         super(GestureClient, self).__init__(config, debug)
 
         self.profile_data = config['profile']
+        self.profile_data['uuid'] = self._client_id
 
         self._t_up_start = None
 

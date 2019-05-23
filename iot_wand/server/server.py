@@ -218,9 +218,10 @@ class ProfileSelectState(ServerState):
             if self.quaternion_state.w <= -375:
                 self.conn.prev_profile()
 
-            print("profile switch", self.conn.current_profile().led_color)
-        except Exception as e:
-            print(e)
+            print("profile switch", self.conn.current_profile().uuid)
+
+        except IndexError:
+            pass
 
         await asyncio.sleep(1)
 
