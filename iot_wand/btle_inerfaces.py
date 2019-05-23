@@ -197,14 +197,12 @@ class WandInterface(Peripheral, DefaultDelegate):
             print("Keeping wand alive.")
 
         with self._lock:
-            try:
-                if not hasattr(self, "_alive_handle"):
-                    handle = self._io_service.getCharacteristics(_IO.KEEP_ALIVE_CHAR.value)[0]
-                    self._alive_handle = handle.getHandle()
-                return self.writeCharacteristic(self._alive_handle, bytes([1]), withResponse=False)
-            except:
-                self.disconnect()
-                
+            if not hasattr(self, "_alive_handle"):
+                handle = self._io_service.getCharacteristics(_IO.KEEP_ALIVE_CHAR.value)[0]
+                self._alive_handle = handle.getHandle()
+            return self.writeCharacteristic(self._alive_handle, bytes([1]), withResponse=True)
+
+
     def vibrate(self, pattern=PATTERN.REGULAR):
         """Vibrate wand with pattern
 
