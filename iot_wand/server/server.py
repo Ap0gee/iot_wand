@@ -213,9 +213,6 @@ class ProfileSelectState(ServerState):
         self.last_profile_uuid = None
         self.conn.clear_current_profile()
 
-        for i in range(0, len(self.conn.profiles())):
-            print('blinking')
-
     def on_quaternion(self, interface, x, y, z, w):
         self.quaternion_state.x = x
         self.quaternion_state.y = y
@@ -224,6 +221,9 @@ class ProfileSelectState(ServerState):
 
     async def on_loop(self):
         try:
+            for i in range(0, len(self.conn.profiles())):
+                print('blinking')
+
             profile = self.conn.current_profile()
 
             if self.quaternion_state.w >= 375:
