@@ -41,7 +41,6 @@ class Profile():
     def __init__(self, data):
         led = data['led']
         vibrate = data['vibrate']
-        self.uuid = data['uuid']
         self.led_on = led['on']
         self.led_color = led['color']
         self.vibrate_on = vibrate['on']
@@ -334,12 +333,12 @@ class GestureServer(ClientConnection):
         return list(dict(self._client_profiles).values())
 
     def next_profile(self):
-        index = self.next_profile_index()
-        return self.profiles()[index]
+        self.next_profile_index()
+        return self.current_profile()
 
     def prev_profile(self):
-        index = self.prev_profile_index()
-        return self.profiles()[index]
+        self.prev_profile_index()
+        return self.current_profile()
 
     def next_profile_index(self):
         return self._mov_profile_index(+1)
