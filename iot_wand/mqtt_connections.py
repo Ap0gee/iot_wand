@@ -386,8 +386,8 @@ class GestureClient(ClientConnection):
 
     def on_message(self, client, obj, msg, topic, identity):
         addressed = self.identity(topic.top)
-        print(topic.top, addressed)
-        
+        print(topic.top, addressed, topic.pattern)
+
         if topic.pattern == TOPICS.SYS.value:
             if topic.top == SYS_LEVELS.PINGREQ.value and not identity:
                 self._publish_sys(

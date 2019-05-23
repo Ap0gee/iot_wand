@@ -191,9 +191,11 @@ class GestureCaptureState(ServerState):
 
                     if closest:
                         self.spell = self.gestures[closest[0]]
-                        self.conn.signed_publish(TOPICS.SPELLS.value, ClientConnection.data_encode(
-                            ClientConnection.addressed_payload(self.conn.current_profile().uuid, {"gesture": gesture, "spell": self.spell})
-                        ))
+                        self.conn.signed_addressed_publish(
+                            TOPICS.SPELLS.value,
+                            self.conn.current_profile().uuid,
+                            ClientConnection.data_encode({"gesture": gesture, "spell": self.spell})
+                        )
 
                     print("{}: {}".format(gesture, self.spell))
 
