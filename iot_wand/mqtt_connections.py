@@ -170,8 +170,7 @@ class ClientConnection():
 
     def signed_addressed_publish(self, topic, addr, payload):
         signed_topic = self.sign_topic(topic)
-        print(signed_topic)
-        addressed_topic = self.address_topic(signed_topic, addr)
+        addressed_topic = signed_topic + addr
         print(addressed_topic)
         self.publish(addressed_topic, payload)
 
@@ -183,11 +182,6 @@ class ClientConnection():
     def sign_topic(self, topic):
         parts = topic.split('+')
         parts.insert(1, self._client_id)
-        return ''.join(parts)
-
-    def address_topic(self, topic, addr):
-        parts = topic.split('+')
-        parts.insert(-1, addr)
         return ''.join(parts)
 
     def identity(self, _id):
