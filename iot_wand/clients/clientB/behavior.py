@@ -4,12 +4,15 @@ import time
 import win32api
 
 current = win32api.GetCursorPos()
-cx = sx = current[0]
-cy = sy = current[1]
+x_dim = win32api.GetSystemMetrics(0)
+y_dim = win32api.GetSystemMetrics(1)
 
 def on_spell(gesture, spell):
     print(spell)
 
 def on_quaternion(x, y, z, w):
-    print(x, y)
-    win32api.SetCursorPos((int(x),int(y)))
+    x_pos = x_dim * ((x * 4 + 1000) / 2000)
+    y_pos = y_dim * (1.0 - (y * 4 + 1000) / 2000)
+    print(int(round(x_pos)),int(round(y_pos)))
+
+    win32api.SetCursorPos((int(round(x_pos)),int(round(y_pos))))

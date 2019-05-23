@@ -224,7 +224,7 @@ class ProfileSelectState(ServerState):
         try:
             if not self.indicated:
                 self.indicated = True
-                self.interface.set_led('#ffffff', False)
+                #self.interface.set_led('#ffffff', False)
 
             if self.quaternion_state.w >= 375:
                 self.conn.next_profile()
