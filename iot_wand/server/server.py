@@ -212,9 +212,7 @@ class ProfileSelectState(ServerState):
         self.quaternion_state.w = w
 
     async def on_loop(self):
-      
-        print("profile switch", self.conn.current_profile())
-
+        print("profile switch")
         await asyncio.sleep(1)
 
     def on_button_press(self, interface, pressed):
