@@ -382,7 +382,6 @@ class GestureClient(ClientConnection):
 
     def on_message(self, client, obj, msg, topic, identity):
         addressed = self.identity(topic.top)
-        print(topic.top, addressed, topic.pattern)
 
         if topic.pattern == TOPICS.SYS.value:
             if topic.top == SYS_LEVELS.PINGREQ.value and not identity:
@@ -400,7 +399,7 @@ class GestureClient(ClientConnection):
 
         if topic.pattern == TOPICS.QUATERNIONS.value and addressed:
             if callable(self.on_quaternion):
-                data = ClientConnection.data_decode(msg.payload, is_json=True)['data'].split(" ")
+                data = ClientConnection.data_decode(msg.payload, is_json=True).split(" ")
                 self.on_quaternion(
                     data[0], data[1], data[2], data[3]
                 )
