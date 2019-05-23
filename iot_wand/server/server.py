@@ -22,7 +22,7 @@ class AsyncServerStateManager:
         self._state = self.set_state(SERVER_STATES.GESTURE_CAPTURE.value)
         self.run = True
 
-        loop = asyncio.get_event_loop()
+        loop = asyncio.new_event_loop()
         loop.run_until_complete(self.run_async_tasks(debug))
 
     async def run_async_tasks(self, debug):
@@ -205,6 +205,7 @@ class ProfileSelectState(ServerState):
         self.pressed = False
         self.speed_clicks = 0
         self.quaternion_state = _h.Quaternion(0, 0, 0, 0)
+        self.last_profile = None
 
     def on_quaternion(self, interface, x, y, z, w):
         self.quaternion_state.x = x
@@ -220,11 +221,13 @@ class ProfileSelectState(ServerState):
                 self.conn.prev_profile()
 
             profile = self.conn.current_profile()
+            if profile != self.last_profile:
+                self.last_profile = profile
 
-            self.interface.set_led(profile.led_color, profile.led_on)
+                self.interface.set_led(profile.led_color, profile.led_on)
 
-            if profile.vibrate_on:
-                self.interface.vibrate(profile.vibrate_pattern)
+                if profile.vibrate_on:
+                    self.interface.vibrate(profile.vibrate_pattern)
 
         except Exception as e:
             print(e)
