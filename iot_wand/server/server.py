@@ -218,7 +218,12 @@ class ProfileSelectState(ServerState):
             if self.quaternion_state.w <= -375:
                 self.conn.prev_profile()
 
-            print("profile switch", self.conn.current_profile().uuid)
+            profile = self.conn.current_profile()
+
+            self.interface.set_led(profile.led_color, profile.led_on)
+
+            if profile.vibrate_on:
+                self.interface.vibrate(profile.vibrate_pattern)
 
         except Exception as e:
             print(e)
