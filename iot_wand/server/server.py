@@ -220,8 +220,8 @@ class ProfileSelectState(ServerState):
 
             print("profile switch", self.conn.current_profile().uuid)
 
-        except IndexError:
-            pass
+        except Exception as e:
+            print(e)
 
         await asyncio.sleep(1)
 
