@@ -26,7 +26,8 @@ class AsyncServerStateManager:
     async def run_async_tasks(self, debug):
         await asyncio.gather(
             self.manage_wands(debug),
-            self.ping_clients_forever()
+            self.ping_clients_forever(),
+            self.loop_state()
         )
 
     async def manage_wands(self, debug):
@@ -78,6 +79,15 @@ class AsyncServerStateManager:
         except (KeyboardInterrupt, Exception) as e:
             exit(1)
 
+    async def loop_state(self):
+        try:
+            run = True
+            while run:
+              self.get_state().on_loop()
+
+        except (KeyboardInterrupt, Exception) as e:
+            exit(1)
+
     def set_state(self, state):
         self._state = state(self)
         return self._state
@@ -103,6 +113,9 @@ class ServerState():
         pass
 
     def on_button_press(self, interface, pressed):
+        pass
+
+    def on_loop(self):
         pass
 
     def switch(self, state):
@@ -141,6 +154,10 @@ class GestureCaptureState(ServerState):
         self.conn.signed_publish(TOPICS.QUATERNIONS.value, ClientConnection.data_encode(
             ClientConnection.addressed_payload("", "%d %d %d %d" % (x, y, z, w))
         ))
+
+    def on_loop(self):
+        print('gesture loop')
+        await asyncio.sleep(1)
 
     def on_button_press(self, interface, pressed):
         self.pressed = pressed
@@ -198,8 +215,10 @@ class ProfileSelectState(ServerState):
         self.quaternion_state.y = y
         self.quaternion_state.x = z
         self.quaternion_state.w = w
-        time.sleep(1)
-        print(self.quaternion_state.w)
+
+    def on_loop(self):
+        print('profile loop')
+        await asyncio.sleep(1)
 
     def on_button_press(self, interface, pressed):
         if pressed:
