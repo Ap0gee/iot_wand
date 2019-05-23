@@ -83,7 +83,7 @@ class AsyncServerStateManager:
         try:
             run = True
             while run:
-              self.get_state().on_loop()
+                await self.get_state().on_loop()
 
         except (KeyboardInterrupt, Exception) as e:
             exit(1)
@@ -115,7 +115,7 @@ class ServerState():
     def on_button_press(self, interface, pressed):
         pass
 
-    def on_loop(self):
+    async def on_loop(self):
         pass
 
     def switch(self, state):
@@ -155,7 +155,7 @@ class GestureCaptureState(ServerState):
             ClientConnection.addressed_payload("", "%d %d %d %d" % (x, y, z, w))
         ))
 
-    def on_loop(self):
+    async def on_loop(self):
         print('gesture loop')
         await asyncio.sleep(1)
 
@@ -216,7 +216,7 @@ class ProfileSelectState(ServerState):
         self.quaternion_state.x = z
         self.quaternion_state.w = w
 
-    def on_loop(self):
+    async def on_loop(self):
         print('profile loop')
         await asyncio.sleep(1)
 
