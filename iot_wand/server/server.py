@@ -22,7 +22,7 @@ class AsyncServerStateManager:
         self._state = self.set_state(SERVER_STATES.GESTURE_CAPTURE.value)
         self.run = True
 
-        loop = asyncio.new_event_loop()
+        loop = asyncio.get_event_loop()
         loop.run_until_complete(self.run_async_tasks(debug))
 
     async def run_async_tasks(self, debug):
@@ -155,6 +155,9 @@ class GestureCaptureState(ServerState):
             ClientConnection.addressed_payload("", "%d %d %d %d" % (x, y, z, w))
         ))
 
+    async def on_loop(self):
+        await asyncio.sleep(1)
+    
     def on_button_press(self, interface, pressed):
         self.pressed = pressed
 
