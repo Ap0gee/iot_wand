@@ -213,6 +213,7 @@ class ProfileSelectState(ServerState):
         self.last_profile_uuid = None
         self.conn.clear_current_profile()
         self.connections_count = len(self.conn.profiles())
+        self.interface.set_led('#ffffff', True)
 
     def on_quaternion(self, interface, x, y, z, w):
         self.quaternion_state.x = x
@@ -222,28 +223,22 @@ class ProfileSelectState(ServerState):
 
     async def on_loop(self):
         try:
-            if self.connections_count > 0:
-                with self.interface._lock:
-                    self.interface.set_led('#ffffff', True)
-                    self.interface.set_led('#ffffff', False)
-                self.connections_count -= 1
-            else:
-                if self.quaternion_state.w >= 375:
-                    self.conn.next_profile()
-                if self.quaternion_state.w <= -375:
-                    self.conn.prev_profile()
+            if self.quaternion_state.w >= 375:
+                self.conn.next_profile()
+            if self.quaternion_state.w <= -375:
+                self.conn.prev_profile()
 
-                profile = self.conn.current_profile()
+            profile = self.conn.current_profile()
 
-                if profile.uuid != self.last_profile_uuid:
-                    print('switching to', profile.uuid)
+            if profile.uuid != self.last_profile_uuid:
+                print('switching to', profile.uuid)
 
-                    #self.last_profile_uuid = profile.uuid
+                #self.last_profile_uuid = profile.uuid
 
-                    #self.interface.set_led(profile.led_color, profile.led_on)
+                #self.interface.set_led(profile.led_color, profile.led_on)
 
-                    #if profile.vibrate_on:
-                    #    self.interface.vibrate(profile.vibrate_pattern)
+                #if profile.vibrate_on:
+                #    self.interface.vibrate(profile.vibrate_pattern)
 
         except Exception as e:
             print(e)
