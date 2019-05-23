@@ -203,7 +203,7 @@ class WandInterface(Peripheral, DefaultDelegate):
             return self.writeCharacteristic(self._alive_handle, bytes([1]), withResponse=False)
 
 
-    async def vibrate(self, pattern=PATTERN.REGULAR):
+    def vibrate(self, pattern=PATTERN.REGULAR):
         """Vibrate wand with pattern
 
         Keyword Arguments:
@@ -225,7 +225,7 @@ class WandInterface(Peripheral, DefaultDelegate):
                 self._vibrator_handle = handle.getHandle()
             return self.writeCharacteristic(self._vibrator_handle, bytes(message), withResponse=False)
 
-    async def set_led(self, color="0x2185d0", on=True):
+    def set_led(self, color="0x2185d0", on=True):
         """Set the LED's color
 
         Keyword Arguments:
