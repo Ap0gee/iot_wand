@@ -676,7 +676,7 @@ class GestureInterface(WandInterface):
         return self
 
     def post_connect(self):
-        self.set_led('#00ff00', True)
+        #self.set_led('#00ff00', True)
         for callback in self._post_connect_callbacks.values():
             callback(self)
 
