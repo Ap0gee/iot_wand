@@ -171,7 +171,6 @@ class ClientConnection():
     def signed_addressed_publish(self, topic, addr, payload):
         signed_topic = self.sign_topic(topic)
         addressed_topic = signed_topic + addr
-        print(addressed_topic)
         self.publish(addressed_topic, payload)
 
     def _publish_sys(self, level, payload=""):
