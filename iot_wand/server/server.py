@@ -103,6 +103,7 @@ class ServerState():
     def on_post_connect(self, interface):
         self.manager.interface = interface
         self.interface = interface
+        self.interface.set_led('#00ff00', True)
         interface.subscribe_button()
         interface.subscribe_position()
 
