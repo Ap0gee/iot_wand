@@ -200,7 +200,7 @@ class WandInterface(Peripheral, DefaultDelegate):
             if not hasattr(self, "_alive_handle"):
                 handle = self._io_service.getCharacteristics(_IO.KEEP_ALIVE_CHAR.value)[0]
                 self._alive_handle = handle.getHandle()
-            return self.writeCharacteristic(self._alive_handle, bytes([1]), withResponse=True)
+            return self.writeCharacteristic(self._alive_handle, bytes([1]), withResponse=False)
 
 
     def vibrate(self, pattern=PATTERN.REGULAR):
@@ -223,7 +223,7 @@ class WandInterface(Peripheral, DefaultDelegate):
             if not hasattr(self, "_vibrator_handle"):
                 handle = self._io_service.getCharacteristics(_IO.VIBRATOR_CHAR.value)[0]
                 self._vibrator_handle = handle.getHandle()
-            return self.writeCharacteristic(self._vibrator_handle, bytes(message), withResponse=True)
+            return self.writeCharacteristic(self._vibrator_handle, bytes(message), withResponse=False)
 
     def set_led(self, color="0x2185d0", on=True):
         """Set the LED's color
@@ -256,7 +256,7 @@ class WandInterface(Peripheral, DefaultDelegate):
             if not hasattr(self, "_led_handle"):
                 handle = self._io_service.getCharacteristics(_IO.LED_CHAR.value)[0]
                 self._led_handle = handle.getHandle()
-            return self.writeCharacteristic(self._led_handle, bytes(message), withResponse=True)
+            return self.writeCharacteristic(self._led_handle, bytes(message), withResponse=False)
 
     def on(self, event, callback):
         """Add an event listener
