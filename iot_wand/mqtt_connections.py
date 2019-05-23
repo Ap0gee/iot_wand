@@ -333,15 +333,21 @@ class GestureServer(ClientConnection):
         return list(dict(self._client_profiles).values())
 
     def next_profile(self):
-        index = self._mov_profile_index(+1)
+        index = self.next_profile_index()
         return self.profiles()[index]
 
     def prev_profile(self):
-        index = self._mov_profile_index(-1)
+        index = self.prev_profile_index()
         return self.profiles()[index]
 
+    def next_profile_index(self):
+        return self._mov_profile_index(+1)
+
+    def prev_profile_index(self):
+        return self._mov_profile_index(-1)
+
     def current_profile(self):
-        return self._client_profiles[self._selected_profile_index]
+        return self.profiles()[self._selected_profile_index]
 
     def ping_collect_clients(self):
         self._client_profiles = self._client_responders
