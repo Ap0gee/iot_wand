@@ -151,9 +151,11 @@ class GestureCaptureState(ServerState):
         if self.pressed:
             self.positions.append(tuple([x, -1 * y]))
 
-        self.conn.signed_publish(TOPICS.QUATERNIONS.value, ClientConnection.data_encode(
-            ClientConnection.addressed_payload("", "%d %d %d %d" % (x, y, z, w))
-        ))
+        self.conn.signed_addressed_publish(
+            TOPICS.QUATERNIONS.value,
+            self.conn.current_profile().uuid,
+            ClientConnection.data_encode("%d %d %d %d" % (x, y, z, w))
+        )
 
     def on_button_press(self, interface, pressed):
         self.pressed = pressed
