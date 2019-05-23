@@ -19,11 +19,11 @@ class AsyncServerStateManager:
     def __init__(self, mqtt_conn, debug=False):
         self.conn = mqtt_conn
         self._state = self.set_state(SERVER_STATES.GESTURE_CAPTURE.value)
+        self.run = True
 
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self.run_async_tasks(debug))
 
-        self.run = True
 
     async def run_async_tasks(self, debug):
         await asyncio.gather(
