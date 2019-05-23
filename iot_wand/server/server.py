@@ -212,6 +212,7 @@ class ProfileSelectState(ServerState):
         self.quaternion_state = _h.Quaternion(0, 0, 0, 0)
         self.last_profile_uuid = None
         self.conn.clear_current_profile()
+        self.displayed_connected = False
 
     def on_quaternion(self, interface, x, y, z, w):
         self.quaternion_state.x = x
@@ -221,11 +222,15 @@ class ProfileSelectState(ServerState):
 
     async def on_loop(self):
         try:
-            for i in range(0, len(self.conn.profiles())):
-                print('blinking')
-
             profile = self.conn.current_profile()
 
+            if not self.displayed_connected:
+                self.displayed_connected = True
+                for i in range(0, len(self.conn.profiles())):
+                    if profile == None:
+                        self.interface.set_led('#ffffff', True)
+                        self.interface.set_led('#ffffff', False)
+                        
             if self.quaternion_state.w >= 375:
                 self.conn.next_profile()
             if self.quaternion_state.w <= -375:
