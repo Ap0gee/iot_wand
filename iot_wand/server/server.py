@@ -191,7 +191,7 @@ class GestureCaptureState(ServerState):
                     if closest:
                         self.spell = self.gestures[closest[0]]
                         self.conn.signed_publish(TOPICS.SPELLS.value, ClientConnection.data_encode(
-                            ClientConnection.addressed_payload(self.conn.current_profile().uuid, {"gesture": gesture, "spell": self.spell})
+                            ClientConnection.addressed_payload("", {"gesture": gesture, "spell": self.spell})
                         ))
 
                     print("{}: {}".format(gesture, self.spell))
@@ -217,7 +217,7 @@ class ProfileSelectState(ServerState):
         if self.quaternion_state.w <= -375:
             profile = self.conn.prev_profile()
 
-        print(profile.uuid)
+        print("profile switch", profile)
 
         await asyncio.sleep(3)
 
