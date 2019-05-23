@@ -103,7 +103,6 @@ class ServerState():
     def on_post_connect(self, interface):
         self.manager.interface = interface
         self.interface = interface
-        self.interface.set_led('#00ff00', True)
         interface.subscribe_button()
         interface.subscribe_position()
 
@@ -117,7 +116,6 @@ class ServerState():
         pass
 
     async def on_loop(self):
-        print('base loop')
         await asyncio.sleep(1)
 
     def switch(self, state):
@@ -214,6 +212,7 @@ class ProfileSelectState(ServerState):
         self.last_profile_uuid = None
         self.conn.clear_current_profile()
         self.connections_count = len(self.conn.profiles())
+        self.indicated = False
 
     def on_quaternion(self, interface, x, y, z, w):
         self.quaternion_state.x = x
@@ -223,6 +222,10 @@ class ProfileSelectState(ServerState):
 
     async def on_loop(self):
         try:
+            if not self.indicated:
+                self.indicated = True
+                self.interface.set_led('#ffffff', False)
+
             if self.quaternion_state.w >= 375:
                 self.conn.next_profile()
             if self.quaternion_state.w <= -375:
