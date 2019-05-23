@@ -116,6 +116,7 @@ class ServerState():
         pass
 
     async def on_loop(self):
+        print('base loop')
         await asyncio.sleep(1)
 
     def switch(self, state):
@@ -218,6 +219,7 @@ class ProfileSelectState(ServerState):
         self.quaternion_state.w = w
 
     async def on_loop(self):
+        print('profile loop')
         try:
             if self.quaternion_state.w >= 375:
                 self.conn.next_profile()
