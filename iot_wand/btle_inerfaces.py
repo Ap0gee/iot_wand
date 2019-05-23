@@ -211,19 +211,19 @@ class WandInterface(Peripheral, DefaultDelegate):
 
         Returns {bytes} -- Status
         """
-        with self._lock:
-            if isinstance(pattern, PATTERN):
-                message = [pattern.value]
-            else:
-                message = [pattern]
 
-            if self.debug:
-                print("Vibrating with pattern {}".format(message))
+        if isinstance(pattern, PATTERN):
+            message = [pattern.value]
+        else:
+            message = [pattern]
 
-            if not hasattr(self, "_vibrator_handle"):
-                handle = self._io_service.getCharacteristics(_IO.VIBRATOR_CHAR.value)[0]
-                self._vibrator_handle = handle.getHandle()
-            return self.writeCharacteristic(self._vibrator_handle, bytes(message), withResponse=False)
+        if self.debug:
+            print("Vibrating with pattern {}".format(message))
+
+        if not hasattr(self, "_vibrator_handle"):
+            handle = self._io_service.getCharacteristics(_IO.VIBRATOR_CHAR.value)[0]
+            self._vibrator_handle = handle.getHandle()
+        return self.writeCharacteristic(self._vibrator_handle, bytes(message), withResponse=False)
 
     def set_led(self, color="0x2185d0", on=True):
         """Set the LED's color
@@ -252,11 +252,11 @@ class WandInterface(Peripheral, DefaultDelegate):
         if self.debug:
             print("Setting LED to {}".format(message))
 
-        with self._lock:
-            if not hasattr(self, "_led_handle"):
-                handle = self._io_service.getCharacteristics(_IO.LED_CHAR.value)[0]
-                self._led_handle = handle.getHandle()
-            return self.writeCharacteristic(self._led_handle, bytes(message), withResponse=False)
+
+        if not hasattr(self, "_led_handle"):
+            handle = self._io_service.getCharacteristics(_IO.LED_CHAR.value)[0]
+            self._led_handle = handle.getHandle()
+        return self.writeCharacteristic(self._led_handle, bytes(message), withResponse=False)
 
     def on(self, event, callback):
         """Add an event listener
@@ -332,12 +332,12 @@ class WandInterface(Peripheral, DefaultDelegate):
             print("Subscribing to position notification")
 
         self._position_subscribed = True
-        with self._lock:
-            if not hasattr(self, "_position_handle"):
-                handle = self._sensor_service.getCharacteristics(_SENSOR.QUATERNIONS_CHAR.value)[0]
-                self._position_handle = handle.getHandle()
 
-            self.writeCharacteristic(self._position_handle + 1, bytes([1, 0]))
+        if not hasattr(self, "_position_handle"):
+            handle = self._sensor_service.getCharacteristics(_SENSOR.QUATERNIONS_CHAR.value)[0]
+            self._position_handle = handle.getHandle()
+
+        self.writeCharacteristic(self._position_handle + 1, bytes([1, 0]))
 
         self._start_notification_thread()
 
