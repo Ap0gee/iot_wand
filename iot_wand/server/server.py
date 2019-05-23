@@ -222,6 +222,8 @@ class ProfileSelectState(ServerState):
 
             profile = self.conn.current_profile()
 
+            print('switching to', profile.uuid)
+
             if profile.uuid != self.last_profile_uuid:
                 self.last_profile_uuid = profile.uuid
 
