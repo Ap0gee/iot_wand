@@ -280,6 +280,7 @@ class GestureServer(ClientConnection):
         self._client_response_window = 1
 
         self._selected_profile_index = 0
+        self._selected_profile = None
 
         self._t_pingreq_start = timeit.default_timer()
 
@@ -335,6 +336,7 @@ class GestureServer(ClientConnection):
 
     def next_profile(self):
         self.next_profile_index()
+        self._selected_profile = self.profiles()[self._selected_profile_index]
         return self.current_profile()
 
     def prev_profile(self):
@@ -348,7 +350,7 @@ class GestureServer(ClientConnection):
         return self._mov_profile_index(-1)
 
     def current_profile(self):
-        return self.profiles()[self._selected_profile_index]
+        return self._selected_profile
 
     def ping_collect_clients(self):
         self._client_profiles = self._client_responders
