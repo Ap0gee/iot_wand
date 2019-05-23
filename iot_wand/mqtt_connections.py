@@ -341,6 +341,7 @@ class GestureServer(ClientConnection):
 
     def prev_profile(self):
         self.prev_profile_index()
+        self._selected_profile = self.profiles()[self._selected_profile_index]
         return self.current_profile()
 
     def next_profile_index(self):
