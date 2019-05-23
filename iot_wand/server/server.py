@@ -223,8 +223,9 @@ class ProfileSelectState(ServerState):
     async def on_loop(self):
         try:
             if self.connections_count > 0:
-                self.interface.set_led('#ffffff', True)
-                self.interface.set_led('#ffffff', False)
+                with self.interface._lock:
+                    self.interface.set_led('#ffffff', True)
+                    self.interface.set_led('#ffffff', False)
                 self.connections_count -= 1
             else:
                 if self.quaternion_state.w >= 375:
