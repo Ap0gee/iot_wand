@@ -321,7 +321,7 @@ class GestureServer(ClientConnection):
 
     def _mov_profile_index(self, dir):
         min = 0
-        max = len(self._client_profiles)
+        max = len(self._client_profiles) - 1
         new_index = self._selected_profile_index + dir
 
         if new_index >= max:
