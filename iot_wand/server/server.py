@@ -224,7 +224,7 @@ class ProfileSelectState(ServerState):
         try:
             if not self.indicated:
                 self.indicated = True
-                self.interface.set_led('#ffffff', False)
+                await self.interface.set_led('#ffffff', False)
 
             if self.quaternion_state.w >= 375:
                 self.conn.next_profile()
@@ -238,10 +238,10 @@ class ProfileSelectState(ServerState):
 
                 self.last_profile_uuid = profile.uuid
 
-                self.interface.set_led(profile.led_color, profile.led_on)
+                await self.interface.set_led(profile.led_color, profile.led_on)
 
                 if profile.vibrate_on:
-                    self.interface.vibrate(profile.vibrate_pattern)
+                    await self.interface.vibrate(profile.vibrate_pattern)
 
         except Exception as e:
             print(e)
