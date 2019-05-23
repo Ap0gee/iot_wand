@@ -28,8 +28,8 @@ class AsyncServerStateManager:
     async def run_async_tasks(self, debug):
         await asyncio.gather(
             self.manage_wands(debug),
+            self.ping_clients_forever(),
             self.loop_state(),
-            self.ping_clients_forever()
         )
 
     async def manage_wands(self, debug):
