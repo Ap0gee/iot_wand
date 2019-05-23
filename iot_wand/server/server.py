@@ -212,14 +212,10 @@ class ProfileSelectState(ServerState):
         self.quaternion_state.w = w
 
     async def on_loop(self):
-        if self.quaternion_state.w >= 375:
-            self.conn.next_profile()
-        if self.quaternion_state.w <= -375:
-            self.conn.prev_profile()
-
+      
         print("profile switch", self.conn.current_profile())
 
-        await asyncio.sleep(3)
+        await asyncio.sleep(1)
 
     def on_button_press(self, interface, pressed):
         if pressed:
