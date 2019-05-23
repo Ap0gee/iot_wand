@@ -194,7 +194,7 @@ class ProfileSelectState(ServerState):
         self.quaternion_state = _h.Quaternion(0, 0, 0, 0)
 
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(self.run_async_tasks)
+        loop.run_until_complete(self.cycle_profiles)
 
     async def run_async_tasks(self):
         await asyncio.gather(
