@@ -227,7 +227,7 @@ class ProfileSelectState(ServerState):
         self.last_profile_uuid = None
         self.conn.clear_current_profile()
         self.connections_count = len(self.conn.profiles())
-        self.interface.set_led('#ffffff', False)
+        #self.interface.set_led('#ffffff', False)
 
     def on_quaternion(self, interface, x, y, z, w):
         self.quaternion_state.x = x
