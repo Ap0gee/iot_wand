@@ -28,15 +28,15 @@ class AsyncServerStateManager:
         self._loop_state_thread = None
         self.run = True
 
-        if self._wand_management_thread == None:
+        if not self._wand_management_thread:
             self._wand_management_thread = threading.Thread(target=self._manage_wands, args=(debug,))
             self._wand_management_thread.start()
 
-        if self._ping_clients_thread == None:
+        if not self._ping_clients_thread:
             self._ping_clients_thread = threading.Thread(target=self._ping_clients_forever)
             self._ping_clients_thread.start()
 
-        if self._loop_state_thread == None:
+        if not self._loop_state_thread:
             self._loop_state_thread = threading.Thread(target=self._loop_state)
             self._loop_state_thread.start()
 
@@ -96,9 +96,7 @@ class AsyncServerStateManager:
     def _loop_state(self):
         try:
             while self.run:
-                with self._lock:
-                    print('looping')
-                    self.get_state().on_loop()
+                self.get_state().on_loop()
         except (KeyboardInterrupt, Exception) as e:
             print(e)
             #exit(1)
