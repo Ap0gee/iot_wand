@@ -25,8 +25,8 @@ class AsyncServerStateManager:
         self._state = self.set_state(SERVER_STATES.GESTURE_CAPTURE.value)
         self._wand_management_thread = None
         self._ping_clients_thread = None
+        self._loop_state_thread = None
         self.run = True
-
 
         if self._wand_management_thread == None:
             self._wand_management_thread = threading.Thread(target=self._manage_wands, args=(debug,))
@@ -36,7 +36,9 @@ class AsyncServerStateManager:
             self._ping_clients_thread = threading.Thread(target=self._ping_clients_forever)
             self._ping_clients_thread.start()
 
-        self.loop_state()
+        if self._loop_state_thread == None:
+            self._loop_state_thread = threading.Thread(target=self._loop_state)
+            self._loop_state_thread.start()
 
     def _manage_wands(self, debug):
         wands = []
@@ -91,14 +93,14 @@ class AsyncServerStateManager:
             print(e)
             #exit(1)
 
-    def loop_state(self):
-        while self.run:
-            try:
-                self.get_state().on_loop()
-            except (Exception) as e:
-                print(e)
-                continue
-                #exit(1)
+    def _loop_state(self):
+        try:
+            while self.run:
+                with self._lock:
+                    self.get_state().on_loop()
+        except (Exception) as e:
+            print(e)
+            #exit(1)
 
     def set_state(self, state):
         self._state = state(self)
@@ -253,6 +255,8 @@ class ProfileSelectState(ServerState):
 
             if profile.vibrate_on:
                 self.interface.vibrate(profile.vibrate_pattern)
+
+        time.sleep(1)
 
     def on_button_press(self, interface, pressed):
         if pressed:
