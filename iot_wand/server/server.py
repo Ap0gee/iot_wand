@@ -57,8 +57,7 @@ class AsyncServerStateManager:
                             wands[0].keep_alive()
                         else:
                             sec_ka += 1
-
-                        await asyncio.sleep(1)
+                            await asyncio.sleep(1)
 
         except (KeyboardInterrupt, Exception) as e:
             self.conn.stop()
