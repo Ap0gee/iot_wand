@@ -15,6 +15,7 @@ def main():
     conn = GestureServer(config, debug=_s.DEBUG)
     conn.start(async=True, async_callback=lambda _conn: AsyncServerStateManager(_conn, _s.DEBUG))
 
+
 class AsyncServerStateManager:
     def __init__(self, mqtt_conn, debug=False):
         self.conn = mqtt_conn
@@ -93,6 +94,7 @@ class AsyncServerStateManager:
 
     def get_state(self):
         return self._state
+
 
 class ServerState():
     def __init__(self, manager):
@@ -273,7 +275,6 @@ class ProfileSelectState(ServerState):
                 if self.press_end - self.press_start > 7:
                     interface.disconnect()
                     exit(0)
-
 
 
 class SERVER_STATES(Enum):

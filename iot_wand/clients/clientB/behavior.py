@@ -3,7 +3,6 @@ import settings as _s
 import time
 import win32api
 
-#current = win32api.GetCursorPos()
 x_dim = win32api.GetSystemMetrics(0)
 y_dim = win32api.GetSystemMetrics(1)
 

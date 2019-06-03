@@ -202,7 +202,6 @@ class WandInterface(Peripheral, DefaultDelegate):
                 self._alive_handle = handle.getHandle()
             return self.writeCharacteristic(self._alive_handle, bytes([1]), withResponse=False)
 
-
     def vibrate(self, pattern=PATTERN.REGULAR):
         """Vibrate wand with pattern
 
@@ -605,7 +604,6 @@ class WandInterface(Peripheral, DefaultDelegate):
             self._on_temperature(data)
         elif cHandle == self._battery_notification_handle:
             self._on_battery(data)
-
 
 class GestureInterface(WandInterface):
     def __init__(self, device, debug=False):
