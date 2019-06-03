@@ -102,9 +102,8 @@ class AsyncServerStateManager:
             #exit(1)
 
     def set_state(self, state):
-        with self._lock:
-            self._state = state(self)
-            return self._state
+        self._state = state(self)
+        return self._state
 
     def get_state(self):
         return self._state
