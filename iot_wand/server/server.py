@@ -32,13 +32,6 @@ class AsyncServerStateManager:
             self._wand_management_thread = threading.Thread(target=self._manage_wands, args=(debug,))
             self._wand_management_thread.start()
 
-        if not self._ping_clients_thread:
-            self._ping_clients_thread = threading.Thread(target=self._ping_clients_forever)
-            self._ping_clients_thread.start()
-
-        while self.run:
-            self.get_state().on_loop()
-
     def _manage_wands(self, debug):
         wands = []
         try:
@@ -69,6 +62,8 @@ class AsyncServerStateManager:
                             else:
                                 sec_ka += 1
 
+                        self.conn.ping_collect_clients()
+                        self.get_state().on_loop()
                         time.sleep(1)
 
         except (KeyboardInterrupt, Exception) as e:
@@ -81,16 +76,6 @@ class AsyncServerStateManager:
             #exit(1)
             print(e)
 
-    def _ping_clients_forever(self):
-        try:
-            while self.run:
-                with self._lock:
-                    self.conn.ping_collect_clients()
-                    time.sleep(1)
-
-        except (KeyboardInterrupt, Exception) as e:
-            print(e)
-            #exit(1)
 
     def set_state(self, state):
         self._state = state(self)
@@ -246,8 +231,6 @@ class ProfileSelectState(ServerState):
 
                 #if profile.vibrate_on:
                 #    self.interface.vibrate(profile.vibrate_pattern)
-
-            time.sleep(1)
 
         except (KeyboardInterrupt, Exception) as e:
             print(e)
