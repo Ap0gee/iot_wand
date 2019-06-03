@@ -82,7 +82,9 @@ class AsyncServerStateManager:
 
 
     def _loop_state(self):
-        self.get_state().on_loop()
+        while 1:
+            self.get_state().on_loop()
+            time.sleep(1)
 
     def set_state(self, state):
         self._state = state(self)
