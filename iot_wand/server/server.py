@@ -223,7 +223,7 @@ class ProfileSelectState(ServerState):
         self.last_profile_uuid = None
         self.conn.clear_current_profile()
         self.connections_count = len(self.conn.profiles())
-        self.indicated = False
+        self.interface.set_led('#ffffff', False)
 
     def on_quaternion(self, interface, x, y, z, w):
         self.quaternion_state.x = x
@@ -232,9 +232,7 @@ class ProfileSelectState(ServerState):
         self.quaternion_state.w = w
 
     def on_loop(self):
-        if not self.indicated:
-            self.indicated = True
-            self.interface.set_led('#ffffff', False)
+        print('profile select loop')
 
         if self.quaternion_state.w >= 375:
             self.conn.next_profile()
