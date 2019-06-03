@@ -35,6 +35,8 @@ class AsyncServerStateManager:
             self._ping_clients_thread = threading.Thread(target=self._ping_clients_forever)
             self._ping_clients_thread.start()
 
+        self.loop_state()
+
     def _manage_wands(self, debug):
         wands = []
         try:
