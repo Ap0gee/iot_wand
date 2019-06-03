@@ -36,9 +36,8 @@ class AsyncServerStateManager:
             self._ping_clients_thread = threading.Thread(target=self._ping_clients_forever)
             self._ping_clients_thread.start()
 
-        if not self._loop_state_thread:
-            self._loop_state_thread = threading.Thread(target=self._loop_state)
-            self._loop_state_thread.start()
+        while self.run:
+            self.get_state().on_loop()
 
     def _manage_wands(self, debug):
         wands = []
@@ -89,14 +88,6 @@ class AsyncServerStateManager:
                     self.conn.ping_collect_clients()
                     time.sleep(1)
 
-        except (KeyboardInterrupt, Exception) as e:
-            print(e)
-            #exit(1)
-
-    def _loop_state(self):
-        try:
-            while self.run:
-                self.get_state().on_loop()
         except (KeyboardInterrupt, Exception) as e:
             print(e)
             #exit(1)
