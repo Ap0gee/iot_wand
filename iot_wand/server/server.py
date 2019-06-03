@@ -70,13 +70,14 @@ class AsyncServerStateManager:
                         time.sleep(1)
 
         except (KeyboardInterrupt, Exception) as e:
-            self.conn.stop()
-            self.run = False
-            for wand in wands:
-                wand.disconnect()
-            wands.clear()
-            self._wand_management_thread.join()
-            exit(1)
+            #self.conn.stop()
+            #self.run = False
+            #for wand in wands:
+            #    wand.disconnect()
+            #wands.clear()
+            #self._wand_management_thread.join()
+            #exit(1)
+            print(e)
 
     def _ping_clients_forever(self):
         try:
@@ -86,7 +87,8 @@ class AsyncServerStateManager:
                     time.sleep(1)
 
         except (KeyboardInterrupt, Exception) as e:
-            exit(1)
+            print(e)
+            #exit(1)
 
     def loop_state(self):
         try:
@@ -95,7 +97,7 @@ class AsyncServerStateManager:
 
         except (KeyboardInterrupt, Exception) as e:
             print(e)
-            exit(1)
+            #exit(1)
 
     def set_state(self, state):
         self._state = state(self)
