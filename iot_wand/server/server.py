@@ -67,7 +67,6 @@ class AsyncServerStateManager:
                                 sec_ka += 1
 
                         self.conn.ping_collect_clients()
-                        self.get_state().on_loop()
                         time.sleep(1)
 
         except (KeyboardInterrupt, Exception) as e:
