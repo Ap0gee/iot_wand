@@ -83,7 +83,7 @@ class AsyncServerStateManager:
     def _loop_state(self):
         while 1:
             self.get_state().on_loop()
-            time.sleep(1)
+            time.sleep(2)
 
     def set_state(self, state):
         self._state = state(self)
@@ -210,8 +210,10 @@ class ProfileSelectState(ServerState):
         self.quaternion_state = _h.Quaternion(0, 0, 0, 0)
         self.last_profile_uuid = None
         self.conn.clear_current_profile()
+        self.press_start = self.press_end = timeit.default_timer()
         self.connections_count = len(self.conn.profiles())
         self.interface.set_led('#ffffff', False)
+
 
     def on_quaternion(self, interface, x, y, z, w):
         self.quaternion_state.x = x
