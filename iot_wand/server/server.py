@@ -44,7 +44,7 @@ class AsyncServerStateManager:
         wands = []
         try:
             sec_ka = 0
-            sec_ka_max = 10
+            sec_ka_max = 60
             wand_scanner = WandScanner(debug=debug)
 
             while self.run:
@@ -97,6 +97,7 @@ class AsyncServerStateManager:
         try:
             while self.run:
                 with self._lock:
+                    print('looping')
                     self.get_state().on_loop()
         except (KeyboardInterrupt, Exception) as e:
             print(e)
