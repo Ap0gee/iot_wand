@@ -94,6 +94,7 @@ class AsyncServerStateManager:
                 self.get_state().on_loop()
 
         except (KeyboardInterrupt, Exception) as e:
+            print(e)
             exit(1)
 
     def set_state(self, state):
@@ -231,30 +232,26 @@ class ProfileSelectState(ServerState):
         self.quaternion_state.w = w
 
     def on_loop(self):
-        try:
-            if not self.indicated:
-                self.indicated = True
-                self.interface.set_led('#ffffff', False)
+        if not self.indicated:
+            self.indicated = True
+            self.interface.set_led('#ffffff', False)
 
-            if self.quaternion_state.w >= 375:
-                self.conn.next_profile()
-            if self.quaternion_state.w <= -375:
-                self.conn.prev_profile()
+        if self.quaternion_state.w >= 375:
+            self.conn.next_profile()
+        if self.quaternion_state.w <= -375:
+            self.conn.prev_profile()
 
-            profile = self.conn.current_profile()
+        profile = self.conn.current_profile()
 
-            if profile.uuid != self.last_profile_uuid:
-                print('switching to', profile.uuid)
+        if profile.uuid != self.last_profile_uuid:
+            print('switching to', profile.uuid)
 
-                self.last_profile_uuid = profile.uuid
+            self.last_profile_uuid = profile.uuid
 
-                self.interface.set_led(profile.led_color, profile.led_on)
+            self.interface.set_led(profile.led_color, profile.led_on)
 
-                if profile.vibrate_on:
-                    self.interface.vibrate(profile.vibrate_pattern)
-
-        except Exception as e:
-            print(e)
+            if profile.vibrate_on:
+                self.interface.vibrate(profile.vibrate_pattern)
 
         time.sleep(2)
 
