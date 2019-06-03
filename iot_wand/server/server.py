@@ -8,6 +8,7 @@ import moosegesture
 import asyncio
 import timeit
 import time
+import threading
 
 
 def main():
@@ -21,15 +22,20 @@ class AsyncServerStateManager:
         self.conn = mqtt_conn
         self.interface = None
         self._state = self.set_state(SERVER_STATES.GESTURE_CAPTURE.value)
+        self._wand_management_thread = None
+        self._ping_clients_thread = None
         self.run = True
+        self._lock = threading.Lock()
 
-        self.loop = asyncio.get_event_loop()
-        self.loop.create_task(self.manage_wands(debug))
-        self.loop.create_task(self.ping_clients_forever())
-        self.loop.create_task(self.loop_state())
-        self.loop.run_forever()
+        if self._wand_management_thread == None:
+            self._wand_management_thread = threading.Thread(target=self._manage_wands)
+            self._wand_management_thread.start()
 
-    async def manage_wands(self, debug):
+        if self._ping_clients_thread == None:
+            self._ping_clients_thread = threading.Thread(target=self._ping_clients_forever)
+            self._ping_clients_thread.start()
+
+    def _manage_wands(self, debug):
         wands = []
         try:
             sec_ka = 0
@@ -37,48 +43,53 @@ class AsyncServerStateManager:
             wand_scanner = WandScanner(debug=debug)
 
             while self.run:
-                if not len(wands):
-                    wands = [
-                        GestureInterface(device, debug=debug)
-                        .on('post_connect', lambda interface: self.get_state().on_post_connect(interface))
-                        .on('post_disconnect', lambda interface: self.get_state().on_post_disconnect(interface))
-                        .on('button_press', lambda interface, pressed: self.get_state().on_button_press(interface, pressed))
-                        .on('quaternion', lambda interface, x, y, z, w: self.get_state().on_quaternion(interface, x, y, z, w))
-                        .connect()
-                        for device in wand_scanner.scan()
-                    ]
-                else:
-                    if not wands[0].connected:
-                        wands.clear()
-                        sec_ka = 0
+                with self._lock:
+                    if not len(wands):
+                        wands = [
+                            GestureInterface(device, debug=debug)
+                            .on('post_connect', lambda interface: self.get_state().on_post_connect(interface))
+                            .on('post_disconnect', lambda interface: self.get_state().on_post_disconnect(interface))
+                            .on('button_press', lambda interface, pressed: self.get_state().on_button_press(interface, pressed))
+                            .on('quaternion', lambda interface, x, y, z, w: self.get_state().on_quaternion(interface, x, y, z, w))
+                            .connect()
+                            for device in wand_scanner.scan()
+                        ]
                     else:
-                        if sec_ka >= sec_ka_max:
+                        if not wands[0].connected:
+                            wands.clear()
                             sec_ka = 0
-                            await self.loop.run_in_executor(None, wands[0].keep_alive)
                         else:
-                            sec_ka += 1
-                            await asyncio.sleep(1)
+                            if sec_ka >= sec_ka_max:
+                                sec_ka = 0
+                                wands[0].keep_alive()
+                            else:
+                                sec_ka += 1
+
+                        time.sleep(1)
 
         except (KeyboardInterrupt, Exception) as e:
             self.conn.stop()
+            self.run = False
             for wand in wands:
                 wand.disconnect()
             wands.clear()
+            self._wand_management_thread.join()
             exit(1)
 
-    async def ping_clients_forever(self):
+    def _ping_clients_forever(self):
         try:
             while self.run:
-                self.conn.ping_collect_clients()
-                await asyncio.sleep(1)
+                with self._lock:
+                    self.conn.ping_collect_clients()
+                    time.sleep(1)
 
         except (KeyboardInterrupt, Exception) as e:
             exit(1)
 
-    async def loop_state(self):
+    def loop_state(self):
         try:
             while self.run:
-                await self.get_state().on_loop()
+                self.get_state().on_loop()
 
         except (KeyboardInterrupt, Exception) as e:
             exit(1)
@@ -112,8 +123,8 @@ class ServerState():
     def on_button_press(self, interface, pressed):
         pass
 
-    async def on_loop(self):
-        await asyncio.sleep(1)
+    def on_loop(self):
+        pass
 
     def switch(self, state):
         return self.manager.set_state(state)
@@ -217,11 +228,11 @@ class ProfileSelectState(ServerState):
         self.quaternion_state.x = z
         self.quaternion_state.w = w
 
-    async def on_loop(self):
+    def on_loop(self):
         try:
             if not self.indicated:
                 self.indicated = True
-                #self.interface.set_led('#ffffff', False)
+                self.interface.set_led('#ffffff', False)
 
             if self.quaternion_state.w >= 375:
                 self.conn.next_profile()
@@ -233,18 +244,17 @@ class ProfileSelectState(ServerState):
             if profile.uuid != self.last_profile_uuid:
                 print('switching to', profile.uuid)
 
-                #self.last_profile_uuid = profile.uuid
+                self.last_profile_uuid = profile.uuid
 
-                #self.interface.set_led(profile.led_color, profile.led_on)
+                self.interface.set_led(profile.led_color, profile.led_on)
 
-                #if profile.vibrate_on:
-                #    self.interface.vibrate(profile.vibrate_pattern)
+                if profile.vibrate_on:
+                    self.interface.vibrate(profile.vibrate_pattern)
 
         except Exception as e:
             print(e)
 
-        await asyncio.sleep(2)
-
+        time.sleep(2)
 
     def on_button_press(self, interface, pressed):
         if pressed:
