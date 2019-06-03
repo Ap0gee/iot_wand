@@ -32,6 +32,10 @@ class AsyncServerStateManager:
             self._wand_management_thread = threading.Thread(target=self._manage_wands, args=(debug,))
             self._wand_management_thread.start()
 
+        if not self._loop_state_thread:
+            self._loop_state_thread = threading.Thread(target=self._loop_state)
+            self._loop_state_thread.start()
+
     def _manage_wands(self, debug):
         wands = []
         try:
@@ -76,6 +80,9 @@ class AsyncServerStateManager:
             #exit(1)
             print(e)
 
+
+    def _loop_state(self):
+        self.get_state().on_loop()
 
     def set_state(self, state):
         self._state = state(self)
