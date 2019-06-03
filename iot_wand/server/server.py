@@ -98,7 +98,7 @@ class AsyncServerStateManager:
             while self.run:
                 with self._lock:
                     self.get_state().on_loop()
-        except (Exception) as e:
+        except (KeyboardInterrupt, Exception) as e:
             print(e)
             #exit(1)
 
@@ -237,26 +237,31 @@ class ProfileSelectState(ServerState):
         self.quaternion_state.w = w
 
     def on_loop(self):
-        print('profile select loop')
+        try:
+            print('profile select loop')
 
-        if self.quaternion_state.w >= 375:
-            self.conn.next_profile()
-        if self.quaternion_state.w <= -375:
-            self.conn.prev_profile()
+            if self.quaternion_state.w >= 375:
+                self.conn.next_profile()
+            if self.quaternion_state.w <= -375:
+                self.conn.prev_profile()
 
-        profile = self.conn.current_profile()
+            profile = self.conn.current_profile()
 
-        if profile.uuid != self.last_profile_uuid:
-            print('switching to', profile.uuid)
+            if profile.uuid != self.last_profile_uuid:
+                print('switching to', profile.uuid)
 
-            self.last_profile_uuid = profile.uuid
+                self.last_profile_uuid = profile.uuid
 
-            self.interface.set_led(profile.led_color, profile.led_on)
+                #self.interface.set_led(profile.led_color, profile.led_on)
 
-            if profile.vibrate_on:
-                self.interface.vibrate(profile.vibrate_pattern)
+                #if profile.vibrate_on:
+                #    self.interface.vibrate(profile.vibrate_pattern)
 
-        time.sleep(1)
+            time.sleep(1)
+
+        except (KeyboardInterrupt, Exception) as e:
+            print(e)
+            #exit(1)
 
     def on_button_press(self, interface, pressed):
         if pressed:
