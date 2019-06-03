@@ -203,7 +203,7 @@ class ProfileSelectState(ServerState):
         self.last_profile_uuid = None
         self.conn.clear_current_profile()
         self.connections_count = len(self.conn.profiles())
-        #self.interface.set_led('#ffffff', False)
+        self.interface.set_led('#ffffff', False)
 
     def on_quaternion(self, interface, x, y, z, w):
         self.quaternion_state.x = x
@@ -225,12 +225,12 @@ class ProfileSelectState(ServerState):
             if profile.uuid != self.last_profile_uuid:
                 print('switching to', profile.uuid)
 
-                #self.last_profile_uuid = profile.uuid
+                self.last_profile_uuid = profile.uuid
 
-                #self.interface.set_led(profile.led_color, profile.led_on)
+                self.interface.set_led(profile.led_color, profile.led_on)
 
-                #if profile.vibrate_on:
-                #    self.interface.vibrate(profile.vibrate_pattern)
+                if profile.vibrate_on:
+                    self.interface.vibrate(profile.vibrate_pattern)
 
         except (KeyboardInterrupt, Exception) as e:
             print(e)
