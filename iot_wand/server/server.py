@@ -19,13 +19,14 @@ def main():
 
 class AsyncServerStateManager:
     def __init__(self, mqtt_conn, debug=False):
+        self._lock = threading.Lock()
         self.conn = mqtt_conn
         self.interface = None
         self._state = self.set_state(SERVER_STATES.GESTURE_CAPTURE.value)
         self._wand_management_thread = None
         self._ping_clients_thread = None
         self.run = True
-        self._lock = threading.Lock()
+
 
         if self._wand_management_thread == None:
             self._wand_management_thread = threading.Thread(target=self._manage_wands, args=(debug,))
