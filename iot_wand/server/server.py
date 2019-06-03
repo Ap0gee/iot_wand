@@ -54,7 +54,7 @@ class AsyncServerStateManager:
                     else:
                         if sec_ka >= sec_ka_max:
                             sec_ka = 0
-                            await self.loop.run_in_executor(None, wands[0].keep_alive())
+                            await self.loop.run_in_executor(None, wands[0].keep_alive)
                         else:
                             sec_ka += 1
                             await asyncio.sleep(1)
