@@ -23,17 +23,17 @@ class AsyncServerStateManager:
         self._state = self.set_state(SERVER_STATES.GESTURE_CAPTURE.value)
         self.run = True
 
-        loop = asyncio.get_event_loop()
-        loop.create_task(self.manage_wands(debug))
-        loop.create_task(self.ping_clients_forever())
-        loop.create_task(self.loop_state())
-        loop.run_forever()
+        self.loop = asyncio.get_event_loop()
+        self.loop.create_task(self.manage_wands(debug))
+        self.loop.create_task(self.ping_clients_forever())
+        self.loop.create_task(self.loop_state())
+        self.loop.run_forever()
 
     async def manage_wands(self, debug):
         wands = []
         try:
             sec_ka = 0
-            sec_ka_max = 60
+            sec_ka_max = 10
             wand_scanner = WandScanner(debug=debug)
 
             while self.run:
@@ -54,7 +54,7 @@ class AsyncServerStateManager:
                     else:
                         if sec_ka >= sec_ka_max:
                             sec_ka = 0
-                            wands[0].keep_alive()
+                            await self.loop.run_in_executor(None, wands[0].keep_alive())
                         else:
                             sec_ka += 1
                             await asyncio.sleep(1)

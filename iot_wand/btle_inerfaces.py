@@ -3,6 +3,7 @@ from bluepy.btle import *
 import numpy
 import threading
 import uuid
+import asyncio
 
 class _INFO(Enum):
     SERVICE = '64A70010-F691-4B93-A6F4-0968F5B648F8'
