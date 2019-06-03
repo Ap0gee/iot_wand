@@ -225,7 +225,7 @@ class ProfileSelectState(ServerState):
             if profile.uuid != self.last_profile_uuid:
                 print('switching to', profile.uuid)
 
-                self.last_profile_uuid = profile.uuid
+                #self.last_profile_uuid = profile.uuid
 
                 #self.interface.set_led(profile.led_color, profile.led_on)
 
