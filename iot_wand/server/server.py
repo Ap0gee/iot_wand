@@ -28,7 +28,7 @@ class AsyncServerStateManager:
         self._lock = threading.Lock()
 
         if self._wand_management_thread == None:
-            self._wand_management_thread = threading.Thread(target=self._manage_wands)
+            self._wand_management_thread = threading.Thread(target=self._manage_wands, args=(debug,))
             self._wand_management_thread.start()
 
         if self._ping_clients_thread == None:
