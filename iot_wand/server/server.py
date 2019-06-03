@@ -255,8 +255,6 @@ class ProfileSelectState(ServerState):
             if profile.vibrate_on:
                 self.interface.vibrate(profile.vibrate_pattern)
 
-        time.sleep(2)
-
     def on_button_press(self, interface, pressed):
         if pressed:
             self.press_start = timeit.default_timer()
