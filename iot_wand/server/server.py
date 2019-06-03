@@ -93,15 +93,17 @@ class AsyncServerStateManager:
     def loop_state(self):
         try:
             while self.run:
-                self.get_state().on_loop()
+                with self._lock:
+                    self.get_state().on_loop()
 
         except (KeyboardInterrupt, Exception) as e:
             print(e)
             #exit(1)
 
     def set_state(self, state):
-        self._state = state(self)
-        return self._state
+        with self._lock:
+            self._state = state(self)
+            return self._state
 
     def get_state(self):
         return self._state
