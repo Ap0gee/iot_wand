@@ -140,15 +140,15 @@ class ClientConnection():
         if self._async:
             self._mqttc.loop_stop()
 
-    def start(self, async=True, async_callback=None):
+    def start(self, as_async=True, async_callback=None):
         self.connect()
-        self.loop(async, async_callback)
+        self.loop(as_async, async_callback)
 
     def stop(self):
         self.disconnect()
 
-    def loop(self, async=True, async_callback=None):
-        if async:
+    def loop(self, as_async=True, async_callback=None):
+        if as_async:
             self._mqttc.loop_start()
             self._async = True
             if callable(async_callback):

@@ -12,6 +12,7 @@ from behavior import on_spell, on_quaternion
 
 def main():
     config = _h.yaml_read(_s.PATH_CONFIG)
+    print(config)
     conn = GestureClient(config, debug=_s.DEBUG)
     conn.on_spell = on_spell
     conn.on_quaternion = on_quaternion
