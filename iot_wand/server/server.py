@@ -14,7 +14,7 @@ import threading
 def main():
     config = _h.yaml_read(_s.PATH_CONFIG)
     conn = GestureServer(config, debug=_s.DEBUG)
-    conn.start(async=True, async_callback=lambda _conn: AsyncServerStateManager(_conn, _s.DEBUG))
+    conn.start(as_async=True, async_callback=lambda _conn: AsyncServerStateManager(_conn, _s.DEBUG))
 
 
 class AsyncServerStateManager:
