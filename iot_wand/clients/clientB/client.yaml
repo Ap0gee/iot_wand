@@ -6,7 +6,7 @@ broker:
 
 profile:
   led:
-    'on': True
+    'on': False
     'color': '#ffffff'
 
   vibrate:
