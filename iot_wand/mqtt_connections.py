@@ -278,8 +278,8 @@ class GestureServer(ClientConnection):
         self._client_profiles = self._client_responders = []
 
         self.add_client_profile('default-profile',  Profile({
-            'led': {'on':False, 'color':'#41f4e8'},
-            'vibrate': {'on':True, 'pattern': 1},
+            'led': {'on':True, 'color':'#41f4e8'},
+            'vibrate': {'on':False, 'pattern': 1},
             'uuid': 'default-profile'
         }))
 
