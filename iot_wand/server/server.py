@@ -209,7 +209,7 @@ class ProfileSelectState(ServerState):
         self.speed_clicks = 0
         self.quaternion_state = _h.Quaternion(0, 0, 0, 0)
         self.last_profile_uuid = None
-        self.conn.clear_current_profile()
+        #self.conn.clear_current_profile()
         self.press_start = self.press_end = timeit.default_timer()
         self.connections_count = len(self.conn.profiles())
         self.interface.set_led('#ffffff', False)

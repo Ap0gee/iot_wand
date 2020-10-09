@@ -93,7 +93,7 @@ class ClientConnection():
 
         identity = self.identity(topic.sig)
 
-        #self.debug(topic.pattern, topic.top, msg.payload, identity)
+        self.debug(topic.pattern, topic.top, msg.payload, identity)
 
         self.on_message(client, obj, msg, topic, identity)
 
@@ -101,7 +101,7 @@ class ClientConnection():
         pass
 
     def __on_publish(self, client, obj, mid):
-        self.debug('published', mid)
+        #self.debug('published', mid)
         self.on_publish(client, obj, mid)
 
     def on_publish(self, client, obj, mid):
@@ -322,10 +322,10 @@ class GestureServer(ClientConnection):
         max = len(self._client_profiles) - 1
         new_index = self._selected_profile_index + dir
 
-        if new_index > max:
-            self._selected_profile_index = min
-        elif new_index < min:
+        if new_index >= max:
             self._selected_profile_index = max
+        elif new_index <= min:
+            self._selected_profile_index = min
         else:
             self._selected_profile_index = new_index
 
@@ -335,13 +335,11 @@ class GestureServer(ClientConnection):
         return list(dict(self._client_profiles).values())
 
     def next_profile(self):
-        self.next_profile_index()
-        self._selected_profile = self.profiles()[self._selected_profile_index]
+        self._selected_profile = self.profiles()[self.next_profile_index()]
         return self.current_profile()
 
     def prev_profile(self):
-        self.prev_profile_index()
-        self._selected_profile = self.profiles()[self._selected_profile_index]
+        self._selected_profile = self.profiles()[self.prev_profile_index()]
         return self.current_profile()
 
     def next_profile_index(self):
@@ -359,7 +357,6 @@ class GestureServer(ClientConnection):
 
     def ping_collect_clients(self):
         self._client_profiles = self._client_responders
-        print(self._client_profiles)
         self._client_responders = []
         self._t_pingreq_start = timeit.default_timer()
         self._publish_sys(SYS_LEVELS.PINGREQ.value)

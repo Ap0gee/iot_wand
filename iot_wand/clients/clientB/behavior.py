@@ -7,7 +7,7 @@ x_dim = win32api.GetSystemMetrics(0)
 y_dim = win32api.GetSystemMetrics(1)
 
 def on_spell(gesture, spell):
-    print(spell)
+    print(gesture, spell)
 
 def on_quaternion(x, y, z, w):
     x_pos = int(round(x_dim * ((int(x) * 4 + 1000) / 2000)))
