@@ -277,10 +277,16 @@ class GestureServer(ClientConnection):
 
         self._client_profiles = self._client_responders = []
 
+        self.add_client_profile('default-profile',  Profile({
+            'led': {'on':True, 'color':'#41f4e8'},
+            'vibrate': {'on':True, 'pattern': 1},
+            'uuid': 'default-profile'
+        }))
+
         self._client_response_window = 1
 
         self._selected_profile_index = 0
-        self._selected_profile = None
+        self._selected_profile = self.client_profile('default-profile')
 
         self._t_pingreq_start = timeit.default_timer()
 

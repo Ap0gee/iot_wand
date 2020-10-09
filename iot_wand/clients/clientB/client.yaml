@@ -11,4 +11,4 @@ profile:
 
   vibrate:
     'on': True
-    'pattern': 3
+    'pattern': 1
