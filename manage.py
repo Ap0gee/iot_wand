@@ -4,13 +4,17 @@
 __version__ = '0.9.0'
 
 import argparse
-from iot_wand.server import server
+import iot_wand.settings as _s
+import os
 
 def main(args):
     if args.to_run == 'server':
+        from iot_wand.server import server
         server.main()
 
-
+    if args.to_run == 'clients':
+        from iot_wand.clients import clients
+        clients.main(os.path.dirname(_s.DIR_BASE))
 
 def parse_args():
     parser = argparse.ArgumentParser(

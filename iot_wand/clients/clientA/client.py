@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
-from iot_wand.mqtt_connections import GestureClient
-from iot_wand import helpers as _h
 import argparse
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+from iot_wand.mqtt_connections import GestureClient
+from iot_wand import helpers as _h
+
+
 
 import settings as _s
 from behavior import on_spell, on_quaternion

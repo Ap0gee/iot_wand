@@ -1,5 +1,5 @@
 import os
-from iot_wand.settings import DEBUG
+from clients.settings import DEBUG
 
 DEBUG = DEBUG
 
