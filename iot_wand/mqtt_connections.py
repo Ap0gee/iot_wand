@@ -204,10 +204,10 @@ class ClientConnection():
             return t_up
         return 0
 
-    def debug(self, *args, sepr=' ', end='\n'):
+    def debug(self, *args, sep=' ', end='\n'):
         if self._debug:
             _args = ("%s:" % self._client_id,) + args
-            print(_args, sepr, end, file=None)
+            print(_args, sep, end, file=None)
 
     @staticmethod
     def data_decode(data, is_json=False):
