@@ -230,6 +230,8 @@ class ProfileSelectState(ServerState):
             if self.quaternion_state.w <= -375:
                 self.conn.prev_profile()
 
+            print(self.conn.current_profile())
+
             profile = self.conn.current_profile()
 
             if profile.uuid != self.last_profile_uuid:

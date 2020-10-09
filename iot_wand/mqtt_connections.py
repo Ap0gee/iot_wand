@@ -93,7 +93,7 @@ class ClientConnection():
 
         identity = self.identity(topic.sig)
 
-        self.debug(topic.pattern, topic.top, msg.payload, identity)
+        #self.debug(topic.pattern, topic.top, msg.payload, identity)
 
         self.on_message(client, obj, msg, topic, identity)
 
