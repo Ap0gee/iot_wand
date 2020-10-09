@@ -101,7 +101,7 @@ class ClientConnection():
         pass
 
     def __on_publish(self, client, obj, mid):
-        #self.debug('published', mid)
+        self.debug('published', mid)
         self.on_publish(client, obj, mid)
 
     def on_publish(self, client, obj, mid):
@@ -359,6 +359,7 @@ class GestureServer(ClientConnection):
 
     def ping_collect_clients(self):
         self._client_profiles = self._client_responders
+        print(self._client_profiles)
         self._client_responders = []
         self._t_pingreq_start = timeit.default_timer()
         self._publish_sys(SYS_LEVELS.PINGREQ.value)

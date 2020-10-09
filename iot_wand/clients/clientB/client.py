@@ -12,7 +12,7 @@ def main():
         conn.on_spell = on_spell
         conn.on_quaternion = on_quaternion
         print('Starting connection...', end='\r\n\r\n')
-        conn.start(as_async=True)
+        conn.start(as_async=False)
     except Exception as e:
         print(e)
         exit_status = 1

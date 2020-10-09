@@ -2,6 +2,7 @@ import os
 import subprocess
 import iot_wand.clients.settings as _s
 from iot_wand import helpers as _h
+import threading
 
 def main(dir_top):
     config = _h.yaml_read(_s.PATH_CONFIG)
@@ -15,3 +16,4 @@ def main(dir_top):
                 subprocess.call(cmd, creationflags=subprocess.CREATE_NEW_CONSOLE)
     else:
         print("No active clients.")
+
