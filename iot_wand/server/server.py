@@ -230,7 +230,8 @@ class ProfileSelectState(ServerState):
             if self.quaternion_state.w <= -375:
                 self.conn.prev_profile()
 
-            print(self.conn.current_profile())
+            print(self.conn._client_profiles)
+            print(self.conn._selected_profile_index)
 
             profile = self.conn.current_profile()
 
