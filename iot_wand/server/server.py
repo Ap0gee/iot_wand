@@ -240,7 +240,8 @@ class ProfileSelectState(ServerState):
 
                 self.last_profile_uuid = profile.uuid
 
-                self.interface.set_led(profile.led_color, profile.led_on)
+                if profile.led_on:
+                    self.interface.set_led(profile.led_color, profile.led_on)
 
                 if profile.vibrate_on:
                     self.interface.vibrate(profile.vibrate_pattern)

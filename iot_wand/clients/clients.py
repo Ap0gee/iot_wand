@@ -15,7 +15,7 @@ def main(dir_top):
                 path_client = entry.path
                 system = platform.system()
                 python = 'python'
-                terminal_cmd = 'cmd.exe'
+                terminal_cmd = 'start cmd /K'
                 if system == 'Linux':
                     terminal_cmd = 'lxterminal -e'
                     python = '$py3'
