@@ -151,9 +151,6 @@ class GestureCaptureState(ServerState):
             ("D", "R", "U"): "reducto"
         }
 
-        if self.interface:
-            self.interface.pause_keep_alive()
-
     def on_quaternion(self, interface, x, y, z, w):
         if self.pressed:
             self.positions.append(tuple([x, -1 * y]))
@@ -165,8 +162,6 @@ class GestureCaptureState(ServerState):
         )
 
     def on_button_press(self, interface, pressed):
-        interface.pause_keep_alive()
-
         self.pressed = pressed
 
         if pressed:
@@ -235,8 +230,6 @@ class ProfileSelectState(ServerState):
         try:
             print('profile select loop')
 
-            self.interface.pause_keep_alive()
-
             if self.quaternion_state.w >= 375:
                 self.conn.next_profile()
             if self.quaternion_state.w <= -375:
@@ -263,8 +256,6 @@ class ProfileSelectState(ServerState):
             #exit(1)
 
     def on_button_press(self, interface, pressed):
-        interface.pause_keep_alive()
-
         if pressed:
             self.press_start = timeit.default_timer()
 
