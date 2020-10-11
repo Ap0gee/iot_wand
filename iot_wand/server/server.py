@@ -66,7 +66,8 @@ class AsyncServerStateManager:
                                 if wands[0].should_keep_alive():
                                     wands[0].keep_alive()
                                 else:
-                                    print('skipping keep alive')
+                                    if debug:
+                                        print('skipping keep alive')
                                 wands[0].resume_keep_alive()
                             else:
                                 sec_ka += 1
@@ -152,7 +153,8 @@ class GestureCaptureState(ServerState):
         }
 
         if self.interface:
-            print("resuming keep alive...")
+            if self.interface.debug:
+                print("resuming keep alive...")
             self.interface.resume_keep_alive()
 
     def on_quaternion(self, interface, x, y, z, w):
@@ -183,7 +185,6 @@ class GestureCaptureState(ServerState):
                 self.speed_clicks += 1
 
                 if self.speed_clicks == 2:
-                    interface.vibrate(PATTERN.BURST)
                     self.switch(SERVER_STATES.PROFILE_SELECT.value)
 
             else:
@@ -221,8 +222,9 @@ class ProfileSelectState(ServerState):
         self.conn.clear_current_profile()
         self.press_start = self.press_end = timeit.default_timer()
         self.connections_count = len(self.conn.profiles())
-        self.interface.set_led('#ffffff', False)
-        self.interface.pause_keep_alive()
+        self.interface.pause_keep_alive() #pause keep alive to avoid write conflicts (guessing)
+        self.interface.set_led('#ffffff', True)
+        self.interface.vibrate(PATTERN.BURST)
 
     def on_quaternion(self, interface, x, y, z, w):
         self.quaternion_state.x = x
@@ -249,11 +251,14 @@ class ProfileSelectState(ServerState):
 
                 self.last_profile_uuid = profile.uuid
 
+                if profile.vibrate_on:
+                    self.interface.vibrate(profile.vibrate_pattern)
+
+                time.sleep(.5) #add time between writes to avoid conflict (guessing)
+
                 if profile.led_on:
                     self.interface.set_led(profile.led_color, profile.led_on)
 
-                if profile.vibrate_on:
-                    self.interface.vibrate(profile.vibrate_pattern)
 
         except (KeyboardInterrupt, Exception) as e:
             print(e)
