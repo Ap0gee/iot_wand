@@ -54,7 +54,7 @@ class AsyncServerStateManager:
                             .on('button_press', lambda interface, pressed: self.get_state().on_button_press(interface, pressed))
                             .on('quaternion', lambda interface, x, y, z, w: self.get_state().on_quaternion(interface, x, y, z, w))
                             .connect()
-                            for device in wand_scanner.scan()
+                            for device in wand_scanner.scan(discovery_callback=self._on_discovery)
                         ]
                     else:
                         if not wands[0].connected:
@@ -85,6 +85,8 @@ class AsyncServerStateManager:
             #exit(1)
             print(e)
 
+    def _on_discovery(self, devices):
+        self.set_state(SERVER_STATES.GESTURE_CAPTURE.value)
 
     def _loop_state(self):
         while 1:
