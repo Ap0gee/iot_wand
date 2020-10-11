@@ -609,12 +609,21 @@ class WandInterface(Peripheral, DefaultDelegate):
 class GestureInterface(WandInterface):
     def __init__(self, device, debug=False):
         super(GestureInterface, self).__init__(device, debug)
-
+        self._should_keep_alive = 1
         self._post_connect_callbacks = {}
         self._spell_callbacks = {}
         self._quaternion_callbacks = {}
         self._button_press_callbacks = {}
         self._post_disconnect_callbacks = {}
+
+    def pause_keep_alive(self):
+        self._should_keep_alive = 0
+
+    def should_keep_alive(self):
+        return self._should_keep_alive
+
+    def resume_keep_alive(self):
+        self._should_keep_alive = 1
 
     def on(self, event, callback):
         id = super(GestureInterface, self).on(event, callback)

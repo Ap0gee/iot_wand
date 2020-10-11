@@ -14,11 +14,11 @@ import threading
 def main():
     config = _h.yaml_read(_s.PATH_CONFIG)
     conn = GestureServer(config, debug=_s.DEBUG)
-    conn.start(as_async=True, async_callback=lambda _conn: AsyncServerStateManager(_conn, _s.DEBUG))
+    conn.start(as_async=True, async_callback=lambda _conn: AsyncServerStateManager(_conn, config, _s.DEBUG))
 
 
 class AsyncServerStateManager:
-    def __init__(self, mqtt_conn, debug=False):
+    def __init__(self, mqtt_conn, config, debug=False):
         self._lock = threading.Lock()
         self.conn = mqtt_conn
         self.interface = None
@@ -29,18 +29,19 @@ class AsyncServerStateManager:
         self.run = True
 
         if not self._wand_management_thread:
-            self._wand_management_thread = threading.Thread(target=self._manage_wands, args=(debug,))
+            self._wand_management_thread = threading.Thread(target=self._manage_wands, args=(debug, config))
             self._wand_management_thread.start()
 
         if not self._loop_state_thread:
             self._loop_state_thread = threading.Thread(target=self._loop_state)
             self._loop_state_thread.start()
 
-    def _manage_wands(self, debug):
+    def _manage_wands(self, debug, config):
         wands = []
+        broker = config['broker']
         try:
             sec_ka = 0
-            sec_ka_max = 60
+            sec_ka_max = broker['keep_alive']
             wand_scanner = WandScanner(debug=debug)
 
             while self.run:
@@ -56,13 +57,17 @@ class AsyncServerStateManager:
                             for device in wand_scanner.scan()
                         ]
                     else:
-                        if not wands[0].connected:
-                            wands.clear()
-                            sec_ka = 0
+                        for wand, index in wands:
+                            if not wand.connected:
+                                del wands[index]
+                                sec_ka = 0
                         else:
                             if sec_ka >= sec_ka_max:
                                 sec_ka = 0
-                                wands[0].keep_alive()
+                                for wand in wands:
+                                    if wand.should_keep_alive():
+                                        wand.keep_alive()
+                                    wand.resume_keep_alive()
                             else:
                                 sec_ka += 1
 
@@ -157,6 +162,8 @@ class GestureCaptureState(ServerState):
         )
 
     def on_button_press(self, interface, pressed):
+        interface.pause_keep_alive()
+
         self.pressed = pressed
 
         if pressed:
