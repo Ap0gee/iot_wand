@@ -1,3 +1,4 @@
 active:
     - clientA
-    - clientB
+#    - clientB
+    - clientC

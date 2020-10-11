@@ -12,7 +12,10 @@ export py3
 pip3="${py3} -m pip"
 export pip3
 
-SOURCEIOTWAND="$HOME/Documents:$HOME/Docuements/iot_wand:$HOME/Documents/iot_wand/iot_wand"
+iot_wand="$HOME/Documents/iot_wand"
+export iot_wand
+
+SOURCEIOTWAND="$HOME/Documents:$HOME/Documents/iot_wand:$HOME/Documents/iot_wand/iot_wand"
 export SOURCEIOTWAND
 
 SOURCES="${SOURCEIOTWAND}"
