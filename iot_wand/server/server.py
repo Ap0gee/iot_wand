@@ -67,6 +67,8 @@ class AsyncServerStateManager:
                                 for wand in wands:
                                     if wand.should_keep_alive():
                                         wand.keep_alive()
+                                    else:
+                                        debug('skipping keep alive', debug)
                                     wand.resume_keep_alive()
                             else:
                                 sec_ka += 1
