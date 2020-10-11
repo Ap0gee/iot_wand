@@ -41,7 +41,7 @@ class AsyncServerStateManager:
         broker = config['broker']
         try:
             sec_ka = 0
-            sec_ka_max = broker['keep_alive']
+            sec_ka_max = broker['keepalive']
             wand_scanner = WandScanner(debug=debug)
 
             while self.run:

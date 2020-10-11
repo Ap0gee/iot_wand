@@ -1,7 +1,7 @@
 broker:
   hostname: 10.0.0.39
   port: 1883
-  keep_alive: 5
+  keepalive: 5
   bind_address: ""
 
 spells:
