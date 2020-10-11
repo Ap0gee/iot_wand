@@ -151,6 +151,10 @@ class GestureCaptureState(ServerState):
             ("D", "R", "U"): "reducto"
         }
 
+        if self.interface:
+            print("resuming keep alive...")
+            self.interface.resume_keep_alive()
+
     def on_quaternion(self, interface, x, y, z, w):
         if self.pressed:
             self.positions.append(tuple([x, -1 * y]))
