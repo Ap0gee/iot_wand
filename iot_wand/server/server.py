@@ -248,13 +248,14 @@ class ProfileSelectState(ServerState):
 
             if profile.uuid != self.last_profile_uuid:
                 print('switching to', profile.uuid)
-                print(profile)
+                print(profile.vibrate_on)
+                print(profile.vibrate_pattern)
                 self.last_profile_uuid = profile.uuid
 
                 if profile.vibrate_on:
                     self.interface.vibrate(profile.vibrate_pattern)
 
-                time.sleep(.5) #add time between writes to avoid conflict (guessing)
+                #time.sleep(.5) #add time between writes to avoid conflict (guessing)
 
                 self.interface.set_led(profile.led_color, profile.led_on)
 
