@@ -86,6 +86,7 @@ class AsyncServerStateManager:
             print(e)
 
     def _on_discovery(self, devices):
+        print('setting state to capture gesture state')
         self.set_state(SERVER_STATES.GESTURE_CAPTURE.value)
 
     def _loop_state(self):
