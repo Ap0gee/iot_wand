@@ -57,19 +57,17 @@ class AsyncServerStateManager:
                             for device in wand_scanner.scan()
                         ]
                     else:
-                        for wand, index in wands:
-                            if not wand.connected:
-                                del wands[index]
-                                sec_ka = 0
+                        if not wands[0].connected:
+                            wands.clear()
+                            sec_ka = 0
                         else:
                             if sec_ka >= sec_ka_max:
                                 sec_ka = 0
-                                for wand in wands:
-                                    if wand.should_keep_alive():
-                                        wand.keep_alive()
-                                    else:
-                                        debug('skipping keep alive', debug)
-                                    wand.resume_keep_alive()
+                                if wands[0].should_keep_alive():
+                                    wands[0].keep_alive()
+                                else:
+                                    debug('skipping keep alive', debug)
+                                wands[0].resume_keep_alive()
                             else:
                                 sec_ka += 1
 
