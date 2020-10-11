@@ -151,7 +151,8 @@ class GestureCaptureState(ServerState):
             ("D", "R", "U"): "reducto"
         }
 
-        self.interface.pause_keep_alive()
+        if self.interface:
+            self.interface.pause_keep_alive()
 
     def on_quaternion(self, interface, x, y, z, w):
         if self.pressed:
@@ -222,7 +223,6 @@ class ProfileSelectState(ServerState):
         self.press_start = self.press_end = timeit.default_timer()
         self.connections_count = len(self.conn.profiles())
         self.interface.set_led('#ffffff', False)
-
         self.interface.pause_keep_alive()
 
     def on_quaternion(self, interface, x, y, z, w):
@@ -264,7 +264,7 @@ class ProfileSelectState(ServerState):
 
     def on_button_press(self, interface, pressed):
         interface.pause_keep_alive()
-        
+
         if pressed:
             self.press_start = timeit.default_timer()
 
