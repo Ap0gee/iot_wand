@@ -15,15 +15,14 @@ def main():
             try:
                 services = lamp.getServices()
                 for service in services:
+                    print('----------service--------')
                     print(service.uuid)
                     print('------------------------')
                     for char in service.getCharacteristics():
                         print(char.uuid)
                         print("HANDLE=" + str(char.getHandle()))
                         print(char.propertiesToString())
-                        print("VAL=" + char.read().decode('utf-8'))
-
-
+                       
                     print('------------------------', end="\r\n\r\n")
             except Exception as e:
                 print(e)
