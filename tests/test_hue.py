@@ -24,10 +24,14 @@ def main():
                     print(char.uuid)
                     print("HANDLE=" + str(char.getHandle()))
                     print(char.propertiesToString())
-
                 print('------------------------', end="\r\n\r\n")
+
+            print('writing to handle 39')
+            light.writeCharacteristic(39, 0)
+
         except Exception as e:
             print(e)
+
 
 if __name__ == '__main__':
     main()
