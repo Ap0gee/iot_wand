@@ -650,7 +650,7 @@ class HueInterface(Peripheral, DefaultDelegate):
         print('CHARACTERISTICS:')
         for index, val in [b'\x00\x00', b'\x00\x01', b'\x00\x02', b'\x00\x03', b'\x00\x04']:
             try:
-                print('writing: i=%s v=%d' % (str(index), int.from_bytes(val, 'big')))
+                print('writing: i=%s v=%s' % (str(index), str(int.from_bytes(val, 'big'))))
                 self.getCharacteristics()[-1].write(val)
             except Exception as e:
                 print('failed to write...')
