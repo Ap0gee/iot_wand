@@ -28,4 +28,4 @@ def main(dir_top):
         print("No active clients.")
 
 def open_new_terminal(cmd):
-    subprocess.call(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    subprocess.call(cmd, shell=True)
