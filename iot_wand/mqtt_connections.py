@@ -392,7 +392,7 @@ class GestureClient(ClientConnection):
     def on_message(self, client, obj, msg, topic, identity):
         addressed = self.identity(topic.top)
 
-        if topic.pattern != TOPICS.SYS.vale and topic.pattern != TOPICS.QUATERNIONS.value:
+        if topic.pattern != TOPICS.SYS.value and topic.pattern != TOPICS.QUATERNIONS.value:
             print(topic.pattern)
 
         if topic.pattern == TOPICS.SYS.value:
