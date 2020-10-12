@@ -650,8 +650,11 @@ class HueInterface(Peripheral, DefaultDelegate):
         for characteristic in self.getCharacteristics():
             print(characteristic.uuid)
             print(characteristic.propertiesToString(), end="\r\n\r\n")
-            print('VALUE: %s' % characteristic.read())
-
+            try:
+                print('VALUE: %s' % characteristic.read())
+            except Exception as e:
+                print("can't be read.")
+                
 class GestureInterface(WandInterface):
     def __init__(self, device, debug=False):
         super(GestureInterface, self).__init__(device, debug)
