@@ -606,6 +606,50 @@ class WandInterface(Peripheral, DefaultDelegate):
         elif cHandle == self._battery_notification_handle:
             self._on_battery(data)
 
+class HueInterface(Peripheral, DefaultDeletage):
+    def __init__(self, device, debug=False):
+        """Create a new wand
+
+        Arguments:
+            device {bluepy.ScanEntry} -- Device information
+
+        Keyword Arguments:
+            debug {bool} -- Print debug messages (default: {False})
+        """
+        super().__init__(None)
+        # Meta stuff
+        self.debug = debug
+        self._dev = device
+        self.name = device.getValueText(9)
+
+        if debug:
+            print("Hue Lamp: {}\n\rLamp Mac: {}".format(self.name, device.addr))
+
+        # Notification stuff
+        self.connected = False
+
+    def connect(self):
+        if self.debug:
+            print("Connecting to {}...".format(self.name))
+
+        super(HueInterface, self).connect(self._dev)
+
+        self._lock = threading.Lock()
+        self.connected = True
+        self.setDelegate(self)
+
+        self.post_connect()
+
+        if self.debug:
+            print("Connected to {}".format(self.name))
+
+        return self
+
+    def post_connect(self):
+        print('CHARACTERISTICS:')
+        print(self.getCharacteristics())
+
+
 class GestureInterface(WandInterface):
     def __init__(self, device, debug=False):
         super(GestureInterface, self).__init__(device, debug)

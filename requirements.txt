@@ -11,3 +11,4 @@ PyYAML
 paho-mqtt
 pywin32
 flask
+phue
