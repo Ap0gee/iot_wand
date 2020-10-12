@@ -232,6 +232,7 @@ class ProfileSelectState(ServerState):
         self.connections_count = len(self.conn.profiles())
         self.interface.pause_keep_alive() #pause keep alive to avoid write conflicts (guessing)
         self.interface.set_led('#ffffff', True)
+        time.sleep(.5)
         self.interface.vibrate(PATTERN.BURST)
 
     def on_quaternion(self, interface, x, y, z, w):
