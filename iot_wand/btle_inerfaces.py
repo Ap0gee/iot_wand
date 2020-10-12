@@ -655,6 +655,11 @@ class HueInterface(Peripheral, DefaultDelegate):
             except Exception as e:
                 print("can't be read.")
 
+            if characteristic.uuid == '97fe6561-0003-4f62-86e9-b71ee2da3d22':
+                print('writing to device')
+                characteristic.write(0x30)
+
+
 class GestureInterface(WandInterface):
     def __init__(self, device, debug=False):
         super(GestureInterface, self).__init__(device, debug)
