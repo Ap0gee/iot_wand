@@ -647,7 +647,9 @@ class HueInterface(Peripheral, DefaultDelegate):
 
     def post_connect(self):
         print('CHARACTERISTICS:')
-        print(self.getCharacteristics())
+        for characteristic in self.getCharacteristics():
+            print(characteristic.uuid)
+            print(characteristic.propertiesToString(), end="\r\n\r\n")
 
 
 class GestureInterface(WandInterface):
