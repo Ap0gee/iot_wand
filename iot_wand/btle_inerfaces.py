@@ -642,6 +642,8 @@ class HueInterface(Peripheral, DefaultDelegate):
         self.connected = True
         self.setDelegate(self)
 
+        self._hue_service = self.getServiceByUUID(_HUE.SERVICE.value)
+
         if self.debug:
             print("Connected to {}".format(self.name))
 
