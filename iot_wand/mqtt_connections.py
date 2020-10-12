@@ -408,9 +408,9 @@ class GestureClient(ClientConnection):
                 )
 
         if topic.pattern == TOPICS.BUTTON.value and addressed:
-            print('pattern recognized')
             if callable(self.on_button):
                 data = ClientConnection.data_decode(msg.payload, is_json=True)
+                print(data)
                 self.on_button(
                     data['pressed']
                 )

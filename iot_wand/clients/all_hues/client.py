@@ -30,6 +30,7 @@ if __name__ == '__main__':
         import settings as _s
         from iot_wand.mqtt_connections import GestureClient
         from behavior import post_connect, on_spell, on_quaternion, on_button
+
     except ImportError as e:
         print(e)
         exit_status = 1
