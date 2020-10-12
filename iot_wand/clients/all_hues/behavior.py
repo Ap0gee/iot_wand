@@ -38,6 +38,7 @@ class AsyncLightManager:
                             for device in hue_scanner.scan()
                         ]
                     else:
+                        self.toggle_lights()
                         time.sleep(1)
 
         except (KeyboardInterrupt, Exception) as e:

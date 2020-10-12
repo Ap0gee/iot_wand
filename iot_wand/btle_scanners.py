@@ -117,8 +117,6 @@ class HueScanner(DefaultDelegate):
             mac {str} -- MAC Address of the device to scan for (default: {None})
             timeout {float} -- Timeout before returning from scan (default: {1.0})
             connect {bool} -- Connect to the wands automatically (default: {False})
-
-        Returns {Wand[]} -- Array of wand objects
         """
 
         if self.debug:
