@@ -19,7 +19,7 @@ def main():
                 #handle = _hue_service.getCharacteristics('932c32bd-0003-47a2-835a-a8d455b859dd')[0]
                 #print("Write Start")
                 #print(handle.getHandle())
-                #lamp.writeCharacteristic(handle.getHandle(), bytes(00))
+                lamp.writeCharacteristic(38, bytes(00))
                 print("write complete")
             except Exception as e:
                 print(e)
