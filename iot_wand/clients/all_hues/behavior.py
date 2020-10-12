@@ -19,6 +19,7 @@ class AsyncLightManager:
         self._lock = threading.Lock()
         self._light_management_thread = None
         self._lights = []
+        self._lights_enabled = True
         self.run = True
 
         if not self._light_management_thread:
@@ -50,6 +51,10 @@ class AsyncLightManager:
         for light in self._lights:
             light.set_light(on)
 
+    def toggle_lights(self):
+        self.set_lights(not self._lights_enabled)
+        self._lights_enabled = not self._lights_enabled
+
 manager = AsyncLightManager(_s.DEBUG) #called when imported
 
 def on_button(pressed):
@@ -57,7 +62,7 @@ def on_button(pressed):
 
     if pressed:
         print("DOWN")
-        print(manager.get_lights())
+
 
 def on_spell(gesture, spell):
     print(spell)
