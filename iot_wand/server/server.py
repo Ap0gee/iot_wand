@@ -173,7 +173,7 @@ class GestureCaptureState(ServerState):
     def on_button_press(self, interface, pressed):
         self.pressed = pressed
 
-       
+
 
         if pressed:
             self.spell = None

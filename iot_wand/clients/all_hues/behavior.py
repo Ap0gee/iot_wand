@@ -15,6 +15,7 @@ debug = _s.DEBUG
 lights = []
 lights_enabled = True
 hue_scanner = HueScanner(debug=debug)
+print('scanning for lamps...')
 if not len(lights):
     lights = [
         HueInterface(device, debug=debug).connect()
