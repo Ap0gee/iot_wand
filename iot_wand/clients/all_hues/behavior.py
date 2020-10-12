@@ -30,8 +30,11 @@ def post_connect():
         print(e)
 
 def on_button(pressed):
+    global lights_enabled
     if pressed:
+        print(str(lights_enabled))
         print("DOWN")
+
 
 def on_spell(gesture, spell):
     print(spell)
