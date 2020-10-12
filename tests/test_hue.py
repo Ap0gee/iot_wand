@@ -11,5 +11,13 @@ def main():
             for device in hue_scanner.scan()
         ]
 
+        for lamp in lamps:
+            for char in lamp.getCharacteristics():
+                try:
+                    print('writing')
+                    char.write(0)
+                except Exception as e:
+                    print(e)
+
 if __name__ == '__main__':
     main()

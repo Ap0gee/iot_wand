@@ -657,7 +657,6 @@ class HueInterface(Peripheral, DefaultDelegate):
     def set_light(self, on=True):
         if self.debug:
             print("Setting light to {}".format(on))
-        val = b'\x01' if on else b'\x00'
         with self._lock:
             if not hasattr(self, "_light_handle"):
                 handle = self._hue_service.getCharacteristics(_HUE.LIGHT_CHAR.value)[0]
