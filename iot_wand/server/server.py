@@ -214,12 +214,11 @@ class GestureCaptureState(ServerState):
 
                     print("{}: {}".format(gesture, self.spell))
 
-        self.conn.signed_addressed_publish(
+        self.conn.signed_addressed_publish( #this needs to be after everything else
             TOPICS.BUTTON.value,
             self.conn.current_profile().uuid,
             ClientConnection.data_encode({'pressed': pressed})
         )
-
 
 class ProfileSelectState(ServerState):
     def __init__(self, manager):
