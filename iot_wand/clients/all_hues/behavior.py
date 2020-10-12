@@ -16,7 +16,7 @@ debug = _s.DEBUG
 lights = []
 lights_enabled = True
 
-def post_connect():
+def post_connect(conn):
     try:
         global lights
         hue_scanner = HueScanner(debug=debug)
