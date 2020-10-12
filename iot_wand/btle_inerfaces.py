@@ -653,7 +653,11 @@ class HueInterface(Peripheral, DefaultDelegate):
             print (service.uuid, end="\r\n\r\n")
             print('--------------------------------')
             for char in service.getCharacteristics():
-                print(char.uuid)
+                try:
+                    print('writing...')
+                    char.write('00'.encode())
+                except:
+                    print('failed to write')
 
 class GestureInterface(WandInterface):
     def __init__(self, device, debug=False):
