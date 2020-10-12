@@ -240,8 +240,7 @@ class ProfileSelectState(ServerState):
         self.connections_count = len(self.conn.profiles())
         self.interface.pause_keep_alive() #pause keep alive to avoid write conflicts (guessing)
 
-        self.interface.vibrate(PATTERN.BURST)
-        time.sleep(.2)
+        #self.interface.vibrate(PATTERN.BURST)
         self.interface.set_led('#ffffff', True)
         time.sleep(1)
 
