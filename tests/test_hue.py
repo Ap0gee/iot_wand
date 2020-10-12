@@ -10,13 +10,9 @@ def main():
     if not len(lights):
         lights = [
             HueInterface(device, debug=debug).connect()
-            for device in hue_scanner.scan(discovery_callback=callback)
+            for device in hue_scanner.scan()
         ]
 
-
-
-def callback(devices):
-    global lights
     for light in lights:
         try:
             services = light.getServices()
@@ -32,7 +28,6 @@ def callback(devices):
                 print('------------------------', end="\r\n\r\n")
         except Exception as e:
             print(e)
-
 
 if __name__ == '__main__':
     main()
