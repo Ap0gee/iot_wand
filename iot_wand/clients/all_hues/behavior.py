@@ -41,5 +41,5 @@ def on_spell(gesture, spell):
     print(spell)
 
 def on_quaternion(x, y, z, w):
-    #pass
-    print(x, y, x, w)
+    pass
+    #print(x, y, x, w)
