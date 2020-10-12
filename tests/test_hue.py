@@ -28,6 +28,9 @@ def main():
 
             print('writing to handle 39')
             light.writeCharacteristic(39, bytes([1]))
+            print('reading val')
+            resp = light.readCharacteristic(39)
+            print(resp)
 
         except Exception as e:
             print(e)
