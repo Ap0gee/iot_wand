@@ -173,16 +173,22 @@ class GestureCaptureState(ServerState):
     def on_button_press(self, interface, pressed):
         self.pressed = pressed
 
+        self.conn.signed_addressed_publish(
+            TOPICS.BUTTON.value,
+            self.conn.current_profile().uuid,
+            ClientConnection.data_encode({'pressed': pressed})
+        )
+
         if pressed:
             self.spell = None
             self.press_start = timeit.default_timer()
 
-            if self.press_start - self.press_end > .2:
+            if self.press_start - self.press_end > .3:
                 self.speed_clicks = 0
         else:
             self.press_end = timeit.default_timer()
 
-            if self.press_end - self.press_start < .2:
+            if self.press_end - self.press_start < .3:
                 self.positions = []
                 interface.reset_position()
                 self.speed_clicks += 1
@@ -212,12 +218,6 @@ class GestureCaptureState(ServerState):
                         )
 
                     print("{}: {}".format(gesture, self.spell))
-
-        self.conn.signed_addressed_publish(
-            TOPICS.BUTTON.value,
-            self.conn.current_profile().uuid,
-            ClientConnection.data_encode({'pressed': pressed})
-        )
 
 class ProfileSelectState(ServerState):
     def __init__(self, manager):
