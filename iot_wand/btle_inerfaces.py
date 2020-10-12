@@ -649,7 +649,9 @@ class HueInterface(Peripheral, DefaultDelegate):
         input('wait for connect')
         print('CHARACTERISTICS:')
         for service in self.getServices():
+            print("SERVICE")
             print (service.uuid, end="\r\n\r\n")
+            print('--------------------------------')
             for char in service.getCharacteristics():
                 print(char.uuid)
 
