@@ -638,17 +638,17 @@ class HueInterface(Peripheral, DefaultDelegate):
         self.connected = True
         self.setDelegate(self)
 
-        self.post_connect()
-
         if self.debug:
             print("Connected to {}".format(self.name))
+
+        self.post_connect()
 
         return self
 
     def post_connect(self):
         input('wait for connect')
         print('CHARACTERISTICS:')
-        for val in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]:
+        for val in [0, 1]:
             try:
                 print('writing: i=%s ' % str(val))
                 self.getCharacteristics()[-1].write(str(val).encode())
