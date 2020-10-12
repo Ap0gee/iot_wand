@@ -6,6 +6,9 @@ import win32api
 x_dim = win32api.GetSystemMetrics(0)
 y_dim = win32api.GetSystemMetrics(1)
 
+def on_button(pressed):
+    pass
+
 def on_spell(gesture, spell):
     print(gesture, spell)
 
