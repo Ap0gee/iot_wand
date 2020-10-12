@@ -648,18 +648,10 @@ class HueInterface(Peripheral, DefaultDelegate):
     def post_connect(self):
         input('wait for connect')
         print('CHARACTERISTICS:')
-        for characteristic in self.getCharacteristics():
-            print(characteristic.uuid)
-            for val in [0, 1]:
-                try:
-                    print('writing: i=%s ' % str(val))
-                    characteristic.write(str(val).encode())
-                except Exception as e:
-                    print('failed to write...')
-                    print(e)
-
-
-
+        for service in self.getServices():
+            print (service.uuid, end="\r\n\r\n")
+            for char in service.getCharacteristics():
+                print(char.uuid)
 
 class GestureInterface(WandInterface):
     def __init__(self, device, debug=False):
