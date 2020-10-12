@@ -646,7 +646,6 @@ class HueInterface(Peripheral, DefaultDelegate):
         return self
 
     def post_connect(self):
-        input('wait for connect')
         print('CHARACTERISTICS:')
         for service in self.getServices():
             print("SERVICE")
