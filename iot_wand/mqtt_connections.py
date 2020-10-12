@@ -392,6 +392,8 @@ class GestureClient(ClientConnection):
     def on_message(self, client, obj, msg, topic, identity):
         addressed = self.identity(topic.top)
 
+        print(topic.pattern)
+
         if topic.pattern == TOPICS.SYS.value:
             if topic.top == SYS_LEVELS.PINGREQ.value and not identity:
                 self._publish_sys(
@@ -412,17 +414,6 @@ class GestureClient(ClientConnection):
                 self.on_quaternion(
                     data[0], data[1], data[2], data[3]
                 )
-
-        if topic.pattern == TOPICS.BUTTON.value and addressed:
-            print('button press!')
-            if callable(self.on_button):
-                data = ClientConnection.data_decode(msg.payload, is_json=True)
-                self.on_button(
-                    data['pressed']
-                )
-
-        if topic.pattern != TOPICS.QUATERNIONS.value and addressed:
-            print(topic.pattern)
 
     def elapsed_up_start(self, minutes=False):
         if self._t_up_start:
