@@ -6,7 +6,7 @@ def main():
     debug = True
     hue_scanner = HueScanner(debug=debug)
     if not len(lights):
-        wands = [
+        lamps = [
             HueInterface(device, debug=debug).connect()
             for device in hue_scanner.scan()
         ]

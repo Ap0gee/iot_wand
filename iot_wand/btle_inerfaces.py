@@ -30,6 +30,10 @@ class _SENSOR(Enum):
     MAGN_CALIBRATE_CHAR = '64A70021-F691-4B93-A6F4-0968F5B648F8'
     QUATERNIONS_RESET_CHAR = '64A70004-F691-4B93-A6F4-0968F5B648F8'
 
+class _HUE(Enum):
+    SERVICE = '932c32bd-0000-47a2-835a-a8d455b859dd'
+    LIGHT_CHAR = '932c32bd-0002-47a2-835a-a8d455b859dd'
+    BRIGHTNESS_CHAR = '932c32bd-0003-47a2-835a-a8d455b859dd'
 
 class PATTERN(Enum):
     REGULAR = 1
@@ -646,17 +650,17 @@ class HueInterface(Peripheral, DefaultDelegate):
         return self
 
     def post_connect(self):
-        print('CHARACTERISTICS:')
-        for service in self.getServices():
-            print("SERVICE")
-            print (service.uuid, end="\r\n\r\n")
-            print('--------------------------------')
-            for char in service.getCharacteristics():
-                try:
-                    print('writing...')
-                    char.write('00'.encode())
-                except:
-                    print('failed to write')
+        pass
+
+    def set_light(self, on=True):
+        if self.debug:
+            print("Setting light to {}".format(on))
+
+        with self._lock:
+            if not hasattr(self, "_light_handle"):
+                handle = self._hue_service.getCharacteristics(_HUE.LIGHT_CHAR.value)[0]
+                self._light_handle = handle.getHandle()
+            return self.writeCharacteristic(self._light_handle, bytes(on), withResponse=False)
 
 class GestureInterface(WandInterface):
     def __init__(self, device, debug=False):

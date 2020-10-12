@@ -15,6 +15,7 @@ class TOPICS(Enum):
     SYS = 'iot_wand/+/$SYS/+'
     SPELLS = 'iot_wand/+/spells/+'
     QUATERNIONS = 'iot_wand/+/quaternions/+'
+    BUTTON = 'iot_wand/+/button/+'
 
 
 class SYS_LEVELS(Enum):
@@ -375,6 +376,7 @@ class GestureClient(ClientConnection):
 
         self.on_spell = lambda gesture, spell: None
         self.on_quaternion = lambda x, y, z, w: None
+        self.on_button = lambda pressed: None
 
     def on_connect(self, client, userdata, flags, rc):
         self._t_up_start = timeit.default_timer()
@@ -409,6 +411,13 @@ class GestureClient(ClientConnection):
                 data = ClientConnection.data_decode(msg.payload, is_json=True).split(" ")
                 self.on_quaternion(
                     data[0], data[1], data[2], data[3]
+                )
+
+        if topic.pattern == TOPICS.BUTTON.value and addressed:
+            if callable(self.on_button):
+                data = ClientConnection.data_decode(msg.payload, is_json=True)
+                self.on_button(
+                    data['pressed']
                 )
 
     def elapsed_up_start(self, minutes=False):
