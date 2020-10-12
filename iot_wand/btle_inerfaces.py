@@ -661,6 +661,7 @@ class HueInterface(Peripheral, DefaultDelegate):
         with self._lock:
             if not hasattr(self, "_light_handle"):
                 handle = self._hue_service.getCharacteristics(_HUE.LIGHT_CHAR.value)[0]
+                print(handle.getHandle())
                 self._light_handle = handle.getHandle()
             return self.writeCharacteristic(self._light_handle, val, withResponse=False)
 
