@@ -27,7 +27,7 @@ def main():
                 print('------------------------', end="\r\n\r\n")
 
             print('writing to handle 39')
-            light.writeCharacteristic(39, bytes([0]))
+            light.writeCharacteristic(39, bytes([1]))
 
         except Exception as e:
             print(e)
