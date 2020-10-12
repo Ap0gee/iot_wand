@@ -657,7 +657,7 @@ class HueInterface(Peripheral, DefaultDelegate):
                 print("can't be read.")
 
             try:
-                characteristic.write(0x30)
+                characteristic.write(b'0')
             except Exception as e:
                 print('failed to write')
                 print(e)
