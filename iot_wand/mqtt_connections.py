@@ -83,6 +83,7 @@ class ClientConnection():
         self._mqttc.subscribe(TOPICS.SYS.value, 0)
         self._mqttc.subscribe(TOPICS.SPELLS.value, 0)
         self._mqttc.subscribe(TOPICS.QUATERNIONS.value, 0)
+        self._mqttc.subscribe(TOPICS.BUTTON.value, 0)
 
         self.on_connect(client, userdata, flags, rc)
 
