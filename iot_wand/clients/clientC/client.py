@@ -13,7 +13,8 @@ def main():
         conn.on_quaternion = on_quaternion
         conn.on_button = on_button
         print('Starting connection...', end='\r\n\r\n')
-        conn.start(as_async=False)
+        conn.start(as_async=True)
+        input()
     except Exception as e:
         print(e)
         exit_status = 1
