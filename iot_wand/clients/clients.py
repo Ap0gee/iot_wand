@@ -15,9 +15,10 @@ def main(dir_top):
                 path_client = entry.path
                 system = platform.system()
                 python = 'python'
-                terminal_cmd = 'start cmd /K'
+                title = os.path.basename(path_client)
+                terminal_cmd = 'start cmd /K title %s' % title
                 if system == 'Linux':
-                    terminal_cmd = 'lxterminal -e'
+                    terminal_cmd = 'lxterminal -e --title=%s' % title
                     python = '$py3'
                 cmd = "%s %s %s %s" % (terminal_cmd, python, os.path.join(path_client, 'client.py'), dir_top)
                 cmd_thread = threading.Thread(target=open_new_terminal, args=(cmd,))
