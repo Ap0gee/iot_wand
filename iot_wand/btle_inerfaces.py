@@ -649,7 +649,7 @@ class HueInterface(Peripheral, DefaultDelegate):
         print('CHARACTERISTICS:')
         for val in [b'00', b'01', b'02', b'03', b'04']:
             try:
-                print('writing: ' + val.decode('utf-8'))
+                print('writing: ' + val.decode('utf-8') + 'to : ' + self.getCharacteristics()[-1].uuid)
                 self.getCharacteristics()[-1].write(val)
             except Exception as e:
                 print('failed to write...')
