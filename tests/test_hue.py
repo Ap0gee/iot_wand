@@ -16,7 +16,8 @@ def main():
 
 
 def callback(devices):
-  for light in lights:
+    global lights
+    for light in lights:
         try:
             services = light.getServices()
             for service in services:
