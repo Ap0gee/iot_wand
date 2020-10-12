@@ -606,7 +606,7 @@ class WandInterface(Peripheral, DefaultDelegate):
         elif cHandle == self._battery_notification_handle:
             self._on_battery(data)
 
-class HueInterface(Peripheral, DefaultDeletage):
+class HueInterface(Peripheral, DefaultDelegate):
     def __init__(self, device, debug=False):
         """Create a new wand
 
