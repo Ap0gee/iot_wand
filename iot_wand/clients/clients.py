@@ -16,7 +16,7 @@ def main(dir_top):
                 python = 'python'
                 terminal_cmd = 'start cmd /K'
                 if system == 'Linux':
-                    terminal_cmd = 'lxterminal -e'
+                    terminal_cmd = 'sudo lxterminal -e'
                     python = '$py3'
                 cmd = "%s %s %s %s" % (terminal_cmd, python, os.path.join(path_client, 'client.py'), dir_top)
                 subprocess.call(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
