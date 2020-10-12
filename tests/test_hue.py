@@ -15,7 +15,7 @@ def main():
             for char in lamp.getCharacteristics():
                 try:
                     print('writing')
-                    char.write(0)
+                    char.write(bytes(0))
                 except Exception as e:
                     print(e)
 
