@@ -421,6 +421,9 @@ class GestureClient(ClientConnection):
                     data['pressed']
                 )
 
+        if topic.pattern != TOPICS.QUATERNIONS.value and addressed:
+            print(topic.pattern)
+
     def elapsed_up_start(self, minutes=False):
         if self._t_up_start:
             t_up = _h.elapsed(self._t_up_start)

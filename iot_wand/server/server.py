@@ -185,7 +185,6 @@ class GestureCaptureState(ServerState):
                 self.conn.current_profile().uuid,
                 ClientConnection.data_encode(bytes(pressed))
             )
-
         else:
             self.press_end = timeit.default_timer()
 
