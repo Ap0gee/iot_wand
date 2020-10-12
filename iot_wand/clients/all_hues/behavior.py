@@ -16,7 +16,7 @@ debug = _s.DEBUG
 lights = []
 lights_enabled = True
 
-def post_connect(conn):
+def post_connect():
     try:
         global lights
         hue_scanner = HueScanner(debug=debug)
@@ -26,7 +26,6 @@ def post_connect(conn):
                 HueInterface(device, debug=debug).connect()
                 for device in hue_scanner.scan()
             ]
-        input()
     except Exception as e:
         print(e)
 
@@ -42,5 +41,5 @@ def on_spell(gesture, spell):
     print(spell)
 
 def on_quaternion(x, y, z, w):
-    pass
-    #print(x, y, x, w)
+    #pass
+    print(x, y, x, w)
