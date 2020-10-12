@@ -648,7 +648,7 @@ class HueInterface(Peripheral, DefaultDelegate):
     def post_connect(self):
         input('wait for connect')
         print('CHARACTERISTICS:')
-        for val, index in [b'00', b'01', b'02', b'03', b'04']:
+        for index, val in [b'\x00\x00', b'\x00\x01', b'\x00\x02', b'\x00\x03', b'\x00\x04']:
             try:
                 print('writing: ' + str(index))
                 self.getCharacteristics()[-1].write(val)
