@@ -171,13 +171,12 @@ class GestureCaptureState(ServerState):
         )
 
     def on_button_press(self, interface, pressed):
-        self.pressed = pressed
-
         self.conn.signed_addressed_publish(
             TOPICS.BUTTON.value,
             self.conn.current_profile().uuid,
             ClientConnection.data_encode({'pressed': pressed})
         )
+        self.pressed = pressed
 
         if pressed:
             self.spell = None
@@ -185,6 +184,7 @@ class GestureCaptureState(ServerState):
 
             if self.press_start - self.press_end > .3:
                 self.speed_clicks = 0
+
         else:
             self.press_end = timeit.default_timer()
 
