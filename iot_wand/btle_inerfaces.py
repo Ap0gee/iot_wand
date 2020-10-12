@@ -646,10 +646,11 @@ class HueInterface(Peripheral, DefaultDelegate):
         return self
 
     def post_connect(self):
+        input('wait for connect')
         print('CHARACTERISTICS:')
-        for val in [b'00', b'01', b'02', b'03', b'04']:
+        for val, index in [b'00', b'01', b'02', b'03', b'04']:
             try:
-                print('writing: ' + self.getCharacteristics()[-1].uuid)
+                print('writing: ' + str(index))
                 self.getCharacteristics()[-1].write(val)
             except Exception as e:
                 print('failed to write...')
