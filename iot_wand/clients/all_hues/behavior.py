@@ -11,30 +11,53 @@ from iot_wand import helpers as _h
 import settings as _s
 from iot_wand.btle_scanners import HueScanner
 from iot_wand.btle_inerfaces import HueInterface
+import threading
+import time
 
-debug = _s.DEBUG
-lights = []
-lights_enabled = True
+class AsyncLightManager:
+    def __init__(self, debug=False):
+        self._lock = threading.Lock()
+        self._light_management_thread = None
+        self._lights = []
+        self.run = True
 
-def post_connect():
-    try:
-        global lights
-        hue_scanner = HueScanner(debug=debug)
-        print('scanning for lamps...')
-        if not len(lights):
-            lights = [
-                HueInterface(device, debug=debug).connect()
-                for device in hue_scanner.scan()
-            ]
-    except Exception as e:
-        print(e)
+        if not self._light_management_thread:
+            self._light_management_thread = threading.Thread(target=self._manage_lights, args=(debug,))
+            self._light_management_thread.start()
+
+    def _manage_lights(self, debug):
+        try:
+            hue_scanner = HueScanner(debug=debug)
+
+            while self.run:
+                with self._lock:
+                    if not len(self._lights):
+                        self._lights = [
+                            HueInterface(device, debug=debug).connect()
+                            for device in hue_scanner.scan()
+                        ]
+                    else:
+                        print("%s lights connected." % len(self._lights))
+                        time.sleep(1)
+
+        except (KeyboardInterrupt, Exception) as e:
+            print(e)
+
+    def get_lights(self):
+        return self._lights
+
+    def set_lights(self, on=True):
+        for light in self._lights:
+            light.set_light(on)
+
+manager = AsyncLightManager(_s.DEBUG) #called when imported
 
 def on_button(pressed):
-    global lights_enabled
-    if pressed:
-        print(str(lights_enabled))
-        print("DOWN")
+    global manager
 
+    if pressed:
+        print("DOWN")
+        print(manager.get_lights())
 
 def on_spell(gesture, spell):
     print(spell)
