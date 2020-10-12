@@ -16,7 +16,7 @@ def main(dir_top):
                 system = platform.system()
                 python = 'python'
                 title = os.path.basename(path_client)
-                terminal_cmd = 'start cmd /K title %s' % title
+                terminal_cmd = 'start cmd /K'
                 if system == 'Linux':
                     terminal_cmd = 'lxterminal -e --title=%s' % title
                     python = '$py3'
@@ -28,4 +28,4 @@ def main(dir_top):
         print("No active clients.")
 
 def open_new_terminal(cmd):
-    subprocess.call(cmd, shell=True)
+    subprocess.call(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
