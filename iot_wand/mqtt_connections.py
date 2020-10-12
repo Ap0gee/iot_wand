@@ -408,12 +408,13 @@ class GestureClient(ClientConnection):
                 )
 
         if topic.pattern == TOPICS.BUTTON.value and addressed:
+            print('pattern recognized')
             if callable(self.on_button):
                 data = ClientConnection.data_decode(msg.payload, is_json=True)
                 self.on_button(
                     data['pressed']
                 )
-        
+
         if topic.pattern == TOPICS.QUATERNIONS.value and addressed:
             if callable(self.on_quaternion):
                 data = ClientConnection.data_decode(msg.payload, is_json=True).split(" ")
