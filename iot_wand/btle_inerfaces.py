@@ -207,6 +207,9 @@ class WandInterface(Peripheral, DefaultDelegate):
                 self._alive_handle = handle.getHandle()
             return self.writeCharacteristic(self._alive_handle, bytes([1]), withResponse=False)
 
+    def get_lock(self):
+        return self._lock
+
     def vibrate(self, pattern=PATTERN.REGULAR):
         """Vibrate wand with pattern
 
