@@ -16,10 +16,9 @@ def main():
                 _hue_service = lamp.getServiceByUUID('932c32bd-0000-47a2-835a-a8d455b859dd')
                 handle = _hue_service.getCharacteristics('932c32bd-0002-47a2-835a-a8d455b859dd')[0]
                 _handle = handle.getHandle()
-                print(handle)
-                resp = lamp.readCharacteristic(_handle)
-                print("READING...")
-                print(resp.decode('utf-8'))
+                print("Write Start")
+                lamp.writeCharacteristic(_handle, bytes(00))
+                print("write complete")
             except Exception as e:
                 print(e)
 
