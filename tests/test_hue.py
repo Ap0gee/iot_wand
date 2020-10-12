@@ -12,12 +12,15 @@ def main():
         ]
 
         for lamp in lamps:
-            for char in lamp.getCharacteristics():
-                try:
-                    print('writing')
-                    char.write(bytes(0))
-                except Exception as e:
-                    print(e)
+            try:
+                _hue_service = lamp.getServiceByUUID('932c32bd-0000-47a2-835a-a8d455b859dd')
+                handle = _hue_service.getCharacteristics('932c32bd-0002-47a2-835a-a8d455b859dd')[0]
+                resp = lamp.readCharacteristic(handle.getHandle())
+                print("READING...")
+                print(resp)
+            except Exception as e:
+                print(e)
+
 
 if __name__ == '__main__':
     main()
