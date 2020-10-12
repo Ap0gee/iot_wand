@@ -163,8 +163,6 @@ class GestureCaptureState(ServerState):
                 print("resuming keep alive...")
             self.interface.resume_keep_alive()
 
-            time.sleep(1)
-
     def on_quaternion(self, interface, x, y, z, w):
         if self.pressed:
             self.positions.append(tuple([x, -1 * y]))
@@ -242,7 +240,6 @@ class ProfileSelectState(ServerState):
 
         #self.interface.vibrate(PATTERN.BURST)
         self.interface.set_led('#ffffff', True)
-        time.sleep(1)
 
     def on_quaternion(self, interface, x, y, z, w):
         self.quaternion_state.x = x
