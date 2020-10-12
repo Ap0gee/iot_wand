@@ -181,9 +181,9 @@ class GestureCaptureState(ServerState):
                 self.speed_clicks = 0
 
             self.conn.signed_addressed_publish(
-                TOPICS.BUTTON.value,
+                TOPICS.SPELLS.value,
                 self.conn.current_profile().uuid,
-                ClientConnection.data_encode({"pressed": pressed})
+                ClientConnection.data_encode({"gesture": 'blah', "spell": 'blah'})
             )
         else:
             self.press_end = timeit.default_timer()
