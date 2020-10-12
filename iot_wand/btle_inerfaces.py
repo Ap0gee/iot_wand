@@ -650,14 +650,17 @@ class HueInterface(Peripheral, DefaultDelegate):
         for characteristic in self.getCharacteristics():
             print(characteristic.uuid)
             print(characteristic.propertiesToString(), end="\r\n\r\n")
+
             try:
                 print('VALUE: %s' % characteristic.read().decode('utf-8'))
             except Exception as e:
                 print("can't be read.")
 
-            if characteristic.uuid == '97fe6561-0003-4f62-86e9-b71ee2da3d22':
-                print('writing to device')
+            try:
                 characteristic.write(0x30)
+            except Exception as e:
+                print('failed to write')
+
 
 
 class GestureInterface(WandInterface):
