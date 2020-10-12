@@ -648,10 +648,10 @@ class HueInterface(Peripheral, DefaultDelegate):
     def post_connect(self):
         input('wait for connect')
         print('CHARACTERISTICS:')
-        for index, val in [b'\x00\x00', b'\x00\x01', b'\x00\x02', b'\x00\x03', b'\x00\x04']:
+        for index, val in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]:
             try:
                 print('writing: i=%s ' % str(index))
-                self.getCharacteristics()[-1].write(val)
+                self.getCharacteristics()[-1].write(str(val).encode())
             except Exception as e:
                 print('failed to write...')
                 print(e)
