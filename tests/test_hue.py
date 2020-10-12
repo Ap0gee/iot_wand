@@ -14,7 +14,7 @@ def main():
         for lamp in lamps:
             try:
                 _hue_service = lamp.getServiceByUUID('932c32bd-0000-47a2-835a-a8d455b859dd')
-                handle = _hue_service.getCharacteristics('932c32bd-0002-47a2-835a-a8d455b859dd')[0]
+                handle = _hue_service.getCharacteristics('932c32bd-0001-47a2-835a-a8d455b859dd')[0]
                 print("Write Start")
                 print(handle.getHandle())
                 lamp.writeCharacteristic(handle.getHandle(), bytes(00))
