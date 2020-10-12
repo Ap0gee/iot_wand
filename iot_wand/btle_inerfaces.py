@@ -650,7 +650,7 @@ class HueInterface(Peripheral, DefaultDelegate):
         for characteristic in self.getCharacteristics():
             print(characteristic.uuid)
             print(characteristic.propertiesToString(), end="\r\n\r\n")
-
+            print('VALUE: %s' % characteristic.read())
 
 class GestureInterface(WandInterface):
     def __init__(self, device, debug=False):
