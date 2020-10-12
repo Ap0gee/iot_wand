@@ -29,7 +29,7 @@ if __name__ == '__main__':
         from iot_wand import helpers as _h
         import settings as _s
         from iot_wand.mqtt_connections import GestureClient
-        from behavior import post_connect, on_spell, on_quaternion, on_button
+        from behavior import *
 
     except ImportError as e:
         print(e)
