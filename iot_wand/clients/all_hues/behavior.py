@@ -47,14 +47,14 @@ class AsyncLightManager:
         return self._lights
 
     def set_lights(self, on=True):
-        for light in self._lights:
+        for light in self.get_lights():
             light.set_light(on)
 
     def toggle_lights(self):
         enabled = not self._lights_enabled
+        self._lights_enabled = enabled
         print("toggling lights to:" + str(enabled))
         self.set_lights(on=enabled)
-        self._lights_enabled = enabled
 
 manager = AsyncLightManager(_s.DEBUG) #called when imported
 
