@@ -38,7 +38,6 @@ class AsyncLightManager:
                             for device in hue_scanner.scan()
                         ]
                     else:
-                        print("%s lights connected." % len(self._lights))
                         time.sleep(1)
 
         except (KeyboardInterrupt, Exception) as e:
@@ -52,8 +51,10 @@ class AsyncLightManager:
             light.set_light(on)
 
     def toggle_lights(self):
-        self.set_lights(not self._lights_enabled)
-        self._lights_enabled = not self._lights_enabled
+        enabled = not self._lights_enabled
+        print("toggling lights to:" + str(enabled))
+        self.set_lights(on=enabled)
+        self._lights_enabled = enabled
 
 manager = AsyncLightManager(_s.DEBUG) #called when imported
 
