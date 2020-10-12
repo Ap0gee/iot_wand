@@ -85,7 +85,7 @@ class WandInterface(Peripheral, DefaultDelegate):
 
         super(WandInterface, self).connect(self._dev)
 
-        self._lock = threading.Lock()
+        self._lock = threading.RLock()
         self.connected = True
         self.setDelegate(self)
 
@@ -218,19 +218,19 @@ class WandInterface(Peripheral, DefaultDelegate):
 
         Returns {bytes} -- Status
         """
+        with self._lock:
+            if isinstance(pattern, PATTERN):
+                message = [pattern.value]
+            else:
+                message = [pattern]
 
-        if isinstance(pattern, PATTERN):
-            message = [pattern.value]
-        else:
-            message = [pattern]
+            if self.debug:
+                print("Vibrating with pattern {}".format(message))
 
-        if self.debug:
-            print("Vibrating with pattern {}".format(message))
-
-        if not hasattr(self, "_vibrator_handle"):
-            handle = self._io_service.getCharacteristics(_IO.VIBRATOR_CHAR.value)[0]
-            self._vibrator_handle = handle.getHandle()
-        return self.writeCharacteristic(self._vibrator_handle, bytes(message), withResponse=False)
+            if not hasattr(self, "_vibrator_handle"):
+                handle = self._io_service.getCharacteristics(_IO.VIBRATOR_CHAR.value)[0]
+                self._vibrator_handle = handle.getHandle()
+            return self.writeCharacteristic(self._vibrator_handle, bytes(message), withResponse=False)
 
     def set_led(self, color="0x2185d0", on=True):
         """Set the LED's color
@@ -259,10 +259,11 @@ class WandInterface(Peripheral, DefaultDelegate):
         if self.debug:
             print("Setting LED to {}".format(message))
 
-        if not hasattr(self, "_led_handle"):
-            handle = self._io_service.getCharacteristics(_IO.LED_CHAR.value)[0]
-            self._led_handle = handle.getHandle()
-        return self.writeCharacteristic(self._led_handle, bytes(message), withResponse=False)
+        with self._lock:
+            if not hasattr(self, "_led_handle"):
+                handle = self._io_service.getCharacteristics(_IO.LED_CHAR.value)[0]
+                self._led_handle = handle.getHandle()
+            return self.writeCharacteristic(self._led_handle, bytes(message), withResponse=False)
 
     def on(self, event, callback):
         """Add an event listener

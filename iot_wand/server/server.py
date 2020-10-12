@@ -157,8 +157,7 @@ class GestureCaptureState(ServerState):
         }
 
         if self.interface:
-            with self.interface.get_lock():
-                self.interface.vibrate(PATTERN.BURST)
+            self.interface.vibrate(PATTERN.BURST)
 
             if self.interface.debug:
                 print("resuming keep alive...")
@@ -239,9 +238,8 @@ class ProfileSelectState(ServerState):
         self.connections_count = len(self.conn.profiles())
         self.interface.pause_keep_alive() #pause keep alive to avoid write conflicts (guessing)
 
-        with self.interface.get_lock():
-            self.interface.vibrate(PATTERN.BURST)
-            self.interface.set_led('#ffffff', True)
+        self.interface.vibrate(PATTERN.BURST)
+        self.interface.set_led('#ffffff', True)
 
     def on_quaternion(self, interface, x, y, z, w):
         self.quaternion_state.x = x
@@ -268,12 +266,10 @@ class ProfileSelectState(ServerState):
 
                 self.last_profile_uuid = profile.uuid
 
-                with self.interface.get_lock():
-                    if profile.vibrate_on:
-                        self.interface.vibrate(profile.vibrate_pattern)
-                    #time.sleep(.5) #add time between writes to avoid conflict (guessing)
-                    self.interface.set_led(profile.led_color, profile.led_on)
+                if profile.vibrate_on:
+                    self.interface.vibrate(profile.vibrate_pattern)
 
+                self.interface.set_led(profile.led_color, profile.led_on)
 
         except (KeyboardInterrupt, Exception) as e:
             print(e)
