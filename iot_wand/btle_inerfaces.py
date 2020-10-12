@@ -647,20 +647,14 @@ class HueInterface(Peripheral, DefaultDelegate):
 
     def post_connect(self):
         print('CHARACTERISTICS:')
-        for characteristic in self.getCharacteristics():
-            print(characteristic.uuid)
-            print(characteristic.propertiesToString(), end="\r\n\r\n")
-
+        for val in [b'00', b'01', b'02', b'03', b'04']:
             try:
-                print('VALUE: %s' % characteristic.read().decode('utf-8'))
+                print('writing: ' + val.decode('utf-8'))
+                self.getCharacteristics()[-1].write(val)
             except Exception as e:
-                print("can't be read.")
-
-            try:
-                characteristic.write(b'00')
-            except Exception as e:
-                print('failed to write')
+                print('failed to write...')
                 print(e)
+
 
 
 
