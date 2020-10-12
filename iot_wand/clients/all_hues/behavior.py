@@ -62,7 +62,7 @@ def on_button(pressed):
 
     if pressed:
         print("DOWN")
-
+        manager.toggle_lights()
 
 def on_spell(gesture, spell):
     print(spell)
