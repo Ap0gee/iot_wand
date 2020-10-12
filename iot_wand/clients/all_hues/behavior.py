@@ -30,12 +30,15 @@ def post_connect():
         print(e)
 
 def on_button(pressed):
-    global lights_enabled
-    enabled = not lights_enabled
-    print("lights are %s!") % 'on' if enabled else 'off'
-    #for light in lights:
-    #    light.set_light(enabled)
-    #    lights_enabled = enabled
+    try:
+        global lights_enabled
+        enabled = not lights_enabled
+        print("lights are %s!") % 'on' if enabled else 'off'
+        #for light in lights:
+        #    light.set_light(enabled)
+        #    lights_enabled = enabled
+    except Exception as e:
+        print(e)
 
 def on_spell(gesture, spell):
     print(spell)
