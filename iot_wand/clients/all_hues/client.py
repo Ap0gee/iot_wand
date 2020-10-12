@@ -12,7 +12,6 @@ def main():
         conn.on_spell = on_spell
         conn.on_quaternion = on_quaternion
         conn.on_button = on_button
-
         print('Starting connection...', end='\r\n\r\n')
         conn.start(as_async=False)
     except Exception as e:

@@ -2,6 +2,7 @@ from iot_wand import helpers as _h
 import settings as _s
 from iot_wand.btle_scanners import HueScanner
 from iot_wand.btle_inerfaces import HueInterface
+from bluepy.btle import *
 
 debug = _s.DEBUG
 lights = []
