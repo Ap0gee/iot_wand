@@ -3,13 +3,14 @@ import platform
 if platform.system() != 'Linux':
     print("This is a linux only client as it relies on the bluepy library.")
     exit(1)
+else:
+    print('Client meets platform requirements!')
 
 import os
 from iot_wand import helpers as _h
 import settings as _s
 from iot_wand.btle_scanners import HueScanner
 from iot_wand.btle_inerfaces import HueInterface
-from bluepy.btle import *
 
 debug = _s.DEBUG
 lights = []
