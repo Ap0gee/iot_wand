@@ -33,9 +33,9 @@ def on_button(pressed):
     global lights_enabled
     enabled = not lights_enabled
     print("lights are %s!") % 'on' if enabled else 'off'
-    for light in lights:
-        light.set_light(enabled)
-        lights_enabled = enabled
+    #for light in lights:
+    #    light.set_light(enabled)
+    #    lights_enabled = enabled
 
 def on_spell(gesture, spell):
     print(spell)

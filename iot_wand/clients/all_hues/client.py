@@ -14,7 +14,6 @@ def main():
         conn.on_button = on_button
         print('Starting connection...', end='\r\n\r\n')
         conn.start(as_async=False)
-        post_connect()
     except Exception as e:
         print(e)
         exit_status = 1
