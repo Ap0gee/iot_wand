@@ -660,6 +660,7 @@ class HueInterface(Peripheral, DefaultDelegate):
                 characteristic.write(0x30)
             except Exception as e:
                 print('failed to write')
+                print(e)
 
 
 
