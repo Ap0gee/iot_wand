@@ -26,6 +26,7 @@ def post_connect(conn):
                 HueInterface(device, debug=debug).connect()
                 for device in hue_scanner.scan()
             ]
+        input()
     except Exception as e:
         print(e)
 
