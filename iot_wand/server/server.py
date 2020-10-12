@@ -134,6 +134,7 @@ class GestureCaptureState(ServerState):
     def __init__(self, manager):
         super(GestureCaptureState, self).__init__(manager)
 
+        self.type = SERVER_STATES.GESTURE_CAPTURE.value
         self.pressed = False
         self.positions = []
         self.spell = None
@@ -156,6 +157,8 @@ class GestureCaptureState(ServerState):
         }
 
         if self.interface:
+            self.interface.vibrate(PATTERN.BURST)
+
             if self.interface.debug:
                 print("resuming keep alive...")
             self.interface.resume_keep_alive()
@@ -177,19 +180,20 @@ class GestureCaptureState(ServerState):
             self.spell = None
             self.press_start = timeit.default_timer()
 
-            if self.press_start - self.press_end > .4:
+            if self.press_start - self.press_end > .3:
                 self.speed_clicks = 0
 
         else:
             self.press_end = timeit.default_timer()
 
-            if self.press_end - self.press_start < .4:
+            if self.press_end - self.press_start < .3:
                 self.positions = []
                 interface.reset_position()
                 self.speed_clicks += 1
 
                 if self.speed_clicks == 2:
-                    self.switch(SERVER_STATES.PROFILE_SELECT.value)
+                    if self.manager.get_state().type is not SERVER_STATES.PROFILE_SELECT.value:
+                        self.switch(SERVER_STATES.PROFILE_SELECT.value)
 
             else:
                 self.speed_clicks = 0
@@ -224,6 +228,7 @@ class ProfileSelectState(ServerState):
     def __init__(self, manager):
         super(ProfileSelectState, self).__init__(manager)
 
+        self.type = SERVER_STATES.PROFILE_SELECT.value
         self.pressed = False
         self.speed_clicks = 0
         self.quaternion_state = _h.Quaternion(0, 0, 0, 0)
@@ -232,6 +237,7 @@ class ProfileSelectState(ServerState):
         self.press_start = self.press_end = timeit.default_timer()
         self.connections_count = len(self.conn.profiles())
         self.interface.pause_keep_alive() #pause keep alive to avoid write conflicts (guessing)
+
         self.interface.vibrate(PATTERN.BURST)
         self.interface.set_led('#ffffff', True)
 
@@ -277,19 +283,19 @@ class ProfileSelectState(ServerState):
         if pressed:
             self.press_start = timeit.default_timer()
 
-            if self.press_start - self.press_end > .2:
+            if self.press_start - self.press_end > .3:
                 self.speed_clicks = 0
         else:
             self.press_end = timeit.default_timer()
 
-            if self.press_end - self.press_start < .2:
+            if self.press_end - self.press_start < .3:
                 self.positions = []
                 interface.reset_position()
                 self.speed_clicks += 1
 
                 if self.speed_clicks == 2:
-                    interface.vibrate(PATTERN.BURST)
-                    self.switch(SERVER_STATES.GESTURE_CAPTURE.value)
+                    if self.manager.get_state().type is not SERVER_STATES.GESTURE_CAPTURE.value:
+                        self.switch(SERVER_STATES.GESTURE_CAPTURE.value)
 
             else:
                 self.speed_clicks = 0
