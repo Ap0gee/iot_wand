@@ -663,7 +663,7 @@ class HueInterface(Peripheral, DefaultDelegate):
                 handle = self._hue_service.getCharacteristics(_HUE.LIGHT_CHAR.value)[0]
                 print(handle.getHandle())
                 self._light_handle = handle.getHandle()
-            return self.writeCharacteristic(self._light_handle, val, withResponse=False)
+            return self.writeCharacteristic(self._light_handle, bytes([0]), withResponse=False)
 
 class GestureInterface(WandInterface):
     def __init__(self, device, debug=False):
