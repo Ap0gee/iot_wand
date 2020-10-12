@@ -13,7 +13,7 @@ def main():
         conn.on_quaternion = on_quaternion
         conn.on_button = on_button
         print('Starting connection...', end='\r\n\r\n')
-        conn.start(as_async=False)
+        conn.start(as_async=False, async_callback=post_connect)
     except Exception as e:
         print(e)
         exit_status = 1
@@ -29,7 +29,7 @@ if __name__ == '__main__':
         from iot_wand import helpers as _h
         import settings as _s
         from iot_wand.mqtt_connections import GestureClient
-        from behavior import on_spell, on_quaternion, on_button
+        from behavior import post_connect, on_spell, on_quaternion, on_button
     except ImportError as e:
         print(e)
         exit_status = 1

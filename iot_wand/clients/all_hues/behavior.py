@@ -14,13 +14,16 @@ from bluepy.btle import *
 debug = _s.DEBUG
 lights = []
 lights_enabled = True
-hue_scanner = HueScanner(debug=debug)
-print('scanning for lamps...')
-if not len(lights):
-    lights = [
-        HueInterface(device, debug=debug).connect()
-        for device in hue_scanner.scan()
-    ]
+
+def post_connect():
+    global lights
+    hue_scanner = HueScanner(debug=debug)
+    print('scanning for lamps...')
+    if not len(lights):
+        lights = [
+            HueInterface(device, debug=debug).connect()
+            for device in hue_scanner.scan()
+        ]
 
 def on_button(pressed):
     global lights_enabled
