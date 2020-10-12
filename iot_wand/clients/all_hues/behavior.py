@@ -30,7 +30,8 @@ def post_connect():
         print(e)
 
 def on_button(pressed):
-    print("PRESSED")
+    if pressed:
+        print("DOWN")
 
 def on_spell(gesture, spell):
     print(spell)
