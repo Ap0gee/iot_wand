@@ -175,6 +175,9 @@ class GestureCaptureState(ServerState):
         if self.conn.current_profile() == None:
             self.interface.set_led(on=False)
 
+    def on_loop(self):
+        print('looping from capture state')
+
     def on_quaternion(self, interface, x, y, z, w):
         if self.pressed:
             self.positions.append(tuple([x, -1 * y]))
