@@ -125,7 +125,7 @@ class ServerState():
         interface.subscribe_position()
 
     def on_post_disconnect(self, interface):
-        self.manager.restart_wand_management()
+        print('POST DISCONNECTED')
 
     def on_quaternion(self, interface, x, y, z, w):
         pass
