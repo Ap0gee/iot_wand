@@ -29,7 +29,7 @@ class AsyncServerStateManager:
         self.run_loop_state = True
 
         if not self._wand_management_thread:
-            self._wand_management_thread = threading.Thread(target=self._manage_wands, args=(config, debug))
+            self._wand_management_thread = threading.Thread(target=self._manage_wands, args=(debug, config))
             self._wand_management_thread.start()
 
         #if not self._loop_state_thread:
