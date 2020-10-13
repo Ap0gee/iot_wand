@@ -11,6 +11,7 @@ import threading
 import os
 import platform
 import subprocess
+from multiprocessing import Process
 
 def main():
     config = _h.yaml_read(_s.PATH_CONFIG)
@@ -67,7 +68,7 @@ class AsyncServerStateManager:
                         else:
                             if sec_ka >= sec_ka_max:
                                 sec_ka = 1
-                                ka_thread = threading.Thread(target=self.keep_wand_alive, args=(wands[0],))
+                                ka_thread = Process(target=self.keep_wand_alive, args=(wands[0],))
                                 ka_thread.start()
                                 ka_thread.join(1)
                             else:
@@ -85,20 +86,6 @@ class AsyncServerStateManager:
             #exit(1)
             print(e)
 
-    def restart_wand_management(self):
-        print('Restarting wand management...')
-        self.run_wand_management = False
-        self._wand_management_thread = threading.Thread(target=self._manage_wands, args=(self.debug, self.config))
-        self.run_wand_management = True
-        self._wand_management_thread.start()
-
-    def restart_loop_state(self):
-        print('Restarting loop state...')
-        self.run_loop_state = False
-        self._loop_state_thread = threading.Thread(target=self._loop_state)
-        self.run_loop_state = True
-        self._loop_state_thread.start()
-
     def keep_wand_alive(self, wand):
         try:
             wand.keep_alive()
@@ -112,7 +99,7 @@ class AsyncServerStateManager:
     def _loop_state(self):
         while self.run_loop_state:
             try:
-                loop_thread = threading.Thread(target=self.get_state().on_loop)
+                loop_thread = Process(target=self.get_state().on_loop)
                 loop_thread.start()
                 loop_thread.join(1)
                 time.sleep(1.5)
@@ -292,7 +279,6 @@ class ProfileSelectState(ServerState):
 
                     if profile.vibrate_on:
                         self.interface.vibrate(profile.vibrate_pattern)
-                        time.sleep(.4)
                     self.interface.set_led(profile.led_color, profile.led_on)
 
         except (KeyboardInterrupt, Exception) as e:
