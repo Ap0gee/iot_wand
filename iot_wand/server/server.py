@@ -65,7 +65,6 @@ class AsyncServerStateManager:
                             sec_ka = 1
                             thread = threading.Thread(target=wands[0].keep_alive)
                             thread.start()
-                            thread.join()
                         else:
                             sec_ka += 1
                     print(sec_ka)
