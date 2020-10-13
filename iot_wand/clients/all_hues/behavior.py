@@ -1,5 +1,7 @@
 from phue import Bridge
 import timeit
+from enum import Enum
+import time
 
 IP_BRIDGE = '10.0.0.46'
 
@@ -7,6 +9,8 @@ class LightsManager():
     def __init__(self, ip_addr):
         self._bridge = Bridge(ip_addr)
         self._bridge.connect()
+        self._transition_time = 1
+        self._brightness = 254
 
     @property
     def is_lights_on(self):
@@ -17,6 +21,31 @@ class LightsManager():
         if type(value) == bool:
             self._lights_on = value
 
+    @property
+    def brightness(self):
+        return self._brightness
+
+    @brightness.setter
+    def brightness(self, value):
+        if value >= 254:
+            self._brightness = 254
+        elif value <= 1:
+            self._brightness = 1
+        else:
+            self._brightness = value
+
+        for light in self.get_lights():
+            light.transitiontime = self._transition_time
+            light.brightness = self._brightness
+
+    @property
+    def transition_time(self):
+        return self._transition_time
+
+    @transition_time.setter
+    def transition_time(self, value):
+        self._transition_time = value
+
     def get_api(self):
         return self._bridge.get_api()
 
@@ -24,7 +53,7 @@ class LightsManager():
         return self._bridge.get_light_objects('list')
 
     def toggle_lights(self):
-        for light in self._bridge.get_light_objects('list'):
+        for light in self.get_lights():
             is_on = not light.on
             print(is_on)
             light.on = is_on
@@ -47,24 +76,46 @@ class ButtonManager():
     def get_press_time(self):
         return self._press_end - self._press_start
 
+class LIGHTS_STATES(Enum):
+    BRIGHTNESS = 'brightness'
+    ENABLE = 'enable'
+
+LIGHTS_STATE = None
+
 lights_manager = LightsManager(IP_BRIDGE)
 button_manager = ButtonManager()
 
 def on_button(pressed):
     global lights_manager
+    global LIGHTS_STATE
+
     if pressed:
         button_manager.reset_press_timer()
         button_manager.start_press_timer()
     else:
         button_manager.end_press_timer()
         time_pressed = button_manager.get_press_time()
+
         print(time_pressed)
 
+        if LIGHTS_STATE == LIGHTS_STATES.BRIGHTNESS.value and time_pressed <= .5:
+            LIGHTS_STATE = LIGHTS_STATES.ENABLE.value
+
 def on_spell(gesture, spell):
+    global LIGHTS_STATE
+
     print(spell)
-    if spell in ['aguamenti', 'reducto', 'reducio']:
-        lights_manager.toggle_lights()
+
+    if LIGHTS_STATE == LIGHTS_STATES.ENABLE.value:
+        if spell in ['aguamenti']:
+            lights_manager.toggle_lights()
+
+        if spell in ['expelliarmus'] and lights_manager._lights_on:
+            LIGHTS_STATE = LIGHTS_STATES.BRIGHTNESS.value
 
 def on_quaternion(x, y, z, w):
-    pass
-    #print(x, y, x, w)
+    global LIGHTS_STATE
+
+    if LIGHTS_STATE == LIGHTS_STATES.BRIGHTNESS.value:
+        print(lights_manager.brightness)
+        lights_manager.brightness = w
