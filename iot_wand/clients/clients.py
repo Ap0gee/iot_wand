@@ -22,6 +22,7 @@ def main(dir_top):
                     terminal_cmd = 'lxterminal -e --title=%s' % title
                     python = '$py3'
                 cmd = "%s %s %s %s" % (terminal_cmd, python, os.path.join(path_client, 'client.py'), dir_top)
+                print(cmd)
                 cmd_thread = threading.Thread(target=open_new_terminal, args=(cmd,))
                 cmd_thread.start()
 
