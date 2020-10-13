@@ -27,7 +27,8 @@ class AsyncServerStateManager:
         self._wand_management_thread = None
         self._ping_clients_thread = None
         self._loop_state_thread = None
-        self.run = True
+        self.run_wand_management = True
+        self.run_loop_state = True
         self.debug = debug
         self.config = config
 
@@ -47,7 +48,7 @@ class AsyncServerStateManager:
             sec_ka_max = broker['keepalive']
             wand_scanner = WandScanner(debug=debug)
 
-            while self.run:
+            while self.run_wand_management:
                 with self._lock:
                     if not len(wands):
                         wands = [
@@ -87,8 +88,10 @@ class AsyncServerStateManager:
 
     def restart_wand_management(self):
         print('Restarting wand management...')
+        self.run_wand_management = False
         self._wand_management_thread.join(1)
         self._wand_management_thread = threading.Thread(target=self._manage_wands, args=(self.debug, self.config))
+        self.run_wand_management = True
         self._wand_management_thread.start()
 
     def keep_wand_alive(self, wand):
@@ -103,9 +106,13 @@ class AsyncServerStateManager:
         self.set_state(SERVER_STATES.GESTURE_CAPTURE.value)
 
     def _loop_state(self):
-        while 1:
-            self.get_state().on_loop()
-            time.sleep(2)
+        while self.run_loop_state:
+            with self._lock:
+                try:
+                    self.get_state().on_loop()
+                    time.sleep(2)
+                except Exception as e:
+                    print(e)
 
     def set_state(self, state):
         self._state = state(self)
