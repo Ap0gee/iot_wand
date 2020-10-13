@@ -261,15 +261,20 @@ class ProfileSelectState(ServerState):
         t.join(1)
 
     def enter_write(self):
-        self.interface.vibrate(PATTERN.BURST)
-        time.sleep(.5)
-        self.interface.set_led('#ffffff', True)
+        try:
+            self.interface.vibrate(PATTERN.BURST)
+            self.interface.set_led('#ffffff', True)
+        except:
+            pass
 
     def profile_write(self, profile):
-        if profile.vibrate_on:
-            self.interface.vibrate(profile.vibrate_pattern)
-            time.sleep(.5)
-        self.interface.set_led(profile.led_color, profile.led_on)
+        try:
+            if profile.vibrate_on:
+                self.interface.vibrate(profile.vibrate_pattern)
+
+            self.interface.set_led(profile.led_color, profile.led_on)
+        except:
+            pass
 
     def on_quaternion(self, interface, x, y, z, w):
         self.quaternion_state.x = x
