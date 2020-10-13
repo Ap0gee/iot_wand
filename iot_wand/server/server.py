@@ -33,14 +33,15 @@ class AsyncServerStateManager:
         self.debug = debug
         self.config = config
 
-    def start_threads(self):
         if not self._wand_management_thread:
             self._wand_management_thread = threading.Thread(target=self._manage_wands, args=(self.debug, self.config))
             self._wand_management_thread.start()
 
         if not self._loop_state_thread:
             self._loop_state_thread = threading.Thread(target=self._loop_state)
-            self._loop_state_thread.start()
+
+    def start_state_loop(self):
+        self._loop_state_thread.start()
 
     def stop_threads(self):
         self.run_loop_state = self.run_wand_management = False
@@ -130,7 +131,7 @@ class ServerState():
         self.conn.clear_current_profile()
         self.manager.set_state(SERVER_STATES.GESTURE_CAPTURE.value)
 
-        self.manager.start_threads()
+        self.manager.start_state_loop()
 
     def on_post_disconnect(self, interface):
         print('POST DISCONNECTED')
