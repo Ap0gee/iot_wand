@@ -20,7 +20,7 @@ def main():
 
 class AsyncServerStateManager:
     def __init__(self, mqtt_conn, config, debug=False):
-        self._lock = threading.RLock()
+        self._lock = threading.Lock()
         self.conn = mqtt_conn
         self.interface = None
         self._state = self.set_state(SERVER_STATES.GESTURE_CAPTURE.value)
@@ -112,6 +112,8 @@ class ServerState():
 
     def on_post_disconnect(self, interface):
         print('post disconnect, restarting server...')
+        self.manager._loop_state_thread.join()
+        self.manager._wand_management_thread.join()
         path_manage = os.path.join(_s.DIR_BASE, 'manage.py')
         system = platform.system()
         python = 'python'
@@ -121,12 +123,9 @@ class ServerState():
             terminal_cmd = 'lxterminal -e'
             python = '%s' % os.path.join(_s.DIR_BASE, 'env/bin/python3')
         cmd = '%s %s %s' % (terminal_cmd, python, "%s run server" % path_manage)
-        terminal_thread = threading.Thread(target=self.open_new_server_terminal, args=(cmd,))
-        terminal_thread.start()
-        exit(1)
-
-    def open_new_server_terminal(self, cmd):
+        print(cmd)
         subprocess.call(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        exit(1)
 
     def on_quaternion(self, interface, x, y, z, w):
         pass
