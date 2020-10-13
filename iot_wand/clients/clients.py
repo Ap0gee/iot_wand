@@ -19,7 +19,7 @@ def main(dir_top):
                 terminal_cmd = 'start cmd /K'
                 print(system)
                 if system == 'Linux':
-                    terminal_cmd = 'lxterminal -e --title=%s' % title
+                    terminal_cmd = 'lxterminal -e'
                     python = '$py3'
                 cmd = "%s %s %s %s" % (terminal_cmd, python, os.path.join(path_client, 'client.py'), dir_top)
                 print(cmd)
