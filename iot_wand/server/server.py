@@ -39,7 +39,7 @@ class AsyncServerStateManager:
 
         if not self._loop_state_thread:
             self._loop_state_thread = threading.Thread(target=self._loop_state)
-            #self._loop_state_thread.start()
+            self._loop_state_thread.start()
 
     def stop_threads(self):
         self.run_loop_state = self.run_wand_management = False
@@ -79,7 +79,6 @@ class AsyncServerStateManager:
                         else:
                             sec_ka += 1
                     self.conn.ping_collect_clients()
-                    self.get_state().on_loop()
                     time.sleep(1)
 
         except (KeyboardInterrupt, Exception) as e:
@@ -99,7 +98,7 @@ class AsyncServerStateManager:
         while self.run_loop_state:
             try:
                 self.get_state().on_loop()
-                time.sleep(1.5)
+                time.sleep(1)
             except Exception as e:
                 print(e)
                 continue
@@ -110,7 +109,6 @@ class AsyncServerStateManager:
 
     def get_state(self):
         return self._state
-
 
 class ServerState():
     def __init__(self, manager):
@@ -257,8 +255,19 @@ class ProfileSelectState(ServerState):
         self.conn.clear_current_profile()
         self.press_start = self.press_end = timeit.default_timer()
         self.connections_count = len(self.conn.profiles())
+
+        t = threading.Thread(target=self.enter_write)
+        t.start()
+        t.join(1)
+
+    def enter_write(self):
         self.interface.vibrate(PATTERN.BURST)
         self.interface.set_led('#ffffff', True)
+
+    def profile_write(self, profile):
+        if profile.vibrate_on:
+            self.interface.vibrate(profile.vibrate_pattern)
+        self.interface.set_led(profile.led_color, profile.led_on)
 
     def on_quaternion(self, interface, x, y, z, w):
         self.quaternion_state.x = x
@@ -286,10 +295,9 @@ class ProfileSelectState(ServerState):
 
                     self.last_profile_uuid = profile.uuid
 
-                    if profile.vibrate_on:
-                        self.interface.vibrate(profile.vibrate_pattern)
-                        time.sleep(.5)
-                    self.interface.set_led(profile.led_color, profile.led_on)
+                    t = threading.Thread(target=self.profile_write, args=(profile,))
+                    t.start()
+                    t.join(1)
 
         except (KeyboardInterrupt, Exception) as e:
             print(e)
