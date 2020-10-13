@@ -96,6 +96,7 @@ class AsyncServerStateManager:
                 time.sleep(1.5)
             except Exception as e:
                 print(e)
+                continue
 
     def set_state(self, state):
         self._state = state(self)
