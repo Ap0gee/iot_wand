@@ -121,8 +121,12 @@ class ServerState():
             terminal_cmd = 'lxterminal -e'
             python = '%s' % os.path.join(_s.DIR_BASE, 'env/bin/python3')
         cmd = '%s %s %s' % (terminal_cmd, python, "%s run server" % path_manage)
-        subprocess.call(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        terminal_thread = threading.Thread(target=self.open_new_server_terminal, args=(cmd,))
+        terminal_thread.start()
         exit(1)
+
+    def open_new_server_terminal(self, cmd):
+        subprocess.call(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
     def on_quaternion(self, interface, x, y, z, w):
         pass
@@ -169,7 +173,7 @@ class GestureCaptureState(ServerState):
     def on_quaternion(self, interface, x, y, z, w):
         if self.pressed:
             self.positions.append(tuple([x, -1 * y]))
-        
+
         if self.conn.current_profile() != None:
             self.conn.signed_addressed_publish(
                 TOPICS.QUATERNIONS.value,
