@@ -20,7 +20,7 @@ def main():
 
 class AsyncServerStateManager:
     def __init__(self, mqtt_conn, config, debug=False):
-        self._lock = threading.RLock()
+        self._lock = threading.Lock()
         self.conn = mqtt_conn
         self.interface = None
         self._state = self.set_state(SERVER_STATES.GESTURE_CAPTURE.value)
@@ -106,12 +106,11 @@ class AsyncServerStateManager:
 
     def _loop_state(self):
         while self.run_loop_state:
-            with self._lock:
-                try:
-                    self.get_state().on_loop()
-                    time.sleep(2)
-                except Exception as e:
-                    print(e)
+            try:
+                self.get_state().on_loop()
+                time.sleep(2)
+            except Exception as e:
+                print(e)
 
     def set_state(self, state):
         self._state = state(self)
