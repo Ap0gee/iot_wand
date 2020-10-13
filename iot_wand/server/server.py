@@ -149,7 +149,6 @@ class GestureCaptureState(ServerState):
     def __init__(self, manager):
         super(GestureCaptureState, self).__init__(manager)
 
-        self.type = SERVER_STATES.GESTURE_CAPTURE.value
         self.pressed = False
         self.positions = []
         self.spell = None
@@ -209,7 +208,7 @@ class GestureCaptureState(ServerState):
                 self.speed_clicks += 1
 
                 if self.speed_clicks == 2:
-                    if self.manager.get_state().type is not SERVER_STATES.PROFILE_SELECT.value:
+                    if isinstance(self, GestureCaptureState):
                         self.switch(SERVER_STATES.PROFILE_SELECT.value)
 
             else:
@@ -246,8 +245,6 @@ class GestureCaptureState(ServerState):
 class ProfileSelectState(ServerState):
     def __init__(self, manager):
         super(ProfileSelectState, self).__init__(manager)
-
-        self.type = SERVER_STATES.PROFILE_SELECT.value
         self.pressed = False
         self.speed_clicks = 0
         self.quaternion_state = _h.Quaternion(0, 0, 0, 0)
@@ -305,7 +302,7 @@ class ProfileSelectState(ServerState):
                 self.speed_clicks += 1
 
                 if self.speed_clicks == 2:
-                    if self.manager.get_state().type is not SERVER_STATES.GESTURE_CAPTURE.value:
+                    if isinstance(self, ProfileSelectState):
                         self.switch(SERVER_STATES.GESTURE_CAPTURE.value)
 
             else:
