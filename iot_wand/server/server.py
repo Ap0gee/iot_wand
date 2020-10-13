@@ -31,6 +31,7 @@ class AsyncServerStateManager:
         if not self._wand_management_thread:
             self._wand_management_thread = threading.Thread(target=self._manage_wands, args=(debug, config))
             self._wand_management_thread.start()
+            self._wand_management_thread.join(1)
 
         if not self._loop_state_thread:
             self._loop_state_thread = threading.Thread(target=self._loop_state)
@@ -42,7 +43,6 @@ class AsyncServerStateManager:
         self._loop_state_thread.join(1)
 
     def _manage_wands(self, debug, config):
-        _lock = threading.Lock()
         try:
             wands = []
             broker = config['broker']
@@ -51,37 +51,36 @@ class AsyncServerStateManager:
             wand_scanner = WandScanner(debug=debug)
 
             while self.run_wand_management:
-                with _lock:
-                    try:
-                        if not len(wands):
-                            wands = [
-                                GestureInterface(device, debug=debug)
-                                .on('post_connect', lambda interface: self.get_state().on_post_connect(interface))
-                                .on('post_disconnect', lambda interface: self.get_state().on_post_disconnect(interface))
-                                .on('button_press', lambda interface, pressed: self.get_state().on_button_press(interface, pressed))
-                                .on('quaternion', lambda interface, x, y, z, w: self.get_state().on_quaternion(interface, x, y, z, w))
-                                .connect()
-                                for device in wand_scanner.scan(discovery_callback=self._on_discovery)
-                            ]
+                try:
+                    if not len(wands):
+                        wands = [
+                            GestureInterface(device, debug=debug)
+                            .on('post_connect', lambda interface: self.get_state().on_post_connect(interface))
+                            .on('post_disconnect', lambda interface: self.get_state().on_post_disconnect(interface))
+                            .on('button_press', lambda interface, pressed: self.get_state().on_button_press(interface, pressed))
+                            .on('quaternion', lambda interface, x, y, z, w: self.get_state().on_quaternion(interface, x, y, z, w))
+                            .connect()
+                            for device in wand_scanner.scan(discovery_callback=self._on_discovery)
+                        ]
+                    else:
+                        if not wands[0].connected:
+                            wands.clear()
+                            sec_ka = 0
                         else:
-                            if not wands[0].connected:
-                                wands.clear()
-                                sec_ka = 0
+                            if sec_ka >= sec_ka_max:
+                                sec_ka = 1
+                                try:
+                                    wands[0].keep_alive()
+                                except Exception as e:
+                                    print(e)
+                                    continue
                             else:
-                                if sec_ka >= sec_ka_max:
-                                    sec_ka = 1
-                                    try:
-                                        wands[0].keep_alive()
-                                    except Exception as e:
-                                        print(e)
-                                        continue
-                                else:
-                                    sec_ka += 1
-                            self.conn.ping_collect_clients()
-                            time.sleep(1)
-                    except Exception as e:
-                        print(e)
-                        continue
+                                sec_ka += 1
+                        self.conn.ping_collect_clients()
+                        time.sleep(1)
+                except Exception as e:
+                    print(e)
+                    continue
 
         except (KeyboardInterrupt, Exception) as e:
             #self.conn.stop()
@@ -97,15 +96,13 @@ class AsyncServerStateManager:
         pass
 
     def _loop_state(self):
-        _lock = threading.Lock()
         while self.run_loop_state:
-            with _lock:
-                try:
-                    self.get_state().on_loop()
-                    time.sleep(1)
-                except Exception as e:
-                    print(e)
-                    continue
+            try:
+                self.get_state().on_loop()
+                time.sleep(1)
+            except Exception as e:
+                print(e)
+                continue
 
     def set_state(self, state):
         self._state = state(self)
