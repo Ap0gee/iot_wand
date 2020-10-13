@@ -35,7 +35,8 @@ class ButtonManager():
         self._press_end = 0
 
     def reset_press_timer(self):
-        self._press_start = self._press_end = 0
+        self._press_start = 0
+        self._press_end = 0
 
     def start_press_timer(self):
         self._press_start = timeit.default_timer()
@@ -57,10 +58,10 @@ def on_button(pressed):
     else:
         button_manager.end_press_timer()
         time_pressed = button_manager.get_press_time()
-        if time_pressed > .5 and time_pressed < 2:
+        print(time_pressed)
+        if time_pressed <= 1:
             lights_manager.toggle_lights()
-        button_manager.reset_press_timer()
-
+       
 def on_spell(gesture, spell):
     print(spell)
 
