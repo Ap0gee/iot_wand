@@ -58,7 +58,7 @@ class AsyncServerStateManager:
                         ]
                     else:
                         if not wands[0].connected:
-                            wands.clear()
+                            wands[0].connect()
                             sec_ka = 0
                         else:
                             if sec_ka >= sec_ka_max:
