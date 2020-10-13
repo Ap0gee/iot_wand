@@ -91,6 +91,13 @@ class AsyncServerStateManager:
         self.run_wand_management = True
         self._wand_management_thread.start()
 
+    def restart_loop_state(self):
+        print('Restarting loop state...')
+        self.run_loop_state = False
+        self._loop_state_thread = threading.Thread(target=self._loop_state)
+        self.run_loop_state = True
+        self._loop_state_thread.start()
+
     def keep_wand_alive(self, wand):
         try:
             wand.keep_alive()
@@ -109,6 +116,7 @@ class AsyncServerStateManager:
                 time.sleep(2)
             except Exception as e:
                 print(e)
+                self.restart_loop_state()
 
     def set_state(self, state):
         self._state = state(self)
@@ -287,8 +295,8 @@ class ProfileSelectState(ServerState):
 
         except (KeyboardInterrupt, Exception) as e:
             print(e)
-            exit(1)
-
+            self.manager.restart_loop_state()
+            
     def on_button_press(self, interface, pressed):
         if pressed:
             self.press_start = timeit.default_timer()
