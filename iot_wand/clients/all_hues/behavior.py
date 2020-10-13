@@ -57,12 +57,11 @@ def on_button(pressed):
     else:
         button_manager.end_press_timer()
         time_pressed = button_manager.get_press_time()
-        if time_pressed > .5:
+        if time_pressed > .5 and time_pressed < 2:
             lights_manager.toggle_lights()
 
 def on_spell(gesture, spell):
     print(spell)
-
 
 def on_quaternion(x, y, z, w):
     pass
