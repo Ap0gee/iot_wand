@@ -97,6 +97,7 @@ def on_button(pressed):
         time_pressed = button_manager.get_press_time()
 
         print(time_pressed)
+        print(LIGHTS_STATE)
 
         if LIGHTS_STATE == LIGHTS_STATES.BRIGHTNESS.value and time_pressed <= .5:
             LIGHTS_STATE = LIGHTS_STATES.ENABLE.value
