@@ -169,12 +169,13 @@ class GestureCaptureState(ServerState):
     def on_quaternion(self, interface, x, y, z, w):
         if self.pressed:
             self.positions.append(tuple([x, -1 * y]))
-
-        self.conn.signed_addressed_publish(
-            TOPICS.QUATERNIONS.value,
-            self.conn.current_profile().uuid,
-            ClientConnection.data_encode("%d %d %d %d" % (x, y, z, w))
-        )
+        
+        if self.conn.current_profile() != None:
+            self.conn.signed_addressed_publish(
+                TOPICS.QUATERNIONS.value,
+                self.conn.current_profile().uuid,
+                ClientConnection.data_encode("%d %d %d %d" % (x, y, z, w))
+            )
 
     def on_button_press(self, interface, pressed):
         self.pressed = pressed
@@ -221,11 +222,12 @@ class GestureCaptureState(ServerState):
 
                     print("{}: {}".format(gesture, self.spell))
 
-        self.conn.signed_addressed_publish( #this needs to be after everything else
-            TOPICS.BUTTON.value,
-            self.conn.current_profile().uuid,
-            ClientConnection.data_encode({'pressed': pressed})
-        )
+        if self.conn.current_profile() != None:
+            self.conn.signed_addressed_publish( #this needs to be after everything else
+                TOPICS.BUTTON.value,
+                self.conn.current_profile().uuid,
+                ClientConnection.data_encode({'pressed': pressed})
+            )
 
 class ProfileSelectState(ServerState):
     def __init__(self, manager):
