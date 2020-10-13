@@ -94,6 +94,8 @@ lights_manager = LightsManager(IP_BRIDGE)
 button_manager = ButtonManager()
 
 def on_button(pressed):
+    global lights_manager
+
     if pressed:
         button_manager.reset_press_timer()
         button_manager.start_press_timer()
@@ -108,6 +110,8 @@ def on_button(pressed):
             lights_manager.state = LIGHTS_STATES.ENABLE
 
 def on_spell(gesture, spell):
+    global lights_manager
+
     print(spell)
 
     if lights_manager.state == LIGHTS_STATES.ENABLE.value:
@@ -118,6 +122,8 @@ def on_spell(gesture, spell):
             lights_manager.state = LIGHTS_STATES.BRIGHTNESS
 
 def on_quaternion(x, y, z, w):
+    global lights_manager
+
     if lights_manager.state == LIGHTS_STATES.BRIGHTNESS.value:
         print(lights_manager.brightness)
         lights_manager.brightness = w
