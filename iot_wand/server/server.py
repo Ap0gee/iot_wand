@@ -68,9 +68,10 @@ class AsyncServerStateManager:
                         else:
                             if sec_ka >= sec_ka_max:
                                 sec_ka = 1
-                                ka_thread = Process(target=self.keep_wand_alive, args=(wands[0],))
-                                ka_thread.start()
-                                ka_thread.join(1)
+                                try:
+                                    wands[0].keep_alive()
+                                except Exception as e:
+                                    print(e)
                             else:
                                 sec_ka += 1
                         self.conn.ping_collect_clients()
@@ -84,12 +85,6 @@ class AsyncServerStateManager:
             #wands.clear()
             #self._wand_management_thread.join()
             #exit(1)
-            print(e)
-
-    def keep_wand_alive(self, wand):
-        try:
-            wand.keep_alive()
-        except Exception as e:
             print(e)
 
     def _on_discovery(self, devices):

@@ -31,13 +31,12 @@ class LightsManager():
     def brightness(self, value):
         if value >= 254:
             self._brightness = 254
-        elif value <= 1:
-            self._brightness = 1
+        elif value <= 0:
+            self._brightness = 0
         else:
             self._brightness = value
 
         for light in self.get_lights():
-            light.transitiontime = self._transition_time
             light.brightness = self._brightness
 
     @property
