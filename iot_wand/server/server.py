@@ -256,25 +256,8 @@ class ProfileSelectState(ServerState):
         self.press_start = self.press_end = timeit.default_timer()
         self.connections_count = len(self.conn.profiles())
 
-        t = Process(target=self.enter_write)
-        t.start()
-        t.join(1)
-
-    def enter_write(self):
-        try:
-            self.interface.vibrate(PATTERN.BURST)
-            self.interface.set_led('#ffffff', True)
-        except:
-            pass
-
-    def profile_write(self, profile):
-        try:
-            if profile.vibrate_on:
-                self.interface.vibrate(profile.vibrate_pattern)
-
-            self.interface.set_led(profile.led_color, profile.led_on)
-        except:
-            pass
+        self.interface.vibrate(PATTERN.BURST)
+        self.interface.set_led('#ffffff', True)
 
     def on_quaternion(self, interface, x, y, z, w):
         self.quaternion_state.x = x
@@ -302,9 +285,10 @@ class ProfileSelectState(ServerState):
 
                     self.last_profile_uuid = profile.uuid
 
-                    t = Process(target=self.profile_write, args=(profile,))
-                    t.start()
-                    t.join(1)
+                    if profile.vibrate_on:
+                        self.interface.vibrate(profile.vibrate_pattern)
+
+                    self.interface.set_led(profile.led_color, profile.led_on)
 
         except (KeyboardInterrupt, Exception) as e:
             print(e)
