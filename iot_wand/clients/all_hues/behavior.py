@@ -128,3 +128,4 @@ def on_quaternion(x, y, z, w):
         print(w)
         #print(lights_manager.brightness)
         #lights_manager.brightness = w
+        time.sleep(.5)
