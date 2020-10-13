@@ -38,38 +38,36 @@ class AsyncServerStateManager:
             self._loop_state_thread.start()
 
     def _manage_wands(self, debug, config):
-        wands = []
-        broker = config['broker']
         try:
+            wands = []
+            broker = config['broker']
             sec_ka = 0
             sec_ka_max = broker['keepalive']
             wand_scanner = WandScanner(debug=debug)
 
             while self.run:
-                with self._lock:
-                    if not len(wands):
-                        wands = [
-                            GestureInterface(device, debug=debug)
-                            .on('post_connect', lambda interface: self.get_state().on_post_connect(interface))
-                            .on('post_disconnect', lambda interface: self.get_state().on_post_disconnect(interface))
-                            .on('button_press', lambda interface, pressed: self.get_state().on_button_press(interface, pressed))
-                            .on('quaternion', lambda interface, x, y, z, w: self.get_state().on_quaternion(interface, x, y, z, w))
-                            .connect()
-                            for device in wand_scanner.scan(discovery_callback=self._on_discovery)
-                        ]
+                if not len(wands):
+                    wands = [
+                        GestureInterface(device, debug=debug)
+                        .on('post_connect', lambda interface: self.get_state().on_post_connect(interface))
+                        .on('post_disconnect', lambda interface: self.get_state().on_post_disconnect(interface))
+                        .on('button_press', lambda interface, pressed: self.get_state().on_button_press(interface, pressed))
+                        .on('quaternion', lambda interface, x, y, z, w: self.get_state().on_quaternion(interface, x, y, z, w))
+                        .connect()
+                        for device in wand_scanner.scan(discovery_callback=self._on_discovery)
+                    ]
+                else:
+                    if not wands[0].connected:
+                        wands.clear()
+                        sec_ka = 0
                     else:
-                        if not wands[0].connected:
-                            wands.clear()
+                        if sec_ka >= sec_ka_max:
                             sec_ka = 0
+                            wands[0].keep_alive()
                         else:
-                            if sec_ka >= sec_ka_max:
-                                sec_ka = 0
-                                wands[0].keep_alive()
-                            else:
-                                sec_ka += 1
-
-                        self.conn.ping_collect_clients()
-                        time.sleep(1)
+                            sec_ka += 1
+                    self.conn.ping_collect_clients()
+                    time.sleep(1)
 
         except (KeyboardInterrupt, Exception) as e:
             #self.conn.stop()
