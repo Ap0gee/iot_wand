@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import os
 import subprocess
 import iot_wand.clients.settings as _s
@@ -19,6 +21,7 @@ def main(dir_top):
                 if system == 'Linux':
                     terminal_cmd = 'lxterminal -e'
                     python = '%s' % os.path.join(dir_top, 'env/bin/python3')
+                    print(python)
                 cmd = '%s %s %s %s' % (terminal_cmd, python, os.path.join(path_client, 'client.py'), dir_top)
                 print(cmd)
                 subprocess.call(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
