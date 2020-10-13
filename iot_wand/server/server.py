@@ -93,8 +93,7 @@ class AsyncServerStateManager:
             print(e)
 
     def _on_discovery(self, devices):
-        print('setting state to capture gesture state')
-        self.set_state(SERVER_STATES.GESTURE_CAPTURE.value)
+        pass
 
     def _loop_state(self):
         while self.run_loop_state:
@@ -123,6 +122,7 @@ class ServerState():
         self.interface = interface
         interface.subscribe_button()
         interface.subscribe_position()
+        self.manager.set_state(SERVER_STATES.GESTURE_CAPTURE.value)
 
     def on_post_disconnect(self, interface):
         print('POST DISCONNECTED')
