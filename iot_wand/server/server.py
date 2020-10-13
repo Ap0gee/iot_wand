@@ -279,6 +279,7 @@ class ProfileSelectState(ServerState):
 
                     if profile.vibrate_on:
                         self.interface.vibrate(profile.vibrate_pattern)
+                        time.sleep(.5)
                     self.interface.set_led(profile.led_color, profile.led_on)
 
         except (KeyboardInterrupt, Exception) as e:
