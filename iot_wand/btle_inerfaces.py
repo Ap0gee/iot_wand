@@ -199,7 +199,7 @@ class WandInterface(Peripheral, DefaultDelegate):
             if not hasattr(self, "_alive_handle"):
                 handle = self._io_service.getCharacteristics(_IO.KEEP_ALIVE_CHAR.value)[0]
                 self._alive_handle = handle.getHandle()
-            return self.writeCharacteristic(self._alive_handle, bytes([1]), withResponse=False)
+            return self.writeCharacteristic(self._alive_handle, bytes([1]), withResponse=True)
 
     def get_lock(self):
         return self._lock
