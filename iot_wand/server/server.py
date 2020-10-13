@@ -122,6 +122,7 @@ class ServerState():
         self.interface = interface
         interface.subscribe_button()
         interface.subscribe_position()
+        self.conn.clear_current_profile()
         self.manager.set_state(SERVER_STATES.GESTURE_CAPTURE.value)
 
     def on_post_disconnect(self, interface):
