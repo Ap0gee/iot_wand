@@ -84,7 +84,6 @@ class AsyncServerStateManager:
             #self._wand_management_thread.join()
             #exit(1)
             print(e)
-            self.restart_wand_management()
 
     def restart_wand_management(self):
         print('Restarting wand management...')
@@ -104,7 +103,6 @@ class AsyncServerStateManager:
         try:
             wand.keep_alive()
         except Exception as e:
-            self.restart_wand_management()
             print(e)
 
     def _on_discovery(self, devices):
@@ -117,7 +115,7 @@ class AsyncServerStateManager:
                 loop_thread = threading.Thread(target=self.get_state().on_loop)
                 loop_thread.start()
                 loop_thread.join(1)
-                time.sleep(2)
+                time.sleep(1.5)
             except Exception as e:
                 print(e)
 
