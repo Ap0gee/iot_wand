@@ -34,11 +34,11 @@ class AsyncServerStateManager:
         self.config = config
 
         if not self._wand_management_thread:
-            self._wand_management_thread = threading.Thread(target=self._manage_wands, args=(debug, config))
+            self._wand_management_thread = Process(target=self._manage_wands, args=(debug, config))
             self._wand_management_thread.start()
 
         if not self._loop_state_thread:
-            self._loop_state_thread = threading.Thread(target=self._loop_state)
+            self._loop_state_thread = Process(target=self._loop_state)
             self._loop_state_thread.start()
 
     def _manage_wands(self, debug, config):
@@ -50,32 +50,31 @@ class AsyncServerStateManager:
             wand_scanner = WandScanner(debug=debug)
 
             while self.run_wand_management:
-                with self._lock:
-                    if not len(wands):
-                        wands = [
-                            GestureInterface(device, debug=debug)
-                            .on('post_connect', lambda interface: self.get_state().on_post_connect(interface))
-                            .on('post_disconnect', lambda interface: self.get_state().on_post_disconnect(interface))
-                            .on('button_press', lambda interface, pressed: self.get_state().on_button_press(interface, pressed))
-                            .on('quaternion', lambda interface, x, y, z, w: self.get_state().on_quaternion(interface, x, y, z, w))
-                            .connect()
-                            for device in wand_scanner.scan(discovery_callback=self._on_discovery)
-                        ]
+                if not len(wands):
+                    wands = [
+                        GestureInterface(device, debug=debug)
+                        .on('post_connect', lambda interface: self.get_state().on_post_connect(interface))
+                        .on('post_disconnect', lambda interface: self.get_state().on_post_disconnect(interface))
+                        .on('button_press', lambda interface, pressed: self.get_state().on_button_press(interface, pressed))
+                        .on('quaternion', lambda interface, x, y, z, w: self.get_state().on_quaternion(interface, x, y, z, w))
+                        .connect()
+                        for device in wand_scanner.scan(discovery_callback=self._on_discovery)
+                    ]
+                else:
+                    if not wands[0].connected:
+                        wands.clear()
+                        sec_ka = 0
                     else:
-                        if not wands[0].connected:
-                            wands.clear()
-                            sec_ka = 0
+                        if sec_ka >= sec_ka_max:
+                            sec_ka = 1
+                            try:
+                                wands[0].keep_alive()
+                            except Exception as e:
+                                print(e)
                         else:
-                            if sec_ka >= sec_ka_max:
-                                sec_ka = 1
-                                try:
-                                    wands[0].keep_alive()
-                                except Exception as e:
-                                    print(e)
-                            else:
-                                sec_ka += 1
-                        self.conn.ping_collect_clients()
-                        time.sleep(1)
+                            sec_ka += 1
+                    self.conn.ping_collect_clients()
+                    time.sleep(1)
 
         except (KeyboardInterrupt, Exception) as e:
             #self.conn.stop()
