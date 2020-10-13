@@ -224,7 +224,7 @@ class WandInterface(Peripheral, DefaultDelegate):
             if not hasattr(self, "_vibrator_handle"):
                 handle = self._io_service.getCharacteristics(_IO.VIBRATOR_CHAR.value)[0]
                 self._vibrator_handle = handle.getHandle()
-            return self.writeCharacteristic(self._vibrator_handle, bytes(message), withResponse=False)
+            return self.writeCharacteristic(self._vibrator_handle, bytes(message), withResponse=True)
 
     def set_led(self, color="0x2185d0", on=True):
         """Set the LED's color
@@ -235,29 +235,29 @@ class WandInterface(Peripheral, DefaultDelegate):
 
         Returns {bytes} -- Status
         """
-        message = []
-        if on:
-            message.append(1)
-        else:
-            message.append(0)
-
-        # I got this from Kano's node module
-        color = int(color.replace("#", ""), 16)
-        r = (color >> 16) & 255
-        g = (color >> 8) & 255
-        b = color & 255
-        rgb = (((r & 248) << 8) + ((g & 252) << 3) + ((b & 248) >> 3))
-        message.append(rgb >> 8)
-        message.append(rgb & 0xff)
-
-        if self.debug:
-            print("Setting LED to {}".format(message))
-
         with self._lock:
+            message = []
+            if on:
+                message.append(1)
+            else:
+                message.append(0)
+
+            # I got this from Kano's node module
+            color = int(color.replace("#", ""), 16)
+            r = (color >> 16) & 255
+            g = (color >> 8) & 255
+            b = color & 255
+            rgb = (((r & 248) << 8) + ((g & 252) << 3) + ((b & 248) >> 3))
+            message.append(rgb >> 8)
+            message.append(rgb & 0xff)
+
+            if self.debug:
+                print("Setting LED to {}".format(message))
+
             if not hasattr(self, "_led_handle"):
                 handle = self._io_service.getCharacteristics(_IO.LED_CHAR.value)[0]
                 self._led_handle = handle.getHandle()
-            return self.writeCharacteristic(self._led_handle, bytes(message), withResponse=False)
+            return self.writeCharacteristic(self._led_handle, bytes(message), withResponse=True)
 
     def on(self, event, callback):
         """Add an event listener

@@ -286,8 +286,7 @@ class ProfileSelectState(ServerState):
                     self.last_profile_uuid = profile.uuid
 
                     if profile.vibrate_on:
-                        self.interface.vibrate(3)
-
+                        self.interface.vibrate(profile.vibrate_pattern)
                     self.interface.set_led(profile.led_color, profile.led_on)
 
         except (KeyboardInterrupt, Exception) as e:
