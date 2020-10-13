@@ -59,11 +59,11 @@ def on_button(pressed):
         button_manager.end_press_timer()
         time_pressed = button_manager.get_press_time()
         print(time_pressed)
-        if time_pressed <= 1:
-            lights_manager.toggle_lights()
-       
+
 def on_spell(gesture, spell):
     print(spell)
+    if spell in ['aguamenti', 'reducto', 'reducio']:
+        lights_manager.toggle_lights()
 
 def on_quaternion(x, y, z, w):
     pass
