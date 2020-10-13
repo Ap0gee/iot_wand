@@ -24,7 +24,7 @@ class AsyncServerStateManager:
         self._lock = threading.RLock()
         self.conn = mqtt_conn
         self.interface = None
-        self._state = self.set_state(SERVER_STATES.GESTURE_CAPTURE.value)
+        self._state = None
         self._wand_management_thread = None
         self._ping_clients_thread = None
         self._loop_state_thread = None
@@ -33,13 +33,19 @@ class AsyncServerStateManager:
         self.debug = debug
         self.config = config
 
+    def start_threads(self):
         if not self._wand_management_thread:
-            self._wand_management_thread = threading.Thread(target=self._manage_wands, args=(debug, config))
+            self._wand_management_thread = threading.Thread(target=self._manage_wands, args=(self.debug, self.config))
             self._wand_management_thread.start()
 
         if not self._loop_state_thread:
             self._loop_state_thread = threading.Thread(target=self._loop_state)
             self._loop_state_thread.start()
+
+    def stop_threads(self):
+        self.run_loop_state = self.run_wand_management = False
+        self._wand_management_thread.join(1)
+        self._loop_state_thread.join(1)
 
     def _manage_wands(self, debug, config):
         try:
@@ -117,13 +123,18 @@ class ServerState():
     def on_post_connect(self, interface):
         self.manager.interface = interface
         self.interface = interface
+
         interface.subscribe_button()
         interface.subscribe_position()
+
         self.conn.clear_current_profile()
         self.manager.set_state(SERVER_STATES.GESTURE_CAPTURE.value)
 
+        self.manager.start_threads()
+
     def on_post_disconnect(self, interface):
         print('POST DISCONNECTED')
+        self.manager.stop_threads()
 
     def on_quaternion(self, interface, x, y, z, w):
         pass
