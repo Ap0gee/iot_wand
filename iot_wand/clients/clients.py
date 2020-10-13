@@ -20,6 +20,7 @@ def main(dir_top):
                     terminal_cmd = 'lxterminal -e'
                     python = '$py3'
                 cmd = "%s %s %s %s" % (terminal_cmd, python, os.path.join(path_client, 'client.py'), dir_top)
+                print(cmd)
                 subprocess.call(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
     else:
