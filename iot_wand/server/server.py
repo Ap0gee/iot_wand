@@ -66,6 +66,7 @@ class AsyncServerStateManager:
                         for device in wand_scanner.scan(discovery_callback=self._on_discovery)
                     ]
                 else:
+                    print(wands)
                     if not wands[0].connected:
                         wands.clear()
                         sec_ka = 0
