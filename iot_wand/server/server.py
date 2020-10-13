@@ -170,7 +170,7 @@ class GestureCaptureState(ServerState):
         if self.interface:
             self.interface.vibrate(PATTERN.BURST)
 
-        if self.conn.conn.current_profile() == None:
+        if self.conn.current_profile() == None:
             try:
                 self.interface.set_led(on=False)
             except Exception as e:
