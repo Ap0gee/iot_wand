@@ -170,6 +170,12 @@ class GestureCaptureState(ServerState):
         if self.interface:
             self.interface.vibrate(PATTERN.BURST)
 
+        if self.conn.conn.current_profile() == None:
+            try:
+                self.interface.set_led(on=False)
+            except Exception as e:
+                pass
+
     def on_quaternion(self, interface, x, y, z, w):
         if self.pressed:
             self.positions.append(tuple([x, -1 * y]))
