@@ -89,7 +89,6 @@ class AsyncServerStateManager:
     def restart_wand_management(self):
         print('Restarting wand management...')
         self.run_wand_management = False
-        self._wand_management_thread.join(1)
         self._wand_management_thread = threading.Thread(target=self._manage_wands, args=(self.debug, self.config))
         self.run_wand_management = True
         self._wand_management_thread.start()
