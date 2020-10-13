@@ -24,7 +24,7 @@ class AsyncServerStateManager:
         self._lock = threading.RLock()
         self.conn = mqtt_conn
         self.interface = None
-        self._state = None
+        self._state = self.set_state(SERVER_STATES.SERVER.value)
         self._wand_management_thread = None
         self._ping_clients_thread = None
         self._loop_state_thread = None
@@ -175,8 +175,7 @@ class GestureCaptureState(ServerState):
             ("D", "R", "U"): "reducto"
         }
 
-        if self.interface:
-            self.interface.vibrate(PATTERN.BURST)
+        self.interface.vibrate(PATTERN.BURST)
 
         if self.conn.current_profile() == None:
             try:
@@ -326,3 +325,4 @@ class ProfileSelectState(ServerState):
 class SERVER_STATES(Enum):
     GESTURE_CAPTURE = GestureCaptureState
     PROFILE_SELECT = ProfileSelectState
+    SERVER = ServerState
