@@ -14,12 +14,12 @@ def main(dir_top):
                 path_client = entry.path
                 system = platform.system()
                 python = 'python '
-                terminal_cmd = 'start cmd /K "'
+                terminal_cmd = 'start cmd /K'
                 print(system)
                 if system == 'Linux':
-                    terminal_cmd = 'lxterminal --command="'
+                    terminal_cmd = 'lxterminal -e --working-directory=%s' % dir_top
                     python = '$py3'
-                cmd = '%s%s %s %s"' % (terminal_cmd, python, os.path.join(path_client, 'client.py'), dir_top)
+                cmd = '%s %s %s %s' % (terminal_cmd, python, os.path.join(path_client, 'client.py'), dir_top)
                 print(cmd)
                 subprocess.call(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
