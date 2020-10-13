@@ -11,6 +11,7 @@ class LightsManager():
         self._bridge.connect()
         self._transition_time = 1
         self._brightness = 254
+        self._state = LIGHTS_STATES.ENABLE.value
 
     @property
     def is_lights_on(self):
@@ -46,6 +47,15 @@ class LightsManager():
     def transition_time(self, value):
         self._transition_time = value
 
+    @property
+    def state(self):
+        return self._state
+
+    @state.setter
+    def state(self, value):
+        if isinstance(value, LIGHTS_STATES):
+            self._state = value.value
+
     def get_api(self):
         return self._bridge.get_api()
 
@@ -80,15 +90,10 @@ class LIGHTS_STATES(Enum):
     BRIGHTNESS = 'brightness'
     ENABLE = 'enable'
 
-LIGHTS_STATE = LIGHTS_STATES.ENABLE.value
-
 lights_manager = LightsManager(IP_BRIDGE)
 button_manager = ButtonManager()
 
 def on_button(pressed):
-    global lights_manager
-    global LIGHTS_STATE
-
     if pressed:
         button_manager.reset_press_timer()
         button_manager.start_press_timer()
@@ -97,26 +102,22 @@ def on_button(pressed):
         time_pressed = button_manager.get_press_time()
 
         print(time_pressed)
-        print(LIGHTS_STATE)
+        print(lights_manager.state)
 
-        if LIGHTS_STATE == LIGHTS_STATES.BRIGHTNESS.value and time_pressed <= .5:
-            LIGHTS_STATE = LIGHTS_STATES.ENABLE.value
+        if lights_manager.state == LIGHTS_STATES.BRIGHTNESS.value and time_pressed <= .5:
+            lights_manager.state = LIGHTS_STATES.ENABLE
 
 def on_spell(gesture, spell):
-    global LIGHTS_STATE
-
     print(spell)
 
-    if LIGHTS_STATE == LIGHTS_STATES.ENABLE.value:
+    if lights_manager.state == LIGHTS_STATES.ENABLE.value:
         if spell in ['aguamenti']:
             lights_manager.toggle_lights()
 
         if spell in ['expelliarmus'] and lights_manager._lights_on:
-            LIGHTS_STATE = LIGHTS_STATES.BRIGHTNESS.value
+            lights_manager.state = LIGHTS_STATES.BRIGHTNESS
 
 def on_quaternion(x, y, z, w):
-    global LIGHTS_STATE
-
-    if LIGHTS_STATE == LIGHTS_STATES.BRIGHTNESS.value:
+    if lights_manager.state == LIGHTS_STATES.BRIGHTNESS.value:
         print(lights_manager.brightness)
         lights_manager.brightness = w
