@@ -28,6 +28,8 @@ class AsyncServerStateManager:
         self._ping_clients_thread = None
         self._loop_state_thread = None
         self.run = True
+        self.debug = debug
+        self.config = config
 
         if not self._wand_management_thread:
             self._wand_management_thread = threading.Thread(target=self._manage_wands, args=(debug, config))
@@ -66,7 +68,7 @@ class AsyncServerStateManager:
                                 sec_ka = 1
                                 ka_thread = threading.Thread(target=self.keep_wand_alive, args=(wands[0],))
                                 ka_thread.start()
-                                ka_thread.join(sec_ka_max - 1)
+                                ka_thread.join(1)
                             else:
                                 sec_ka += 1
                         print(sec_ka)
@@ -83,14 +85,18 @@ class AsyncServerStateManager:
             #exit(1)
             print(e)
 
+    def restart_wand_management(self):
+        print('Restarting wand management...')
+        self._wand_management_thread.join(1)
+        self._wand_management_thread = threading.Thread(target=self._manage_wands, args=(self.debug, self.config))
+        self._wand_management_thread.start()
+
     def keep_wand_alive(self, wand):
         try:
             wand.keep_alive()
         except Exception as e:
+            self.restart_wand_management()
             print(e)
-            print('Restarting wand management...')
-            self._wand_management_thread.join(1)
-            self._wand_management_thread.start()
 
     def _on_discovery(self, devices):
         print('setting state to capture gesture state')
@@ -122,7 +128,7 @@ class ServerState():
         interface.subscribe_position()
 
     def on_post_disconnect(self, interface):
-        pass
+        self.manager.restart_wand_management()
 
     def on_quaternion(self, interface, x, y, z, w):
         pass
@@ -214,11 +220,13 @@ class GestureCaptureState(ServerState):
 
                     if closest:
                         self.spell = self.gestures[closest[0]]
-                        self.conn.signed_addressed_publish(
-                            TOPICS.SPELLS.value,
-                            self.conn.current_profile().uuid,
-                            ClientConnection.data_encode({"gesture": gesture, "spell": self.spell})
-                        )
+
+                        if self.conn.current_profile() != None:
+                            self.conn.signed_addressed_publish(
+                                TOPICS.SPELLS.value,
+                                self.conn.current_profile().uuid,
+                                ClientConnection.data_encode({"gesture": gesture, "spell": self.spell})
+                            )
 
                     print("{}: {}".format(gesture, self.spell))
 
