@@ -106,7 +106,7 @@ def on_button(pressed):
 
         print(time_pressed)
 
-        if lights_manager.state == LIGHTS_STATES.BRIGHTNESS.value and time_pressed >= 2:
+        if lights_manager.state == LIGHTS_STATES.BRIGHTNESS.value and time_pressed >= 1:
             lights_manager.state = LIGHTS_STATES.ENABLE
 
         print("STATE: %s" % lights_manager.state)
@@ -126,4 +126,8 @@ def on_quaternion(x, y, z, w):
     global lights_manager
 
     if lights_manager.state == LIGHTS_STATES.BRIGHTNESS.value:
-        print(math.floor(abs(int(w)/4)))
+        _w = abs(int(w))
+        if _w > 0:
+            if _w % 6 == 0:
+                print(_w / 6)
+  
