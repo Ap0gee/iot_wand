@@ -126,4 +126,5 @@ def on_quaternion(x, y, z, w):
     global lights_manager
 
     if lights_manager.state == LIGHTS_STATES.BRIGHTNESS.value:
-        print(str(int(w)))
+        if int(w) > 0:
+            print(w)
