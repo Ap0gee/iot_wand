@@ -120,13 +120,11 @@ class ServerState():
         print("POST CONNECT")
         self.manager.interface = interface
         self.interface = interface
+        self.conn.clear_current_profile()
+        self.switch(SERVER_STATES.GESTURE_CAPTURE.value)
 
         interface.subscribe_button()
         interface.subscribe_position()
-
-        self.conn.clear_current_profile()
-
-        self.switch(SERVER_STATES.GESTURE_CAPTURE.value)
 
     def on_post_disconnect(self, interface):
         print('POST DISCONNECT')
