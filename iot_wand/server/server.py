@@ -34,7 +34,7 @@ class AsyncServerStateManager:
         self.config = config
 
         if not self._wand_management_thread:
-            self._wand_management_thread = Process(target=self._manage_wands, args=(debug, config))
+            self._wand_management_thread = threading.Thread(target=self._manage_wands, args=(debug, config))
             self._wand_management_thread.start()
 
         if not self._loop_state_thread:
