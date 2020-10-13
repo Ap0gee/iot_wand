@@ -111,21 +111,7 @@ class ServerState():
         interface.subscribe_position()
 
     def on_post_disconnect(self, interface):
-        print('post disconnect, restarting server...')
-        self.manager._loop_state_thread.join()
-        self.manager._wand_management_thread.join()
-        path_manage = os.path.join(_s.DIR_BASE, 'manage.py')
-        system = platform.system()
-        python = 'python'
-        terminal_cmd = 'start cmd /K'
-        print(system)
-        if system == 'Linux':
-            terminal_cmd = 'lxterminal -e'
-            python = '%s' % os.path.join(_s.DIR_BASE, 'env/bin/python3')
-        cmd = '%s %s %s' % (terminal_cmd, python, "%s run server" % path_manage)
-        print(cmd)
-        subprocess.call(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        exit(1)
+        pass
 
     def on_quaternion(self, interface, x, y, z, w):
         pass
