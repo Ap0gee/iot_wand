@@ -256,7 +256,7 @@ class ProfileSelectState(ServerState):
         self.press_start = self.press_end = timeit.default_timer()
         self.connections_count = len(self.conn.profiles())
 
-        t = threading.Thread(target=self.enter_write)
+        t = Process(target=self.enter_write)
         t.start()
         t.join(1)
 
@@ -297,7 +297,7 @@ class ProfileSelectState(ServerState):
 
                     self.last_profile_uuid = profile.uuid
 
-                    t = threading.Thread(target=self.profile_write, args=(profile,))
+                    t = Process(target=self.profile_write, args=(profile,))
                     t.start()
                     t.join(1)
 
