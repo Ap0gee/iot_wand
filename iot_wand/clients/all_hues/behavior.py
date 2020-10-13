@@ -106,9 +106,6 @@ def on_button(pressed):
         print(time_pressed)
         print("STATE: %s" % lights_manager.state)
 
-        if lights_manager.state == LIGHTS_STATES.BRIGHTNESS.value and time_pressed >= 3:
-            lights_manager.state = LIGHTS_STATES.ENABLE
-
 def on_spell(gesture, spell):
     global lights_manager
 
