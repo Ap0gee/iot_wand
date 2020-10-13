@@ -5,11 +5,12 @@ import iot_wand.server.settings as _s
 import iot_wand.helpers as _h
 from enum import Enum
 import moosegesture
-import asyncio
 import timeit
 import time
 import threading
-
+import os
+import platform
+import subprocess
 
 def main():
     config = _h.yaml_read(_s.PATH_CONFIG)
@@ -58,12 +59,12 @@ class AsyncServerStateManager:
                         ]
                     else:
                         if not wands[0].connected:
-                            wands[0].connect()
+                            wands.clear()
                             sec_ka = 0
                         else:
                             if sec_ka >= sec_ka_max:
                                 sec_ka = 0
-                                print(wands[0].keep_alive())
+                                wands[0].keep_alive()
                             else:
                                 sec_ka += 1
 
@@ -110,7 +111,18 @@ class ServerState():
         interface.subscribe_position()
 
     def on_post_disconnect(self, interface):
-        pass
+        print('post disconnect, restarting server...')
+        path_manage = os.path.join(_s.DIR_BASE, 'manage.py')
+        system = platform.system()
+        python = 'python'
+        terminal_cmd = 'start cmd /K'
+        print(system)
+        if system == 'Linux':
+            terminal_cmd = 'lxterminal -e'
+            python = '%s' % os.path.join(_s.DIR_BASE, 'env/bin/python3')
+        cmd = '%s %s %s' % (terminal_cmd, python, "%s run server" % path_manage)
+        subprocess.call(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        exit(1)
 
     def on_quaternion(self, interface, x, y, z, w):
         pass
