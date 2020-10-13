@@ -259,8 +259,6 @@ class WandInterface(Peripheral, DefaultDelegate):
                 self._led_handle = handle.getHandle()
             return self.writeCharacteristic(self._led_handle, bytes(message), withResponse=False)
 
-
-
     def vibrate_and_led(self, pattern=PATTERN.REGULAR, color="0x2185d0", on=True):
         with self._lock:
             led_message = []

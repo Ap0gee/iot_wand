@@ -12,12 +12,11 @@ import os
 import platform
 import subprocess
 from multiprocessing import Process
-
+print('imported all')
 def main():
     config = _h.yaml_read(_s.PATH_CONFIG)
     conn = GestureServer(config, debug=_s.DEBUG)
     conn.start(as_async=True, async_callback=lambda _conn: AsyncServerStateManager(_conn, config, _s.DEBUG))
-
 
 class AsyncServerStateManager:
     def __init__(self, mqtt_conn, config, debug=False):
