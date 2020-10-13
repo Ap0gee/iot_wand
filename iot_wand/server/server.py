@@ -63,7 +63,7 @@ class AsyncServerStateManager:
                     else:
                         if sec_ka >= sec_ka_max:
                             sec_ka = 1
-                            print(wands[0].keep_alive())
+                            threading.Thread(target=wands[0].keep_alive).start().join()
                         else:
                             sec_ka += 1
                     print(sec_ka)
