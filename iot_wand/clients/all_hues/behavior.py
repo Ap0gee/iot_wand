@@ -2,6 +2,7 @@ from phue import Bridge
 import timeit
 from enum import Enum
 import time
+import math
 
 IP_BRIDGE = '10.0.0.46'
 
@@ -124,6 +125,6 @@ def on_quaternion(x, y, z, w):
     global lights_manager
 
     if lights_manager.state == LIGHTS_STATES.BRIGHTNESS.value:
-        print(x, y, z, w)
+        print(math.floor(abs(w/100)))
         #print(lights_manager.brightness)
         #lights_manager.brightness = w
