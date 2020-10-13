@@ -290,13 +290,12 @@ class ProfileSelectState(ServerState):
 
                 if profile.vibrate_on:
                     self.interface.vibrate(profile.vibrate_pattern)
-                    time.sleep(.2)
                 self.interface.set_led(profile.led_color, profile.led_on)
 
         except (KeyboardInterrupt, Exception) as e:
             print(e)
             self.manager.restart_loop_state()
-            
+
     def on_button_press(self, interface, pressed):
         if pressed:
             self.press_start = timeit.default_timer()
