@@ -123,7 +123,7 @@ def on_spell(gesture, spell):
 
 def on_quaternion(x, y, z, w):
     global lights_manager
-
+    _x, _y, _z, _w = x, y, z, w
     if lights_manager.state == LIGHTS_STATES.BRIGHTNESS.value:
-        print(lights_manager.brightness)
-        lights_manager.brightness = w
+        if _w > 0:
+            print(_w)
