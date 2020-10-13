@@ -39,6 +39,7 @@ class AsyncServerStateManager:
 
         if not self._loop_state_thread:
             self._loop_state_thread = threading.Thread(target=self._loop_state)
+            self._loop_state_thread.start()
 
     def start_state_loop(self):
         self._loop_state_thread.start()
@@ -128,7 +129,7 @@ class ServerState():
 
         self.conn.clear_current_profile()
 
-        self.manager.start_state_loop()
+
 
         self.switch(SERVER_STATES.GESTURE_CAPTURE.value)
 
