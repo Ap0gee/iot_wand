@@ -20,7 +20,7 @@ def main():
 
 class AsyncServerStateManager:
     def __init__(self, mqtt_conn, config, debug=False):
-        self._lock = threading.Lock()
+        self._lock = threading.RLock()
         self.conn = mqtt_conn
         self.interface = None
         self._state = self.set_state(SERVER_STATES.GESTURE_CAPTURE.value)
