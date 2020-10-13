@@ -106,7 +106,7 @@ def on_button(pressed):
 
         print(time_pressed)
 
-        if lights_manager.state == LIGHTS_STATES.BRIGHTNESS.value and time_pressed > 1.0:
+        if lights_manager.state == LIGHTS_STATES.BRIGHTNESS.value and time_pressed >= .5:
             lights_manager.state = LIGHTS_STATES.ENABLE
 
         print("STATE: %s" % lights_manager.state)
@@ -124,6 +124,6 @@ def on_spell(gesture, spell):
 
 def on_quaternion(x, y, z, w):
     global lights_manager
-    _x, _y, _z, _w = x, y, z, w
+
     if lights_manager.state == LIGHTS_STATES.BRIGHTNESS.value:
-        print(_w)
+        print(str(int(w)))
