@@ -121,6 +121,7 @@ class ServerState():
         self.interface = manager.interface
 
     def on_post_connect(self, interface):
+        print("POST CONNECT")
         self.manager.interface = interface
         self.interface = interface
 
@@ -129,14 +130,10 @@ class ServerState():
 
         self.conn.clear_current_profile()
 
-
-
         self.switch(SERVER_STATES.GESTURE_CAPTURE.value)
 
-
-
     def on_post_disconnect(self, interface):
-        print('POST DISCONNECTED')
+        print('POST DISCONNECT')
         self.manager.stop_threads()
 
     def on_quaternion(self, interface, x, y, z, w):
