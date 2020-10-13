@@ -80,7 +80,7 @@ class LIGHTS_STATES(Enum):
     BRIGHTNESS = 'brightness'
     ENABLE = 'enable'
 
-LIGHTS_STATE = None
+LIGHTS_STATE = LIGHTS_STATES.ENABLE.value
 
 lights_manager = LightsManager(IP_BRIDGE)
 button_manager = ButtonManager()
