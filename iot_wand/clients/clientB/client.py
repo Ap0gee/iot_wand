@@ -6,18 +6,22 @@ import os
 exit_status = 0
 
 def main():
+    global exit_status
+
     try:
         config = _h.yaml_read(_s.PATH_CONFIG)
+
         conn = GestureClient(config, debug=_s.DEBUG)
         conn.on_spell = on_spell
         conn.on_quaternion = on_quaternion
+        conn.on_button = on_button
+
         print('Starting connection...', end='\r\n\r\n')
+
         conn.start(as_async=False)
     except Exception as e:
         print(e)
         exit_status = 1
-
-    input()
 
 if __name__ == '__main__':
     dir_top = sys.argv[1]
@@ -30,13 +34,13 @@ if __name__ == '__main__':
         from iot_wand import helpers as _h
         import settings as _s
         from iot_wand.mqtt_connections import GestureClient
-        from behavior import on_spell, on_quaternion
-    except (Exception, ImportError) as e:
+        from behavior import *
+
+    except ImportError as e:
         print(e)
         exit_status = 1
 
     main()
     exit(exit_status)
-
 
 

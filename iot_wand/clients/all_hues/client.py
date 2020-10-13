@@ -6,13 +6,18 @@ import os
 exit_status = 0
 
 def main():
+    global exit_status
+
     try:
         config = _h.yaml_read(_s.PATH_CONFIG)
+
         conn = GestureClient(config, debug=_s.DEBUG)
         conn.on_spell = on_spell
         conn.on_quaternion = on_quaternion
         conn.on_button = on_button
+
         print('Starting connection...', end='\r\n\r\n')
+
         conn.start(as_async=False)
     except Exception as e:
         print(e)

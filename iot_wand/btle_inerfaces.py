@@ -3,7 +3,6 @@ from bluepy.btle import *
 import numpy
 import threading
 import uuid
-import asyncio
 
 class _INFO(Enum):
     SERVICE = '64A70010-F691-4B93-A6F4-0968F5B648F8'
@@ -29,11 +28,6 @@ class _SENSOR(Enum):
     # MOTION_CHAR = '64A7000C-F691-4B93-A6F4-0968F5B648F8'
     MAGN_CALIBRATE_CHAR = '64A70021-F691-4B93-A6F4-0968F5B648F8'
     QUATERNIONS_RESET_CHAR = '64A70004-F691-4B93-A6F4-0968F5B648F8'
-
-class _HUE(Enum):
-    SERVICE = '932c32bd-0000-47a2-835a-a8d455b859dd'
-    LIGHT_CHAR = '932c32bd-0002-47a2-835a-a8d455b859dd'
-    BRIGHTNESS_CHAR = '932c32bd-0003-47a2-835a-a8d455b859dd'
 
 class PATTERN(Enum):
     REGULAR = 1
@@ -613,78 +607,14 @@ class WandInterface(Peripheral, DefaultDelegate):
         elif cHandle == self._battery_notification_handle:
             self._on_battery(data)
 
-class HueInterface(Peripheral, DefaultDelegate):
-    def __init__(self, device, debug=False):
-        """Create a new wand
-
-        Arguments:
-            device {bluepy.ScanEntry} -- Device information
-
-        Keyword Arguments:
-            debug {bool} -- Print debug messages (default: {False})
-        """
-        super().__init__(None)
-        # Meta stuff
-        self.debug = debug
-        self._dev = device
-        self.name = device.getValueText(9)
-
-        if debug:
-            print("Hue Lamp: {}\n\rLamp Mac: {}".format(self.name, device.addr))
-
-        # Notification stuff
-        self.connected = False
-
-    def connect(self):
-        if self.debug:
-            print("Connecting to {}...".format(self.name))
-
-        super(HueInterface, self).connect(self._dev)
-
-        self._lock = threading.Lock()
-        self.connected = True
-        self.setDelegate(self)
-
-        self._hue_service = self.getServiceByUUID(_HUE.SERVICE.value)
-
-        if self.debug:
-            print("Connected to {}".format(self.name))
-
-        self.post_connect()
-
-        return self
-
-    def post_connect(self):
-        pass
-
-    def set_light(self, on=True):
-        if self.debug:
-            print("Setting light to {}".format(on))
-        with self._lock:
-            if not hasattr(self, "_light_handle"):
-                handle = self._hue_service.getCharacteristics(_HUE.LIGHT_CHAR.value)[0]
-                print(handle.getHandle())
-                self._light_handle = handle.getHandle()
-            return self.writeCharacteristic(self._light_handle, bytes([0]), withResponse=False)
-
 class GestureInterface(WandInterface):
     def __init__(self, device, debug=False):
         super(GestureInterface, self).__init__(device, debug)
-        self._should_keep_alive = 1
         self._post_connect_callbacks = {}
         self._spell_callbacks = {}
         self._quaternion_callbacks = {}
         self._button_press_callbacks = {}
         self._post_disconnect_callbacks = {}
-
-    def pause_keep_alive(self):
-        self._should_keep_alive = 0
-
-    def should_keep_alive(self):
-        return self._should_keep_alive
-
-    def resume_keep_alive(self):
-        self._should_keep_alive = 1
 
     def on(self, event, callback):
         id = super(GestureInterface, self).on(event, callback)

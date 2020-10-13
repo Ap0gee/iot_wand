@@ -63,12 +63,7 @@ class AsyncServerStateManager:
                         else:
                             if sec_ka >= sec_ka_max:
                                 sec_ka = 0
-                                if wands[0].should_keep_alive():
-                                    wands[0].keep_alive()
-                                else:
-                                    if debug:
-                                        print('skipping keep alive')
-                                wands[0].resume_keep_alive()
+                                wands[0].keep_alive()
                             else:
                                 sec_ka += 1
 
@@ -159,10 +154,6 @@ class GestureCaptureState(ServerState):
         if self.interface:
             self.interface.vibrate(PATTERN.BURST)
 
-            if self.interface.debug:
-                print("resuming keep alive...")
-            self.interface.resume_keep_alive()
-
     def on_quaternion(self, interface, x, y, z, w):
         if self.pressed:
             self.positions.append(tuple([x, -1 * y]))
@@ -236,9 +227,8 @@ class ProfileSelectState(ServerState):
         self.conn.clear_current_profile()
         self.press_start = self.press_end = timeit.default_timer()
         self.connections_count = len(self.conn.profiles())
-        self.interface.pause_keep_alive() #pause keep alive to avoid write conflicts (guessing)
-
         self.interface.vibrate(PATTERN.BURST)
+        time.sleep(.2)
         self.interface.set_led('#ffffff', True)
 
     def on_quaternion(self, interface, x, y, z, w):
