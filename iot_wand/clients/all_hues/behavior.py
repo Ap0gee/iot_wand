@@ -87,8 +87,8 @@ class ButtonManager():
         return self._press_end - self._press_start
 
 class LIGHTS_STATES(Enum):
-    BRIGHTNESS = 'brightness'
-    ENABLE = 'enable'
+    BRIGHTNESS = 'BRIGHTNESS'
+    ENABLE = 'ENABLE'
 
 lights_manager = LightsManager(IP_BRIDGE)
 button_manager = ButtonManager()
@@ -104,9 +104,9 @@ def on_button(pressed):
         time_pressed = button_manager.get_press_time()
 
         print(time_pressed)
-        print(lights_manager.state)
+        print("STATE: %s" % lights_manager.state)
 
-        if lights_manager.state == LIGHTS_STATES.BRIGHTNESS.value and time_pressed <= .5:
+        if lights_manager.state == LIGHTS_STATES.BRIGHTNESS.value and time_pressed >= 3:
             lights_manager.state = LIGHTS_STATES.ENABLE
 
 def on_spell(gesture, spell):
@@ -118,7 +118,7 @@ def on_spell(gesture, spell):
         if spell in ['aguamenti']:
             lights_manager.toggle_lights()
 
-        if spell in ['expelliarmus'] and lights_manager._lights_on:
+        if spell in ['expelliarmus'] and lights_manager.is_lights_on:
             lights_manager.state = LIGHTS_STATES.BRIGHTNESS
 
 def on_quaternion(x, y, z, w):
