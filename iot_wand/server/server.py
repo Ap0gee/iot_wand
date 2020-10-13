@@ -99,9 +99,7 @@ class AsyncServerStateManager:
     def _loop_state(self):
         while self.run_loop_state:
             try:
-                loop_thread = Process(target=self.get_state().on_loop)
-                loop_thread.start()
-                loop_thread.join(1)
+                self.get_state().on_loop()
                 time.sleep(1.5)
             except Exception as e:
                 print(e)
