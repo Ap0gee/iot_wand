@@ -129,6 +129,4 @@ def on_quaternion(x, y, z, w):
         divisor = 2
         _w = abs(int(w))
         if _w > 0:
-            if _w % divisor == 0:
-                lights_manager.brightness = _w / divisor
-                print(lights_manager.brightness)
+            print(_w)
