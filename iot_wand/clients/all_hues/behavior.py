@@ -51,14 +51,13 @@ button_manager = ButtonManager()
 
 def on_button(pressed):
     global lights_manager
-    lights_manager.toggle_lights()
     if pressed:
         button_manager.reset_press_timer()
         button_manager.start_press_timer()
     else:
         button_manager.end_press_timer()
         time_pressed = button_manager.get_press_time()
-        if time_pressed > 1:
+        if time_pressed > .5:
             lights_manager.toggle_lights()
 
 def on_spell(gesture, spell):

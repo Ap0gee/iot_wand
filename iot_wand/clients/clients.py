@@ -17,6 +17,7 @@ def main(dir_top):
                 python = 'python'
                 title = os.path.basename(path_client)
                 terminal_cmd = 'start cmd /K'
+                print(system)
                 if system == 'Linux':
                     terminal_cmd = 'lxterminal -e --title=%s' % title
                     python = '$py3'
