@@ -13,12 +13,12 @@ def main(dir_top):
                 print("Activating client: %s..." % entry.name)
                 path_client = entry.path
                 system = platform.system()
-                python = 'python '
+                python = 'python'
                 terminal_cmd = 'start cmd /K'
                 print(system)
                 if system == 'Linux':
-                    terminal_cmd = 'lxterminal -e --working-directory=%s' % dir_top
-                    python = '$py3'
+                    terminal_cmd = 'lxterminal -e'
+                    python = '%s' % os.path.join(dir_top, 'env/bin/python3')
                 cmd = '%s %s %s %s' % (terminal_cmd, python, os.path.join(path_client, 'client.py'), dir_top)
                 print(cmd)
                 subprocess.call(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
