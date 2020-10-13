@@ -20,7 +20,6 @@ def main():
 
 class AsyncServerStateManager:
     def __init__(self, mqtt_conn, config, debug=False):
-        self._lock = threading.Lock()
         self.conn = mqtt_conn
         self.interface = None
         self._state = self.set_state(SERVER_STATES.GESTURE_CAPTURE.value)
@@ -49,32 +48,30 @@ class AsyncServerStateManager:
             wand_scanner = WandScanner(debug=debug)
 
             while self.run_wand_management:
-                with self._lock:
-                    if not len(wands):
-                        wands = [
-                            GestureInterface(device, debug=debug)
-                            .on('post_connect', lambda interface: self.get_state().on_post_connect(interface))
-                            .on('post_disconnect', lambda interface: self.get_state().on_post_disconnect(interface))
-                            .on('button_press', lambda interface, pressed: self.get_state().on_button_press(interface, pressed))
-                            .on('quaternion', lambda interface, x, y, z, w: self.get_state().on_quaternion(interface, x, y, z, w))
-                            .connect()
-                            for device in wand_scanner.scan(discovery_callback=self._on_discovery)
-                        ]
+                if not len(wands):
+                    wands = [
+                        GestureInterface(device, debug=debug)
+                        .on('post_connect', lambda interface: self.get_state().on_post_connect(interface))
+                        .on('post_disconnect', lambda interface: self.get_state().on_post_disconnect(interface))
+                        .on('button_press', lambda interface, pressed: self.get_state().on_button_press(interface, pressed))
+                        .on('quaternion', lambda interface, x, y, z, w: self.get_state().on_quaternion(interface, x, y, z, w))
+                        .connect()
+                        for device in wand_scanner.scan(discovery_callback=self._on_discovery)
+                    ]
+                else:
+                    if not wands[0].connected:
+                        wands.clear()
+                        sec_ka = 0
                     else:
-                        if not wands[0].connected:
-                            wands.clear()
-                            sec_ka = 0
+                        if sec_ka >= sec_ka_max:
+                            sec_ka = 1
+                            ka_thread = threading.Thread(target=self.keep_wand_alive, args=(wands[0],))
+                            ka_thread.start()
+                            ka_thread.join(1)
                         else:
-                            if sec_ka >= sec_ka_max:
-                                sec_ka = 1
-                                ka_thread = threading.Thread(target=self.keep_wand_alive, args=(wands[0],))
-                                ka_thread.start()
-                                ka_thread.join(1)
-                            else:
-                                sec_ka += 1
-                        print(sec_ka)
-                        self.conn.ping_collect_clients()
-                        time.sleep(1)
+                            sec_ka += 1
+                    self.conn.ping_collect_clients()
+                    time.sleep(1)
 
         except (KeyboardInterrupt, Exception) as e:
             #self.conn.stop()
@@ -85,6 +82,7 @@ class AsyncServerStateManager:
             #self._wand_management_thread.join()
             #exit(1)
             print(e)
+            self.restart_wand_management()
 
     def restart_wand_management(self):
         print('Restarting wand management...')
