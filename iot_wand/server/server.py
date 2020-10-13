@@ -207,7 +207,6 @@ class GestureCaptureState(ServerState):
 
                 if self.press_end - self.press_start > 7:
                     interface.disconnect()
-                    exit(0)
 
                 else:
                     gesture = moosegesture.getGesture(self.positions)
