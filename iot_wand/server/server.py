@@ -44,7 +44,6 @@ class AsyncServerStateManager:
             sec_ka = 0
             sec_ka_max = broker['keepalive']
             wand_scanner = WandScanner(debug=debug)
-            ka_thread = None
 
             while self.run:
                 with self._lock:
@@ -65,10 +64,8 @@ class AsyncServerStateManager:
                         else:
                             if sec_ka >= sec_ka_max:
                                 sec_ka = 1
-                                if ka_thread is not None:
-                                    ka_thread.join(timeout=1)
                                 ka_thread = threading.Thread(target=self.keep_wand_alive, args=(wands[0],))
-                                ka_thread.start()
+                                ka_thread.join(sec_ka_max - 1)
                             else:
                                 sec_ka += 1
                         print(sec_ka)
@@ -90,6 +87,9 @@ class AsyncServerStateManager:
             wand.keep_alive()
         except Exception as e:
             print(e)
+            print('Restarting wand management...')
+            self._wand_management_thread.join(1)
+            self._wand_management_thread.start()
 
     def _on_discovery(self, devices):
         print('setting state to capture gesture state')
