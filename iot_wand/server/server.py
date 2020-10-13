@@ -33,13 +33,16 @@ class AsyncServerStateManager:
         self.debug = debug
         self.config = config
 
-        if not self._wand_management_thread:
-            self._wand_management_thread = threading.Thread(target=self._manage_wands, args=(self.debug, self.config))
-            self._wand_management_thread.start()
+        #if not self._wand_management_thread:
+        #    self._wand_management_thread = threading.Thread(target=self._manage_wands, args=(self.debug, self.config))
+        #    self._wand_management_thread.start()
+
 
         if not self._loop_state_thread:
             self._loop_state_thread = threading.Thread(target=self._loop_state)
             self._loop_state_thread.start()
+
+        self._manage_wands(self.debug, self.config)
 
     def stop_threads(self):
         self.run_loop_state = self.run_wand_management = False
