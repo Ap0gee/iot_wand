@@ -86,7 +86,7 @@ class AsyncServerStateManager:
         try:
             wand.keep_alive()
         except Exception as e:
-            pass
+            print(e)
 
     def _on_discovery(self, devices):
         print('setting state to capture gesture state')
