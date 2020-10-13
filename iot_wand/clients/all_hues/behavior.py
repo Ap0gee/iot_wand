@@ -114,8 +114,7 @@ def on_spell(gesture, spell):
     if lights_manager.state == LIGHTS_STATES.ENABLE.value:
         if spell in ['aguamenti']:
             lights_manager.toggle_lights()
-
-        if spell in ['expelliarmus'] and lights_manager.is_lights_on:
+        elif spell in ['expelliarmus']:
             lights_manager.state = LIGHTS_STATES.BRIGHTNESS
 
 def on_quaternion(x, y, z, w):
