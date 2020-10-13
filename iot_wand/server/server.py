@@ -66,6 +66,7 @@ class AsyncServerStateManager:
                             wands[0].keep_alive()
                         else:
                             sec_ka += 1
+                    print(sec_ka)
                     self.conn.ping_collect_clients()
                     time.sleep(1)
 
