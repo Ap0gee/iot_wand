@@ -39,10 +39,7 @@ class AsyncServerStateManager:
 
         if not self._loop_state_thread:
             self._loop_state_thread = threading.Thread(target=self._loop_state)
-            self._loop_state_thread.start()
-
-    def start_state_loop(self):
-        self._loop_state_thread.start()
+            #self._loop_state_thread.start()
 
     def stop_threads(self):
         self.run_loop_state = self.run_wand_management = False
@@ -82,6 +79,7 @@ class AsyncServerStateManager:
                         else:
                             sec_ka += 1
                     self.conn.ping_collect_clients()
+                    self.get_state().on_loop()
                     time.sleep(1)
 
         except (KeyboardInterrupt, Exception) as e:
