@@ -129,5 +129,7 @@ def on_quaternion(x, y, z, w):
         _w = abs(int(w))
         if _w > 0:
             if _w % 3 == 0:
-                lights_manager.brightness = _w / 3
+                b = int(_w / 3)
+                print(str(b))
+                lights_manager.brightness = b
 
