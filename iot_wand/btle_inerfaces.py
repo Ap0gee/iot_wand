@@ -53,7 +53,6 @@ class WandInterface(Peripheral, DefaultDelegate):
         self.debug = debug
         self._dev = device
         self.name = device.getValueText(9)
-        self._lock = threading.RLock()
 
         if debug:
             print("Wand: {}\n\rWand Mac: {}".format(self.name, device.addr))
@@ -79,6 +78,8 @@ class WandInterface(Peripheral, DefaultDelegate):
             print("Connecting to {}...".format(self.name))
 
         super(WandInterface, self).connect(self._dev)
+
+        self._lock = threading.RLock()
 
         self.connected = True
         self.setDelegate(self)

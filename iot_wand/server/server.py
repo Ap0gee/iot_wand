@@ -11,8 +11,7 @@ import threading
 import os
 import platform
 import subprocess
-from multiprocessing import Process
-print('imported all')
+
 def main():
     config = _h.yaml_read(_s.PATH_CONFIG)
     conn = GestureServer(config, debug=_s.DEBUG)
@@ -20,7 +19,6 @@ def main():
 
 class AsyncServerStateManager:
     def __init__(self, mqtt_conn, config, debug=False):
-        self._lock = threading.RLock()
         self.conn = mqtt_conn
         self.interface = None
         self._state = self.set_state(SERVER_STATES.SERVER.value)
