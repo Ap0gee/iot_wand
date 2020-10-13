@@ -63,7 +63,7 @@ class AsyncServerStateManager:
                     else:
                         if sec_ka >= sec_ka_max:
                             sec_ka = 1
-                            thread = threading.Thread(target=wands[0].keep_alive)
+                            thread = threading.Thread(target=self.keep_wand_alive, args=(wands[0],))
                             thread.start()
                             thread.join()
                         else:
@@ -81,6 +81,12 @@ class AsyncServerStateManager:
             #self._wand_management_thread.join()
             #exit(1)
             print(e)
+
+    def keep_wand_alive(self, wand):
+        try:
+            wand.keep_alive()
+        except Exception as e:
+            pass
 
     def _on_discovery(self, devices):
         print('setting state to capture gesture state')
