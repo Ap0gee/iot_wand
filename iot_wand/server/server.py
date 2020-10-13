@@ -20,6 +20,7 @@ def main():
 
 class AsyncServerStateManager:
     def __init__(self, mqtt_conn, config, debug=False):
+        self._lock = threading.Lock()
         self.conn = mqtt_conn
         self.interface = None
         self._state = self.set_state(SERVER_STATES.GESTURE_CAPTURE.value)
@@ -48,30 +49,31 @@ class AsyncServerStateManager:
             wand_scanner = WandScanner(debug=debug)
 
             while self.run_wand_management:
-                if not len(wands):
-                    wands = [
-                        GestureInterface(device, debug=debug)
-                        .on('post_connect', lambda interface: self.get_state().on_post_connect(interface))
-                        .on('post_disconnect', lambda interface: self.get_state().on_post_disconnect(interface))
-                        .on('button_press', lambda interface, pressed: self.get_state().on_button_press(interface, pressed))
-                        .on('quaternion', lambda interface, x, y, z, w: self.get_state().on_quaternion(interface, x, y, z, w))
-                        .connect()
-                        for device in wand_scanner.scan(discovery_callback=self._on_discovery)
-                    ]
-                else:
-                    if not wands[0].connected:
-                        wands.clear()
-                        sec_ka = 0
+                with self._lock:
+                    if not len(wands):
+                        wands = [
+                            GestureInterface(device, debug=debug)
+                            .on('post_connect', lambda interface: self.get_state().on_post_connect(interface))
+                            .on('post_disconnect', lambda interface: self.get_state().on_post_disconnect(interface))
+                            .on('button_press', lambda interface, pressed: self.get_state().on_button_press(interface, pressed))
+                            .on('quaternion', lambda interface, x, y, z, w: self.get_state().on_quaternion(interface, x, y, z, w))
+                            .connect()
+                            for device in wand_scanner.scan(discovery_callback=self._on_discovery)
+                        ]
                     else:
-                        if sec_ka >= sec_ka_max:
-                            sec_ka = 1
-                            ka_thread = threading.Thread(target=self.keep_wand_alive, args=(wands[0],))
-                            ka_thread.start()
-                            ka_thread.join(1)
+                        if not wands[0].connected:
+                            wands.clear()
+                            sec_ka = 0
                         else:
-                            sec_ka += 1
-                    self.conn.ping_collect_clients()
-                    time.sleep(1)
+                            if sec_ka >= sec_ka_max:
+                                sec_ka = 1
+                                ka_thread = threading.Thread(target=self.keep_wand_alive, args=(wands[0],))
+                                ka_thread.start()
+                                ka_thread.join(1)
+                            else:
+                                sec_ka += 1
+                        self.conn.ping_collect_clients()
+                        time.sleep(1)
 
         except (KeyboardInterrupt, Exception) as e:
             #self.conn.stop()
@@ -112,11 +114,12 @@ class AsyncServerStateManager:
     def _loop_state(self):
         while self.run_loop_state:
             try:
-                self.get_state().on_loop()
+                loop_thread = threading.Thread(target=self.get_state().on_loop)
+                loop_thread.start()
+                loop_thread.join(1)
                 time.sleep(2)
             except Exception as e:
                 print(e)
-                self.restart_loop_state()
 
     def set_state(self, state):
         self._state = state(self)
@@ -282,20 +285,19 @@ class ProfileSelectState(ServerState):
             print(self.conn._selected_profile_index)
 
             profile = self.conn.current_profile()
+            if profile != None:
+                if profile.uuid != self.last_profile_uuid:
 
-            if profile != None and profile.uuid != self.last_profile_uuid:
-                print('switching to', profile.uuid)
+                    print('switching to', profile.uuid)
 
-                self.last_profile_uuid = profile.uuid
+                    self.last_profile_uuid = profile.uuid
 
-                if profile.vibrate_on:
-                    self.interface.vibrate(profile.vibrate_pattern)
-                    time.sleep(.2)
-                self.interface.set_led(profile.led_color, profile.led_on)
+                    if profile.vibrate_on:
+                        self.interface.vibrate(profile.vibrate_pattern)
+                    self.interface.set_led(profile.led_color, profile.led_on)
 
         except (KeyboardInterrupt, Exception) as e:
             print(e)
-            self.manager.restart_loop_state()
 
     def on_button_press(self, interface, pressed):
         if pressed:
