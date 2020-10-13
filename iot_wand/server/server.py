@@ -44,6 +44,7 @@ class AsyncServerStateManager:
             sec_ka = 0
             sec_ka_max = broker['keepalive']
             wand_scanner = WandScanner(debug=debug)
+            ka_thread = None
 
             while self.run:
                 with self._lock:
@@ -64,9 +65,10 @@ class AsyncServerStateManager:
                         else:
                             if sec_ka >= sec_ka_max:
                                 sec_ka = 1
-                                thread = threading.Thread(target=self.keep_wand_alive, args=(wands[0],))
-                                thread.start()
-                                thread.join()
+                                if ka_thread is not None:
+                                    ka_thread.join()
+                                ka_thread = threading.Thread(target=self.keep_wand_alive, args=(wands[0],))
+                                ka_thread.start()
                             else:
                                 sec_ka += 1
                         print(sec_ka)
