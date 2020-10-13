@@ -41,7 +41,7 @@ if __name__ == '__main__':
         exit_status = 1
 
     main()
-    input()
+    input("press Enter to exit.")
     exit(exit_status)
 
 
