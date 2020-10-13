@@ -7,7 +7,6 @@ class LightsManager():
     def __init__(self, ip_addr):
         self._bridge = Bridge(ip_addr)
         self._bridge.connect()
-        self._lights_on = True
 
     @property
     def is_lights_on(self):
@@ -26,10 +25,9 @@ class LightsManager():
 
     def toggle_lights(self):
         for light in self._bridge.get_light_objects('list'):
-            is_on = not self.is_lights_on
+            is_on = not light.on
             print(is_on)
             light.on = is_on
-            self.is_lights_on = is_on
 
 class ButtonManager():
     def __init__(self):
@@ -53,13 +51,14 @@ button_manager = ButtonManager()
 
 def on_button(pressed):
     global lights_manager
+    lights_manager.toggle_lights()
     if pressed:
         button_manager.reset_press_timer()
         button_manager.start_press_timer()
     else:
         button_manager.end_press_timer()
         time_pressed = button_manager.get_press_time()
-        if time_pressed > 2:
+        if time_pressed > 1:
             lights_manager.toggle_lights()
 
 def on_spell(gesture, spell):
