@@ -10,7 +10,6 @@ class _INFO(Enum):
     SOFTWARE_CHAR = '64A70013-F691-4B93-A6F4-0968F5B648F8'
     HARDWARE_CHAR = '64A70001-F691-4B93-A6F4-0968F5B648F8'
 
-
 class _IO(Enum):
     SERVICE = '64A70012-F691-4B93-A6F4-0968F5B648F8'
     BATTERY_CHAR = '64A70007-F691-4B93-A6F4-0968F5B648F8'
@@ -18,7 +17,6 @@ class _IO(Enum):
     VIBRATOR_CHAR = '64A70008-F691-4B93-A6F4-0968F5B648F8'
     LED_CHAR = '64A70009-F691-4B93-A6F4-0968F5B648F8'
     KEEP_ALIVE_CHAR = '64A7000F-F691-4B93-A6F4-0968F5B648F8'
-
 
 class _SENSOR(Enum):
     SERVICE = '64A70011-F691-4B93-A6F4-0968F5B648F8'
@@ -114,10 +112,10 @@ class WandInterface(Peripheral, DefaultDelegate):
             print("Disconnected from {}".format(self.name))
 
     def post_disconnect(self):
-        self._lock.release()
-        """Do anything necessary after disconnecting
-        """
-        pass
+        try:
+            self._lock.release()
+        except Exception:
+            pass
 
     def get_organization(self):
         """Get organization of device
@@ -202,9 +200,6 @@ class WandInterface(Peripheral, DefaultDelegate):
                 self._alive_handle = handle.getHandle()
             return self.writeCharacteristic(self._alive_handle, bytes([1]), withResponse=False)
 
-    def get_lock(self):
-        return self._lock
-
     def vibrate(self, pattern=PATTERN.REGULAR):
         """Vibrate wand with pattern
 
@@ -259,44 +254,6 @@ class WandInterface(Peripheral, DefaultDelegate):
                 handle = self._io_service.getCharacteristics(_IO.LED_CHAR.value)[0]
                 self._led_handle = handle.getHandle()
             return self.writeCharacteristic(self._led_handle, bytes(message), withResponse=False)
-
-    def vibrate_and_led(self, pattern=PATTERN.REGULAR, color="0x2185d0", on=True):
-        with self._lock:
-            led_message = []
-            if on:
-                led_message.append(1)
-            else:
-                led_message.append(0)
-
-            # I got this from Kano's node module
-            color = int(color.replace("#", ""), 16)
-            r = (color >> 16) & 255
-            g = (color >> 8) & 255
-            b = color & 255
-            rgb = (((r & 248) << 8) + ((g & 252) << 3) + ((b & 248) >> 3))
-            led_message.append(rgb >> 8)
-            led_message.append(rgb & 0xff)
-
-            if self.debug:
-                print("Setting LED to {}".format(led_message))
-
-            if not hasattr(self, "_led_handle"):
-                handle = self._io_service.getCharacteristics(_IO.LED_CHAR.value)[0]
-                self._led_handle = handle.getHandle()
-                self.writeCharacteristic(self._led_handle, bytes(led_message), withResponse=False)
-
-            if isinstance(pattern, PATTERN):
-                vib_message = [pattern.value]
-            else:
-                vib_message = [pattern]
-
-            if self.debug:
-                print("Vibrating with pattern {}".format(vib_message))
-
-            if not hasattr(self, "_vibrator_handle"):
-                handle = self._io_service.getCharacteristics(_IO.VIBRATOR_CHAR.value)[0]
-                self._vibrator_handle = handle.getHandle()
-                self.writeCharacteristic(self._vibrator_handle, bytes(vib_message), withResponse=False)
 
     def on(self, event, callback):
         """Add an event listener
@@ -714,11 +671,12 @@ class GestureInterface(WandInterface):
         return self
 
     def post_connect(self):
+        super(GestureInterface, self).post_connect()
         for callback in self._post_connect_callbacks.values():
             callback(self)
 
     def post_disconnect(self):
-        self._lock.release()
+        super(GestureInterface, self).post_disconnect()
         for callback in self._post_disconnect_callbacks.values():
             callback(self)
 
