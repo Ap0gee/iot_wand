@@ -87,7 +87,6 @@ class AsyncServerStateManager:
                         time.sleep(1)
                 except Exception as e:
                     print(e)
-                    continue
 
         except (KeyboardInterrupt, Exception) as e:
             #self.conn.stop()

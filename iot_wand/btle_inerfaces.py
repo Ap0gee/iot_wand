@@ -714,12 +714,11 @@ class GestureInterface(WandInterface):
         return self
 
     def post_connect(self):
-        super(WandInterface, self).post_connect()
         for callback in self._post_connect_callbacks.values():
             callback(self)
 
     def post_disconnect(self):
-        super(WandInterface, self).post_disconnect()
+        self._lock.release()
         for callback in self._post_disconnect_callbacks.values():
             callback(self)
 
