@@ -27,19 +27,22 @@ class AsyncServerStateManager:
         self._loop_state_thread = None
         self.run_wand_management = True
         self.run_loop_state = True
+        self._debug = debug
+        self._config = config
 
-        if not self._wand_management_thread:
-            self._wand_management_thread = threading.Thread(target=self._manage_wands, args=(debug, config))
-            self._wand_management_thread.start()
-
-        if not self._loop_state_thread:
-            self._loop_state_thread = threading.Thread(target=self._loop_state)
-            self._loop_state_thread.start()
+        self.start_threads()
 
     def stop_threads(self):
         self.run_loop_state = self.run_wand_management = False
         self._wand_management_thread.join(1)
         self._loop_state_thread.join(1)
+
+    def start_threads(self):
+        self._wand_management_thread = threading.Thread(target=self._manage_wands, args=(self._debug, self._config))
+        self._wand_management_thread.start()
+
+        self._loop_state_thread = threading.Thread(target=self._loop_state)
+        self._loop_state_thread.start()
 
     def _manage_wands(self, debug, config):
         try:
@@ -71,8 +74,7 @@ class AsyncServerStateManager:
                                 try:
                                     wands[0].keep_alive()
                                 except Exception as e:
-                                    print(e)
-                                    continue
+                                    wands[0].disconnect()
                             else:
                                 sec_ka += 1
                         self.conn.ping_collect_clients()
@@ -129,6 +131,8 @@ class ServerState():
     def on_post_disconnect(self, interface):
         print('POST DISCONNECT')
         self.manager.stop_threads()
+        print('restarting threads...')
+        self.manager.start_threads()
 
     def on_quaternion(self, interface, x, y, z, w):
         pass
