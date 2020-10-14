@@ -114,6 +114,7 @@ class WandInterface(Peripheral, DefaultDelegate):
             print("Disconnected from {}".format(self.name))
 
     def post_disconnect(self):
+        self._lock.release()
         """Do anything necessary after disconnecting
         """
         pass
@@ -713,10 +714,12 @@ class GestureInterface(WandInterface):
         return self
 
     def post_connect(self):
+        super(WandInterface).post_connect()
         for callback in self._post_connect_callbacks.values():
             callback(self)
 
     def post_disconnect(self):
+        super(WandInterface).post_disconnect()
         for callback in self._post_disconnect_callbacks.values():
             callback(self)
 

@@ -140,7 +140,7 @@ class ClientConnection():
     def disconnect(self):
         self._mqttc.disconnect()
         if self._async:
-            self._mqttc.loop_stop()
+            self._mqttc.loop_stop(force=True)
 
     def start(self, as_async=True, async_callback=None):
         self.connect()
