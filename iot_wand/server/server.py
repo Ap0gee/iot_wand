@@ -131,8 +131,8 @@ class ServerState():
     def on_post_disconnect(self, interface):
         print('POST DISCONNECT')
         self.manager.stop_threads()
-        print('restarting threads...')
-        self.manager.start_threads()
+        print('restarting server...')
+        main()
 
     def on_quaternion(self, interface, x, y, z, w):
         pass
