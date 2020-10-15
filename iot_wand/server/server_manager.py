@@ -25,10 +25,11 @@ def mk_server_cmd(dir, module, new_terminal=True):
     return cmd
 
 def main(dir_top):
-    cmd = mk_server_cmd(dir_top, 'server_manager.py').split()
-    subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    cmd = mk_server_cmd(dir_top, 'server_manager.py')
+    subprocess.call(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
 if __name__ == '__main__':
+    print('Starting server manager...')
     dir_top = sys.argv[1]
     sys.path.append(dir_top)
     cmd = mk_server_cmd(dir_top, 'server.py', new_terminal=False).split()
