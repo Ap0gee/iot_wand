@@ -43,6 +43,7 @@ class AsyncServerStateManager:
             except Exception as e:
                 print(e)
                 continue
+        del self
 
     def start_threads(self):
         print('starting threads...')
