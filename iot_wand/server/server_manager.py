@@ -40,7 +40,7 @@ if __name__ == '__main__':
             if p.returncode != 0:
                 raise subprocess.CalledProcessError(p.returncode, p.args)
         input()
-    except (Exception, KeyboardInterrupt) as e:
+    except (Exception, KeyboardInterrupt, subprocess.CalledProcessError) as e:
         print(e)
         input()
 
