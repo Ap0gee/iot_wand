@@ -38,7 +38,7 @@ if __name__ == '__main__':
         while 1:
             if not process:
                 print('Spawning server process...')
-                process = subprocess.run(cmd, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                process = subprocess.run(cmd, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.STD_ERROR_HANDLE)
             else:
                 ret = process.check_returncode()
                 print(ret)
