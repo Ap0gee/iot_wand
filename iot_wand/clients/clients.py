@@ -25,6 +25,5 @@ def main(dir_top):
                 cmd = '%s %s %s %s' % (terminal_cmd, python, os.path.join(path_client, 'client.py'), dir_top)
                 print(cmd)
                 subprocess.call(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-
     else:
         print("No active clients.")

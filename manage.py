@@ -6,22 +6,18 @@ __version__ = '0.9.0'
 import argparse
 import iot_wand.settings as _s
 import os
-from multiprocessing import Process
-import time
-
-def spawn_server():
-    from iot_wand.server import server
-    p = Process(server.main())
-    p.start()
-    return p
+import sys
 
 def main(args):
     if args.to_run == 'server':
-        server = spawn_server()
-       
+        from iot_wand.server import server
+        server.main()
+
     if args.to_run == 'clients':
         from iot_wand.clients import clients
         clients.main(os.path.dirname(_s.DIR_BASE))
+
+    print(args)
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -50,5 +46,11 @@ def parse_args():
     return parser.parse_args()
 
 if __name__ == '__main__':
-    args = parse_args()
-    main(args)
+    try:
+        while 1:
+            del sys.argv[1:]
+            [sys.argv.append(i) for i in input("Enter a command:").split()]
+            args = parse_args()
+            main(args)
+    except KeyboardInterrupt as e:
+        exit(1)
