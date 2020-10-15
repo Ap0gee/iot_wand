@@ -26,7 +26,7 @@ def mk_server_cmd(dir, module, new_terminal=True):
 
 def main(dir_top):
     cmd = mk_server_cmd(dir_top, 'server_manager.py')
-    subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 if __name__ == '__main__':
     print('Starting server manager...')
@@ -35,7 +35,7 @@ if __name__ == '__main__':
     cmd = mk_server_cmd(dir_top, 'server.py', new_terminal=True)
 
     try:
-        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output = p.communicate()[0]
         if p.returncode != 0:
            print("CAPTURED OUTPUT %s %s" % (p.returncode, output))
