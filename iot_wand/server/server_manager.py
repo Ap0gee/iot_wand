@@ -39,9 +39,9 @@ if __name__ == '__main__':
             try:
                 if not process:
                     print('Spawning server process...')
-                    process = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                    process = subprocess.run(cmd, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
                 else:
-                    print(process.check_returncode())
+                    print(process.check_returncode(), end="\r\n")
             except (Exception, subprocess.CalledProcessError) as e:
                 print("EXCEPTION IN CHILD PROCESS")
                 #non-zero exit status
