@@ -24,22 +24,28 @@ def mk_server_cmd(dir, module, new_terminal=True):
     print(cmd)
     return cmd
 
+def start_subprocess(cmd):
+    return subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+
 def main(dir_top):
     cmd = mk_server_cmd(dir_top, 'server_manager.py')
-    subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    start_subprocess(cmd)
 
 if __name__ == '__main__':
     print('Starting server manager...')
     dir_top = sys.argv[1]
     sys.path.append(dir_top)
     cmd = mk_server_cmd(dir_top, 'server.py', new_terminal=True)
+    process = start_subprocess(cmd)
     try:
-        with subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, bufsize=1, universal_newlines=True) as p:
-            for line in p.stdout:
-                print(line, end='') # process line here
-            if p.returncode != 0:
-                raise subprocess.CalledProcessError(p.returncode, p.args)
-        input()
+        while True:
+            resp = process.poll()
+            if resp is not None:
+                print('restarting process...')
+                process = start_subprocess(cmd)
+            time.sleep(1)
+
     except (Exception, KeyboardInterrupt, subprocess.CalledProcessError) as e:
         print(e)
         input()
