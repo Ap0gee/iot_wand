@@ -41,7 +41,7 @@ if __name__ == '__main__':
     try:
         while True:
             resp = process.poll()
-            print(resp)
+            print('server manager resp: %s' % resp)
             if resp is not None:
                 print('restarting process...')
                 process = start_subprocess(cmd)

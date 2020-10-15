@@ -74,6 +74,12 @@ class AsyncServerStateManager:
                             else:
                                 sec_ka += 1
 
+                            try:
+                                status = wands[0].getStatus()
+                                print(status)
+                            except Exception as e:
+                                raise ConnectionAbortedError
+
                         self.conn.ping_collect_clients()
                         time.sleep(1)
 
