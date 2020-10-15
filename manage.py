@@ -14,8 +14,8 @@ def main(args):
 
     if hasattr(args, 'to_run'):
         if args.to_run == 'server':
-            from iot_wand.server import server
-            server.main()
+            from iot_wand.server import server_manager
+            server_manager.main(dir_top)
 
         if args.to_run == 'clients':
             from iot_wand.clients import clients
@@ -71,4 +71,3 @@ def parse_args():
 if __name__ == '__main__':
     args = parse_args()
     main(args)
-    input()

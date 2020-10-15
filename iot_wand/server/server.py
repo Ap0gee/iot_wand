@@ -1,8 +1,3 @@
-from iot_wand.mqtt_connections import GestureServer, ClientConnection, TOPICS, SYS_LEVELS
-from iot_wand.btle_scanners import WandScanner
-from iot_wand.btle_inerfaces import GestureInterface, PATTERN
-import iot_wand.server.settings as _s
-import iot_wand.helpers as _h
 from enum import Enum
 import moosegesture
 import timeit
@@ -12,11 +7,6 @@ import os
 import platform
 import subprocess
 import sys
-
-def main():
-    config = _h.yaml_read(_s.PATH_CONFIG)
-    conn = GestureServer(config, debug=_s.DEBUG)
-    conn.start(as_async=True, async_callback=lambda _conn: AsyncServerStateManager(_conn, config, _s.DEBUG))
 
 class AsyncServerStateManager:
     def __init__(self, mqtt_conn, config, debug=False):
@@ -318,7 +308,6 @@ class SERVER_STATES(Enum):
     PROFILE_SELECT = ProfileSelectState
     SERVER = ServerState
 
-'''
 if __name__ == '__main__':
     dir_top = sys.argv[1]
     sys.path.append(dir_top)
@@ -337,5 +326,4 @@ if __name__ == '__main__':
     except Exception as e:
         print(e)
         exit(1)
-'''
 
