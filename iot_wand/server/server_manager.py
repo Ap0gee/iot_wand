@@ -41,10 +41,11 @@ if __name__ == '__main__':
     try:
         while True:
             resp = process.poll()
+            print(resp)
             if resp is not None:
                 print('restarting process...')
-                process = start_subprocess(cmd)
-            time.sleep(1)
+                #process = start_subprocess(cmd)
+            time.sleep(2)
 
     except (Exception, KeyboardInterrupt, subprocess.CalledProcessError) as e:
         print(e)
