@@ -38,7 +38,6 @@ if __name__ == '__main__':
             print(cmd)
             try:
                 process = subprocess.run(cmd, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-                stderr, stdout = process.check_returncode()
             except subprocess.CalledProcessError as e:
                 #non-zero exit status
                 if e.returncode == 2:
