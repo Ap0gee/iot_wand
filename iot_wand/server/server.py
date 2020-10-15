@@ -47,7 +47,7 @@ class AsyncServerStateManager:
             sec_ka = 1
             sec_ka_max = broker['keepalive']
             sec_st = 1
-            sec_st_max = 3
+            sec_st_max = 10
             wand_scanner = WandScanner(debug=debug)
 
             while self.run_wand_management:
@@ -82,6 +82,7 @@ class AsyncServerStateManager:
                                     status = wands[0].getStatus()
                                     print("WAND STATUS=%s" % status)
                                 except Exception as e:
+                                    print("WAND STATUS ERROR=%s" % e)
                                     raise ConnectionAbortedError
                             else:
                                 sec_st += 1
