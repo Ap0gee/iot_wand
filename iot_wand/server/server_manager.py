@@ -41,6 +41,7 @@ if __name__ == '__main__':
                     print('Spawning server process...')
                     process = subprocess.run(cmd, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
                     process.wait()
+                    print("PROCESS WAITED FOR")
                     process_needed = True
                     continue
             except (Exception, subprocess.CalledProcessError) as e:
