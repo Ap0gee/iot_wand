@@ -26,21 +26,19 @@ def mk_server_cmd(dir, module, new_terminal=True):
 
 def main(dir_top):
     cmd = mk_server_cmd(dir_top, 'server_manager.py')
-    subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    output = p.communicate()[0]
-    if p.returncode != 0:
-           print("CAPTURED OUTPUT FROM MAIN %s %s" % (p.returncode, output))
+    subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
 if __name__ == '__main__':
     print('Starting server manager...')
     dir_top = sys.argv[1]
     sys.path.append(dir_top)
     cmd = mk_server_cmd(dir_top, 'server.py', new_terminal=True)
-
     try:
-        p = subprocess.run(cmd, shell=True)
-        p.check_returncode()
-        input()
+        p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        while 1:
+            print(p.poll())
+            time.sleep(3)
+
     except (Exception, KeyboardInterrupt) as e:
         print(e)
         input()
