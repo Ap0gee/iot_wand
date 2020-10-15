@@ -40,9 +40,7 @@ if __name__ == '__main__':
                 print('Spawning server process...')
                 process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             else:
-                out, err = process.communicate()
-                print(out, err)
-                print (process.returncode)
+                print(process.returncode)
             time.sleep(3)
     except (Exception, KeyboardInterrupt) as e:
         print(e)
