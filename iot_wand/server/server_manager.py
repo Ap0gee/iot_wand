@@ -44,6 +44,7 @@ if __name__ == '__main__':
             print('server manager resp: %s' % resp)
             if resp is not None:
                 print('restarting process...')
+                process.terminate()
                 process = start_subprocess(cmd)
             time.sleep(2)
 
