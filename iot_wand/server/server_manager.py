@@ -34,9 +34,14 @@ if __name__ == '__main__':
     sys.path.append(dir_top)
     cmd = mk_server_cmd(dir_top, 'server.py', new_terminal=True)
     try:
-        p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        process = subprocess.Popen(cmd, shell=True)
         while 1:
-            print(p.poll())
+            nextline = process.stdout.readline()
+            if nextline == '' and process.poll() is not None:
+                break
+            sys.stdout.write(nextline)
+            sys.stdout.flush()
+
             time.sleep(3)
 
     except (Exception, KeyboardInterrupt) as e:
