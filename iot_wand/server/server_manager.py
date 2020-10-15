@@ -49,5 +49,4 @@ if __name__ == '__main__':
 
     except (Exception, KeyboardInterrupt, subprocess.CalledProcessError) as e:
         print(e)
-        input()
 
