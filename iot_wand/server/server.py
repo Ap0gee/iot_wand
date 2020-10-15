@@ -37,8 +37,11 @@ class AsyncServerStateManager:
         self.conn.stop()
         print('stopping threads...')
         while self._wand_management_thread.is_alive() or self._loop_state_thread.is_alive():
-            self._wand_management_thread.join()
-            self._loop_state_thread.join()
+            try:
+                self._wand_management_thread.join()
+                self._loop_state_thread.join()
+            except:
+                continue
 
     def start_threads(self):
         print('starting threads...')
@@ -81,7 +84,6 @@ class AsyncServerStateManager:
                                     wands[0].keep_alive()
                                 except Exception as e:
                                     raise ConnectionAbortedError
-
                             else:
                                 sec_ka += 1
 
