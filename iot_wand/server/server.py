@@ -1,21 +1,14 @@
-from iot_wand.mqtt_connections import GestureServer, ClientConnection, TOPICS, SYS_LEVELS
-from iot_wand.btle_scanners import WandScanner
-from iot_wand.btle_inerfaces import GestureInterface, PATTERN
-import iot_wand.server.settings as _s
-import iot_wand.helpers as _h
 from enum import Enum
 import moosegesture
 import timeit
 import time
 import threading
 import os
-import platform
-import subprocess
+import sys
 
-def main():
-    config = _h.yaml_read(_s.PATH_CONFIG)
-    conn = GestureServer(config, debug=_s.DEBUG)
-    conn.start(as_async=True, async_callback=lambda _conn: AsyncServerStateManager(_conn, config, _s.DEBUG))
+EXIT_STATUS_OK = 0
+EXIT_STATUS_ERR = 1
+EXIT_STATUS_RESTART = 2
 
 class AsyncServerStateManager:
     def __init__(self, mqtt_conn, config, debug=False):
@@ -92,6 +85,7 @@ class AsyncServerStateManager:
 
         except (KeyboardInterrupt, Exception) as e:
             print(e)
+            exit(EXIT_STATUS_ERR)
 
     def _on_discovery(self, devices):
         pass
@@ -103,6 +97,7 @@ class AsyncServerStateManager:
                 time.sleep(1)
             except(KeyboardInterrupt, Exception) as e:
                 print(e)
+                exit(EXIT_STATUS_ERR)
 
     def set_state(self, state):
         self._state = state(self)
@@ -130,7 +125,7 @@ class ServerState():
     def on_post_disconnect(self, interface):
         print('POST DISCONNECT')
         self.manager.stop_threads()
-        exit(1)
+        exit(EXIT_STATUS_RESTART)
 
     def on_quaternion(self, interface, x, y, z, w):
         pass
@@ -143,7 +138,6 @@ class ServerState():
 
     def switch(self, state):
         return self.manager.set_state(state)
-
 
 class GestureCaptureState(ServerState):
     def __init__(self, manager):
@@ -310,10 +304,29 @@ class ProfileSelectState(ServerState):
 
                 if self.press_end - self.press_start > 7:
                     interface.disconnect()
-                    exit(0)
-
 
 class SERVER_STATES(Enum):
     GESTURE_CAPTURE = GestureCaptureState
     PROFILE_SELECT = ProfileSelectState
     SERVER = ServerState
+
+if __name__ == '__main__':
+    dir_top = sys.argv[1]
+    sys.path.append(dir_top)
+
+    try:
+        from iot_wand.mqtt_connections import GestureServer, ClientConnection, TOPICS, SYS_LEVELS
+        from iot_wand.btle_scanners import WandScanner
+        from iot_wand.btle_inerfaces import GestureInterface, PATTERN
+        import iot_wand.server.settings as _s
+        import iot_wand.helpers as _h
+
+        config = _h.yaml_read(_s.PATH_CONFIG)
+        conn = GestureServer(config, debug=_s.DEBUG)
+        conn.start(as_async=True, async_callback=lambda _conn: AsyncServerStateManager(_conn, config, _s.DEBUG))
+
+    except Exception as e:
+        print(e)
+        exit(EXIT_STATUS_ERR)
+
+
