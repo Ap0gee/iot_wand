@@ -11,6 +11,7 @@ def main(args):
     if args.to_run == 'server':
         from iot_wand.server import server
         while 1:
+            print('starting server...')
             p = Process(server.main())
             p.start()
             p.join()
