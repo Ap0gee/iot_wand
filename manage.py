@@ -6,11 +6,14 @@ __version__ = '0.9.0'
 import argparse
 import iot_wand.settings as _s
 import os
-
+from multiprocessing import Process
 def main(args):
     if args.to_run == 'server':
         from iot_wand.server import server
-        server.main()
+        while 1:
+            p = Process(server.main())
+            p.start()
+            p.join()
 
     if args.to_run == 'clients':
         from iot_wand.clients import clients

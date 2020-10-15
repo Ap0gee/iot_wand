@@ -12,9 +12,6 @@ import os
 import platform
 import subprocess
 
-run_wand_management = True
-run_loop_state = True
-
 def main():
     config = _h.yaml_read(_s.PATH_CONFIG)
     conn = GestureServer(config, debug=_s.DEBUG)
@@ -28,26 +25,21 @@ class AsyncServerStateManager:
         self._wand_management_thread = None
         self._ping_clients_thread = None
         self._loop_state_thread = None
-
+        self.run_wand_management = True
+        self.run_loop_state = True
         self._debug = debug
         self._config = config
 
         self.start_threads()
 
     def stop_threads(self):
-        global run_loop_state
-        global run_wand_management
-
         self.conn.stop()
-
-        run_loop_state = run_wand_management = False
+        print('stopping threads...')
+        self.run_loop_state = self.run_wand_management = False
 
     def start_threads(self):
-        global  run_loop_state
-        global  run_wand_management
-
         print('starting threads...')
-        run_loop_state = run_wand_management = True
+        self.run_loop_state = self.run_wand_management = True
 
         self._wand_management_thread = threading.Thread(target=self._manage_wands, args=(self._debug, self._config))
         self._wand_management_thread.start()
@@ -56,7 +48,6 @@ class AsyncServerStateManager:
         self._loop_state_thread.start()
 
     def _manage_wands(self, debug, config):
-        global run_wand_management
         try:
             wands = []
             broker = config['broker']
@@ -64,7 +55,7 @@ class AsyncServerStateManager:
             sec_ka_max = broker['keepalive']
             wand_scanner = WandScanner(debug=debug)
 
-            while run_wand_management:
+            while self.run_wand_management:
                 try:
                     if not len(wands):
                         wands = [
@@ -98,25 +89,17 @@ class AsyncServerStateManager:
                     wands[0].disconnect()
 
         except (KeyboardInterrupt, Exception) as e:
-            #self.conn.stop()
-            #self.run = False
-            #for wand in wands:
-            #    wand.disconnect()
-            #wands.clear()
-            #self._wand_management_thread.join()
-            #exit(1)
             print(e)
 
     def _on_discovery(self, devices):
         pass
 
     def _loop_state(self):
-        global run_loop_state
-        while run_loop_state:
+        while self.run_loop_state:
             try:
                 self.get_state().on_loop()
                 time.sleep(1)
-            except Exception as e:
+            except(KeyboardInterrupt, Exception) as e:
                 print(e)
 
     def set_state(self, state):
@@ -145,8 +128,7 @@ class ServerState():
     def on_post_disconnect(self, interface):
         print('POST DISCONNECT')
         self.manager.stop_threads()
-        print('restarting server...')
-        main()
+        exit(1)
 
     def on_quaternion(self, interface, x, y, z, w):
         pass
