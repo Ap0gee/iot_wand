@@ -39,7 +39,7 @@ if __name__ == '__main__':
                 print(line, end='') # process line here
             if p.returncode != 0:
                 raise subprocess.CalledProcessError(p.returncode, p.args)
-
+        input()
     except (Exception, KeyboardInterrupt) as e:
         print(e)
         input()
