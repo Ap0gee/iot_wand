@@ -42,11 +42,11 @@ class AsyncServerStateManager:
         print('starting threads...')
         self.run_loop_state = self.run_wand_management = True
 
-        if not hasattr(self, '_wand_management_thread'):
+        if not self._wand_management_thread:
             self._wand_management_thread = threading.Thread(target=self._manage_wands, args=(self._debug, self._config))
             self._wand_management_thread.start()
 
-        if not hasattr(self, '_wand_management_thread'):
+        if not self._loop_state_thread:
             self._loop_state_thread = threading.Thread(target=self._loop_state)
             self._loop_state_thread.start()
 
