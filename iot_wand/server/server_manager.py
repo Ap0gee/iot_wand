@@ -32,7 +32,7 @@ if __name__ == '__main__':
     print('Starting server manager...')
     dir_top = sys.argv[1]
     sys.path.append(dir_top)
-    cmd = mk_server_cmd(dir_top, 'server.py', new_terminal=False)
+    cmd = mk_server_cmd(dir_top, 'server.py', new_terminal=True)
     try:
         while 1:
             print('Spawning server process...')
