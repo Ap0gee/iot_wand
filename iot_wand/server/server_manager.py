@@ -13,7 +13,7 @@ def mk_server_cmd(dir, module, new_terminal=True):
     python = 'python'
     terminal_cmd = 'start cmd /K'
     if system == 'Linux':
-        terminal_cmd = 'lxterminal'
+        terminal_cmd = 'lxterminal -e'
         python = '%s' % os.path.join(dir, 'env/bin/python3')
     print(python)
     path_module = os.path.join(_s.DIR_BASE, module)
@@ -25,8 +25,8 @@ def mk_server_cmd(dir, module, new_terminal=True):
     return cmd
 
 def main(dir_top):
-    cmd = mk_server_cmd(dir_top, 'server_manager.py')
-    return subprocess.call(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    cmd = mk_server_cmd(dir_top, 'server_manager.py').split()
+    subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
 if __name__ == '__main__':
     dir_top = sys.argv[1]

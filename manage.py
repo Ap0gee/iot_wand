@@ -20,8 +20,10 @@ def main(args):
         if args.to_run == 'clients':
             from iot_wand.clients import clients
             clients.main(dir_top)
+
     elif hasattr(args, 'to_make'):
         pass
+
     elif hasattr(args, 'i'):
         args.i()
 
