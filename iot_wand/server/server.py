@@ -12,6 +12,9 @@ import os
 import platform
 import subprocess
 
+run_wand_management = True
+run_loop_state = True
+
 def main():
     config = _h.yaml_read(_s.PATH_CONFIG)
     conn = GestureServer(config, debug=_s.DEBUG)
@@ -25,26 +28,26 @@ class AsyncServerStateManager:
         self._wand_management_thread = None
         self._ping_clients_thread = None
         self._loop_state_thread = None
-        self.run_wand_management = True
-        self.run_loop_state = True
+
         self._debug = debug
         self._config = config
 
         self.start_threads()
 
     def stop_threads(self):
+        global run_loop_state
+        global run_wand_management
+
         self.conn.stop()
-        print('stopping threads...')
-        while self._wand_management_thread.is_alive() or self._loop_state_thread.is_alive():
-            try:
-                self.run_loop_state = self.run_wand_management = False
-            except Exception as e:
-                print(e)
-                continue
+
+        run_loop_state = run_wand_management = False
 
     def start_threads(self):
+        global  run_loop_state
+        global  run_wand_management
+
         print('starting threads...')
-        self.run_loop_state = self.run_wand_management = True
+        run_loop_state = run_wand_management = True
 
         self._wand_management_thread = threading.Thread(target=self._manage_wands, args=(self._debug, self._config))
         self._wand_management_thread.start()
@@ -53,6 +56,7 @@ class AsyncServerStateManager:
         self._loop_state_thread.start()
 
     def _manage_wands(self, debug, config):
+        global run_wand_management
         try:
             wands = []
             broker = config['broker']
@@ -60,7 +64,7 @@ class AsyncServerStateManager:
             sec_ka_max = broker['keepalive']
             wand_scanner = WandScanner(debug=debug)
 
-            while self.run_wand_management:
+            while run_wand_management:
                 try:
                     if not len(wands):
                         wands = [
@@ -91,7 +95,6 @@ class AsyncServerStateManager:
 
                 except (Exception, ConnectionAbortedError) as e:
                     print(e)
-                    self.run_wand_management = False
                     wands[0].disconnect()
 
         except (KeyboardInterrupt, Exception) as e:
@@ -108,7 +111,8 @@ class AsyncServerStateManager:
         pass
 
     def _loop_state(self):
-        while self.run_loop_state:
+        global run_loop_state
+        while run_loop_state:
             try:
                 self.get_state().on_loop()
                 time.sleep(1)
