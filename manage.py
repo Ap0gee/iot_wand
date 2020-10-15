@@ -25,8 +25,7 @@ def main(args):
         pass
 
     elif hasattr(args, 'i'):
-        pass
-        #args.i()
+        args.i()
 
 def interactive():
     try:
