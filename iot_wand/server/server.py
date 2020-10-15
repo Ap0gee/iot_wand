@@ -81,6 +81,7 @@ class AsyncServerStateManager:
                                     wands[0].keep_alive()
                                 except Exception as e:
                                     raise ConnectionAbortedError
+
                             else:
                                 sec_ka += 1
                             try:
@@ -91,8 +92,10 @@ class AsyncServerStateManager:
 
                         self.conn.ping_collect_clients()
                         time.sleep(1)
+
                 except (Exception, ConnectionAbortedError) as e:
                     print(e)
+                    self.run_wand_management = False
                     wands[0].disconnect()
 
         except (KeyboardInterrupt, Exception) as e:
