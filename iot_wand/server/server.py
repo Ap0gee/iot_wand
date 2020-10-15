@@ -9,11 +9,9 @@ import timeit
 import time
 import threading
 import os
+import platform
+import subprocess
 import sys
-
-EXIT_STATUS_OK = 0
-EXIT_STATUS_ERR = 1
-EXIT_STATUS_RESTART = 2
 
 def main():
     config = _h.yaml_read(_s.PATH_CONFIG)
@@ -95,7 +93,7 @@ class AsyncServerStateManager:
 
         except (KeyboardInterrupt, Exception) as e:
             print(e)
-            exit(EXIT_STATUS_ERR)
+            exit(1)
 
     def _on_discovery(self, devices):
         pass
@@ -107,7 +105,7 @@ class AsyncServerStateManager:
                 time.sleep(1)
             except(KeyboardInterrupt, Exception) as e:
                 print(e)
-                exit(EXIT_STATUS_ERR)
+                exit(1)
 
     def set_state(self, state):
         self._state = state(self)
@@ -135,7 +133,7 @@ class ServerState():
     def on_post_disconnect(self, interface):
         print('POST DISCONNECT')
         self.manager.stop_threads()
-        exit(EXIT_STATUS_RESTART)
+        exit(2)
 
     def on_quaternion(self, interface, x, y, z, w):
         pass
@@ -320,6 +318,7 @@ class SERVER_STATES(Enum):
     PROFILE_SELECT = ProfileSelectState
     SERVER = ServerState
 
+'''
 if __name__ == '__main__':
     dir_top = sys.argv[1]
     sys.path.append(dir_top)
@@ -337,6 +336,6 @@ if __name__ == '__main__':
 
     except Exception as e:
         print(e)
-        exit(EXIT_STATUS_ERR)
-
+        exit(1)
+'''
 
