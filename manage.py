@@ -7,13 +7,20 @@ import argparse
 import iot_wand.settings as _s
 import os
 from multiprocessing import Process
+
+def spawn_server():
+    from iot_wand.server import server
+    p = Process(server.main())
+    p.start()
+    return p
+
 def main(args):
     if args.to_run == 'server':
-        from iot_wand.server import server
-        p = Process(server.main())
-        p.start()
-        p.join()
-        print('joined')
+        server = spawn_server()
+        while 1:
+            if not server.is_alive():
+                print('spawning new server...')
+                server = spawn_server()
 
     if args.to_run == 'clients':
         from iot_wand.clients import clients
