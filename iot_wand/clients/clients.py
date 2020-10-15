@@ -23,7 +23,8 @@ def main(dir_top):
                     python = '%s' % os.path.join(dir_top, 'env/bin/python3')
                     print(python)
                 cmd = '%s %s %s %s' % (terminal_cmd, python, os.path.join(path_client, 'client.py'), dir_top)
+                cmd = cmd.split()
                 print(cmd)
-                subprocess.call(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     else:
         print("No active clients.")
