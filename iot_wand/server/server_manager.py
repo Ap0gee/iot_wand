@@ -40,7 +40,9 @@ if __name__ == '__main__':
                 if process_needed:
                     print('Spawning server process...')
                     process = subprocess.run(cmd, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-                    process_needed = False
+                    process.wait()
+                    process_needed = True
+                    continue
             except (Exception, subprocess.CalledProcessError) as e:
                 print("EXCEPTION IN CHILD PROCESS")
                 #non-zero exit status
