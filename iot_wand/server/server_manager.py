@@ -35,9 +35,14 @@ if __name__ == '__main__':
     cmd = mk_server_cmd(dir_top, 'server.py', new_terminal=True)
     process = None
     try:
-        print('Spawning server process...')
-        process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        process.communicate()
+        while 1:
+            if not process:
+                print('Spawning server process...')
+                process = subprocess.run(cmd, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            else:
+                ret = process.check_returncode()
+                print(ret)
+            time.sleep(3)
     except (Exception, KeyboardInterrupt) as e:
         print(e)
         input()
