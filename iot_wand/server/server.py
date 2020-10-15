@@ -1,3 +1,8 @@
+from iot_wand.mqtt_connections import GestureServer, ClientConnection, TOPICS, SYS_LEVELS
+from iot_wand.btle_scanners import WandScanner
+from iot_wand.btle_inerfaces import GestureInterface, PATTERN
+import iot_wand.server.settings as _s
+import iot_wand.helpers as _h
 from enum import Enum
 import moosegesture
 import timeit
@@ -5,11 +10,6 @@ import time
 import threading
 import os
 import sys
-from iot_wand.mqtt_connections import GestureServer, ClientConnection, TOPICS, SYS_LEVELS
-from iot_wand.btle_scanners import WandScanner
-from iot_wand.btle_inerfaces import GestureInterface, PATTERN
-import iot_wand.server.settings as _s
-import iot_wand.helpers as _h
 
 EXIT_STATUS_OK = 0
 EXIT_STATUS_ERR = 1
@@ -33,7 +33,10 @@ class AsyncServerStateManager:
         self._debug = debug
         self._config = config
 
-        self.start_threads()
+        try:
+            self.start_threads()
+        except Exception as e:
+            print(e)
 
     def stop_threads(self):
         self.conn.stop()
@@ -320,6 +323,23 @@ class SERVER_STATES(Enum):
     PROFILE_SELECT = ProfileSelectState
     SERVER = ServerState
 
+if __name__ == '__main__':
+    dir_top = sys.argv[1]
+    sys.path.append(dir_top)
 
+    try:
+        from iot_wand.mqtt_connections import GestureServer, ClientConnection, TOPICS, SYS_LEVELS
+        from iot_wand.btle_scanners import WandScanner
+        from iot_wand.btle_inerfaces import GestureInterface, PATTERN
+        import iot_wand.server.settings as _s
+        import iot_wand.helpers as _h
+
+        config = _h.yaml_read(_s.PATH_CONFIG)
+        conn = GestureServer(config, debug=_s.DEBUG)
+        conn.start(as_async=True, async_callback=lambda _conn: AsyncServerStateManager(_conn, config, _s.DEBUG))
+
+    except Exception as e:
+        print(e)
+        exit(EXIT_STATUS_ERR)
 
 
