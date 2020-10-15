@@ -32,16 +32,20 @@ if __name__ == '__main__':
     print('Starting server manager...')
     dir_top = sys.argv[1]
     sys.path.append(dir_top)
-    cmd = mk_server_cmd(dir_top, 'server.py', new_terminal=False)
+    cmd = mk_server_cmd(dir_top, 'server.py', new_terminal=True)
+    process_needed = True
     try:
         while 1:
             print('Spawning server process...')
             try:
-                process = subprocess.check_call(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                if process_needed:
+                    process = subprocess.check_call(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                    process_needed = False
             except (Exception, subprocess.CalledProcessError) as e:
                 #non-zero exit status
                 if isinstance(e, subprocess.CalledProcessError):
                     if e.returncode == 2:
+                        process_needed = True
                         continue
                 print(e)
                 exit(1)
