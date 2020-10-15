@@ -12,8 +12,6 @@ def main(args):
         from iot_wand.server import server
         p = Process(server.main())
         p.start()
-        p.join()
-        input('ready to exit...')
 
     if args.to_run == 'clients':
         from iot_wand.clients import clients
