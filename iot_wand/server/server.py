@@ -33,10 +33,7 @@ class AsyncServerStateManager:
         self._debug = debug
         self._config = config
 
-        try:
-            self.start_threads()
-        except Exception as e:
-            print(e)
+        self.start_threads()
 
     def stop_threads(self):
         self.conn.stop()
