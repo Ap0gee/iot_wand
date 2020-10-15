@@ -33,23 +33,21 @@ if __name__ == '__main__':
     dir_top = sys.argv[1]
     sys.path.append(dir_top)
     cmd = mk_server_cmd(dir_top, 'server.py', new_terminal=True)
-    process_needed = True
+    process = None
     try:
         while 1:
             try:
-                if process_needed:
+                if not process:
                     print('Spawning server process...')
-                    process = subprocess.run(cmd, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-                    process.wait()
-                    print("PROCESS WAITED FOR")
-                    process_needed = True
-                    continue
+                    process = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                else:
+                    print(process.check_returncode())
             except (Exception, subprocess.CalledProcessError) as e:
                 print("EXCEPTION IN CHILD PROCESS")
                 #non-zero exit status
                 if isinstance(e, subprocess.CalledProcessError):
                     if e.returncode != 0:
-                        process_needed = True
+                        process = None
                         continue
                 print(e)
                 exit(1)
