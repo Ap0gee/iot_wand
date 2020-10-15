@@ -38,10 +38,8 @@ if __name__ == '__main__':
     cmd = mk_server_cmd(dir_top, 'server.py', new_terminal=True)
 
     try:
-        p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        output = p.communicate()[0]
-        if p.returncode != 0:
-           print("CAPTURED OUTPUT %s %s" % (p.returncode, output))
+        p = subprocess.run(cmd, shell=True)
+        p.check_returncode()
         input()
     except (Exception, KeyboardInterrupt) as e:
         print(e)
