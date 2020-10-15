@@ -40,21 +40,8 @@ if __name__ == '__main__':
                 print('Spawning server process...')
                 process = subprocess.run(cmd, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
                 ret = process.wait()
-                print(ret)
-            else:
-                try:
-                    print(process.check_returncode())
-                except (Exception, subprocess.CalledProcessError) as e:
-                    print("EXCEPTION IN CHILD PROCESS")
-                    #non-zero exit status
-                    if isinstance(e, subprocess.CalledProcessError):
-                        if e.returncode != 0:
-                            process = None
-                            continue
-                    print(e)
-                    exit(1)
-            time.sleep(3)
-            continue
+
     except (Exception, KeyboardInterrupt) as e:
         print(e)
-        exit(1)
+        input()
+
