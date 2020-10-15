@@ -44,7 +44,7 @@ if __name__ == '__main__':
             print(resp)
             if resp is not None:
                 print('restarting process...')
-                #process = start_subprocess(cmd)
+                process = start_subprocess(cmd)
             time.sleep(2)
 
     except (Exception, KeyboardInterrupt, subprocess.CalledProcessError) as e:

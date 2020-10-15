@@ -322,7 +322,6 @@ if __name__ == '__main__':
         config = _h.yaml_read(_s.PATH_CONFIG)
         conn = GestureServer(config, debug=_s.DEBUG)
         conn.start(as_async=True, async_callback=lambda _conn: AsyncServerStateManager(_conn, config, _s.DEBUG))
-        input()
     except Exception as e:
         print(e)
         exit(1)
