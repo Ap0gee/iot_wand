@@ -38,7 +38,7 @@ if __name__ == '__main__':
         while 1:
             if not process:
                 print('Spawning server process...')
-                process = subprocess.run(cmd, shell=True, check=True, capture_output=True)
+                process = subprocess.run(cmd, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             else:
                 try:
                     print(process.check_returncode())
@@ -53,5 +53,6 @@ if __name__ == '__main__':
                     exit(1)
             time.sleep(3)
             continue
-    except KeyboardInterrupt as e:
+    except (Exception, KeyboardInterrupt) as e:
+        print(e)
         exit(1)
