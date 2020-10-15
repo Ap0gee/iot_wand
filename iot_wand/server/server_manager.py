@@ -13,7 +13,7 @@ def mk_server_cmd(dir, module, new_terminal=True):
     python = 'python'
     terminal_cmd = 'start cmd /K'
     if system == 'Linux':
-        terminal_cmd = 'lxterminal -e'
+        terminal_cmd = 'lxterminal'
         python = '%s' % os.path.join(dir, 'env/bin/python3')
     print(python)
     path_module = os.path.join(_s.DIR_BASE, module)
