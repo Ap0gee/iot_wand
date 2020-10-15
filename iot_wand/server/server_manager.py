@@ -36,7 +36,6 @@ if __name__ == '__main__':
     try:
         while 1:
             print('Spawning server process...')
-            print(cmd)
             try:
                 process = subprocess.check_call(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             except (Exception, subprocess.CalledProcessError) as e:
@@ -44,12 +43,8 @@ if __name__ == '__main__':
                 if isinstance(e, subprocess.CalledProcessError):
                     if e.returncode == 2:
                         continue
-                    else:
-                        print(e.output)
-                        exit(1)
-                else:
-                    print(e)
-                    exit(1)
+                print(e)
+                exit(1)
 
             time.sleep(3)
             continue
