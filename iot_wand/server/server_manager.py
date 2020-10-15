@@ -25,7 +25,7 @@ def mk_server_cmd(dir, module, new_terminal=True):
     return cmd
 
 def start_subprocess(cmd):
-    return subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    return subprocess.Popen(cmd, shell=True)
 
 
 def main(dir_top):
