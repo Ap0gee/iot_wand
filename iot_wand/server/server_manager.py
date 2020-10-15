@@ -36,20 +36,20 @@ if __name__ == '__main__':
     process_needed = True
     try:
         while 1:
-            print('Spawning server process...')
             try:
                 if process_needed:
+                    print('Spawning server process...')
                     process = subprocess.check_call(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
                     process_needed = False
             except (Exception, subprocess.CalledProcessError) as e:
                 #non-zero exit status
                 if isinstance(e, subprocess.CalledProcessError):
-                    if e.returncode == 2:
+                    if e.returncode:
                         process_needed = True
                         continue
                 print(e)
                 exit(1)
-
+            print('Waiting for process to exit...', end="\r")
             time.sleep(3)
             continue
     except KeyboardInterrupt as e:
