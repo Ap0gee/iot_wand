@@ -30,7 +30,7 @@ def main(dir_top):
     output = p.communicate()[0]
     if p.returncode != 0:
            print("CAPTURED OUTPUT FROM MAIN %s %s" % (p.returncode, output))
-        
+
 if __name__ == '__main__':
     print('Starting server manager...')
     dir_top = sys.argv[1]
@@ -42,6 +42,7 @@ if __name__ == '__main__':
         output = p.communicate()[0]
         if p.returncode != 0:
            print("CAPTURED OUTPUT %s %s" % (p.returncode, output))
+        input()
     except (Exception, KeyboardInterrupt) as e:
         print(e)
         input()
