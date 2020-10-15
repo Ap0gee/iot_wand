@@ -33,16 +33,12 @@ if __name__ == '__main__':
     dir_top = sys.argv[1]
     sys.path.append(dir_top)
     cmd = mk_server_cmd(dir_top, 'server.py', new_terminal=True)
-    process = None
+
     try:
-        while 1:
-            if not process:
-                print('Spawning server process...')
-                process = subprocess.run(cmd, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.STD_ERROR_HANDLE)
-            else:
-                ret = process.check_returncode()
-                print(ret)
-            time.sleep(3)
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        output = p.communicate()[0]
+        if p.returncode != 0:
+           print("CAPTURED OUTPUT %s %s" % (p.returncode, output))
     except (Exception, KeyboardInterrupt) as e:
         print(e)
         input()
