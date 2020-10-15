@@ -33,14 +33,15 @@ class AsyncServerStateManager:
         self.start_threads()
 
     def stop_threads(self):
-        self.run_loop_state = self.run_wand_management = False
         self.conn.stop()
         print('stopping threads...')
         while self._wand_management_thread.is_alive() or self._loop_state_thread.is_alive():
             try:
+                self.run_loop_state = self.run_wand_management = False
                 self._wand_management_thread.join()
                 self._loop_state_thread.join()
-            except:
+            except Exception as e:
+                print(e)
                 continue
 
     def start_threads(self):
