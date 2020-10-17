@@ -47,14 +47,21 @@ fogger_manager = FoggerManager()
 
 def on_button(pressed):
     if pressed:
-        if fogger_manager.state:
-            fogger_manager.state = False
-            fogger_manager.off()
-        else:
-            fogger_manager.state = True
-            fogger_manager.on()
-    else:
-        GPIO.cleanup()
+        try:
+            print("Pressed = %s" % pressed)
+            print("STATE = %") % str(fogger_manager.state)
+            if fogger_manager.state:
+                fogger_manager.state = False
+                fogger_manager.off()
+                time.sleep(1)
+            else:
+                fogger_manager.state = True
+                fogger_manager.on()
+                time.sleep(1)
+        except Exception as e:
+            print(e)
+        finally:
+            GPIO.cleanup()
 
 def on_spell(gesture, spell):
     pass
