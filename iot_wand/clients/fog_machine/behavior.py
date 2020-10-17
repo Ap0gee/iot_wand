@@ -8,8 +8,6 @@ import RPi.GPIO as GPIO
 
 GPIO.setmode(GPIO.BCM)
 
-
-
 class FoggerManager():
     def __init__(self):
         self._state = False
@@ -20,6 +18,8 @@ class FoggerManager():
         #setup
         GPIO.setup(self._on_pin, GPIO.OUT)
         GPIO.setup(self._off_pin, GPIO.OUT)
+
+        print('fogger ready for input...')
 
     def on(self):
         self.state = True
