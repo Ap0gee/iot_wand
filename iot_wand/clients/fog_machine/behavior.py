@@ -38,7 +38,7 @@ class FoggerManager():
     @state.setter
     def state(self, value):
         if isinstance(value, bool):
-            self.state = value
+            self._state = value
 
     def toggle(self):
         self.off() if self.state else self.on()
@@ -53,7 +53,7 @@ def on_button(pressed):
         else:
             fogger_manager.state = True
             fogger_manager.on()
-        time.sleep(1)
+    else:
         GPIO.cleanup()
 
 def on_spell(gesture, spell):
