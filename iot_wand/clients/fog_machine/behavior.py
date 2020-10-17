@@ -54,7 +54,7 @@ def on_button(pressed):
         print('toggling fogger...')
         fogger_manager.toggle()
         print('fogger state is now %s' % str(fogger_manager.state))
-        
+
 
 def on_spell(gesture, spell):
     print(spell)

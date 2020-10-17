@@ -243,7 +243,7 @@ class ProfileSelectState(ServerState):
         self.connections_count = len(self.conn.profiles())
 
         self.interface.vibrate(PATTERN.BURST)
-        self.interface.set_led()
+        self.interface.set_led('#ffffff')
 
     def on_quaternion(self, interface, x, y, z, w):
         self.quaternion_state.x = x
