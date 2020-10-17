@@ -47,7 +47,7 @@ fogger_manager = FoggerManager()
 
 def on_button(pressed):
     global fogger_manager
-    
+
     if pressed:
         try:
             print("Pressed = %s" % pressed)
@@ -62,6 +62,7 @@ def on_button(pressed):
                 time.sleep(1)
         except Exception as e:
             print(e)
+            input() and exit(1)
         finally:
             GPIO.cleanup()
 
