@@ -1,15 +1,10 @@
 numpy==1.15.4
-#bluepy==1.2.0
-# gesture.py
-#PyUserInput==0.1.11
+bluepy==1.2.0
 pymouse==1.0
-# hue.py
-qhue==1.0.10
-# gesture.py and hue.py
 MooseGesture==1.0.2
 PyYAML
 paho-mqtt
-pywin32
+#pywin32
 flask
 phue
 rpi.gpio
