@@ -19,22 +19,17 @@ class FoggerManager():
         GPIO.setup(self._on_pin, GPIO.OUT)
         GPIO.setup(self._off_pin, GPIO.OUT)
 
-        GPIO.output(self._on_pin, GPIO.HIGH)
-        GPIO.output(self._off_pin, GPIO.HIGH)
+        GPIO.cleanup()
 
         print('fogger ready for input...')
 
     def on(self):
         print('turning on fogger..')
-        self.state = True
         GPIO.output(self._on_pin, GPIO.HIGH)
-        time.sleep(3)
 
     def off(self):
         print('turning off fogger..')
-        self.state = False
         GPIO.output(self._off_pin, GPIO.HIGH)
-        time.sleep(3)
 
     @property
     def state(self):
@@ -52,6 +47,13 @@ fogger_manager = FoggerManager()
 
 def on_button(pressed):
     if pressed:
+        if fogger_manager.state:
+            fogger_manager.state = False
+            fogger_manager.off()
+        else:
+            fogger_manager.state = True
+            fogger_manager.on()
+        time.sleep(1)
         GPIO.cleanup()
 
 def on_spell(gesture, spell):
