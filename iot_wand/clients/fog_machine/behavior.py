@@ -46,6 +46,8 @@ class FoggerManager():
 fogger_manager = FoggerManager()
 
 def on_button(pressed):
+    global fogger_manager
+    
     if pressed:
         try:
             print("Pressed = %s" % pressed)
