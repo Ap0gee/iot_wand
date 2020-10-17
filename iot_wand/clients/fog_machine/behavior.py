@@ -52,7 +52,7 @@ fogger_manager = FoggerManager()
 
 def on_button(pressed):
     if pressed:
-        pass
+        GPIO.cleanup()
 
 def on_spell(gesture, spell):
     pass
