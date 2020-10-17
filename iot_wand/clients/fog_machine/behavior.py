@@ -6,8 +6,6 @@ _h.restrict_client_system('Linux')
 
 import RPi.GPIO as GPIO
 
-GPIO.setmode(GPIO.BCM)
-
 class FoggerManager():
     def __init__(self):
         self._state = False
@@ -16,6 +14,8 @@ class FoggerManager():
         self._t_delay = 2
 
         #setup
+        GPIO.setmode(GPIO.BCM)
+
         GPIO.setup(self._on_pin, GPIO.OUT)
         GPIO.setup(self._off_pin, GPIO.OUT)
 
@@ -46,12 +46,7 @@ class FoggerManager():
             self.state = value
 
     def toggle(self):
-        state = not self.state
-
-        if state:
-            self.off()
-        else:
-            self.on()
+        self.off() if self.state else self.on()
 
 fogger_manager = FoggerManager()
 
