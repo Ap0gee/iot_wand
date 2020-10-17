@@ -37,7 +37,7 @@ class FoggerManager():
 
     @state.setter
     def state(self, value):
-        if isinstance(value, bool):
+        if type(value) == bool:
             self._state = value
 
     def toggle(self):
