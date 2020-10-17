@@ -49,7 +49,7 @@ def on_button(pressed):
     if pressed:
         try:
             print("Pressed = %s" % pressed)
-            print("STATE = %") % str(fogger_manager.state)
+            print("STATE = %s") % str(fogger_manager.state)
             if fogger_manager.state:
                 fogger_manager.state = False
                 fogger_manager.off()
