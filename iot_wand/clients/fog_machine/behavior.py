@@ -11,8 +11,8 @@ GPIO.setmode(GPIO.BCM)
 class FoggerManager():
     def __init__(self):
         self._state = False
-        self._on_pin = 23
-        self._off_pin = 24
+        self._on_pin = 17
+        self._off_pin = 27
         self._t_delay = 2
 
         #setup
