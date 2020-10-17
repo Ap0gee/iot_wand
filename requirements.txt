@@ -12,3 +12,4 @@ paho-mqtt
 pywin32
 flask
 phue
+rpi.gpio
