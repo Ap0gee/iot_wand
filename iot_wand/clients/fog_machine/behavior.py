@@ -18,18 +18,17 @@ class FoggerManager():
 
     def on(self):
         print('turning on fogger..')
-        self.gpio_setup()
+        self.__gpio_pin_setup(self._on_pin)
         GPIO.output(self._on_pin, GPIO.HIGH)
 
     def off(self):
         print('turning off fogger..')
-        self.gpio_setup()
+        self.__gpio_pin_setup(self._off_pin)
         GPIO.output(self._off_pin, GPIO.HIGH)
 
-    def gpio_setup(self):
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self._on_pin, GPIO.OUT)
-        GPIO.setup(self._off_pin, GPIO.OUT)
+    def __gpio_pin_setup(self, pin, mode=GPIO.BCM, direction=GPIO.OUT):
+        GPIO.setmode(mode)
+        GPIO.setup(pin, direction)
 
     @property
     def state(self):
