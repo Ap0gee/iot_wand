@@ -1,6 +1,12 @@
 import yaml
 import io
 import timeit
+import platform
+from enum import Enum
+
+class SYSTEMS(Enum):
+    LINUX = 'Linux'
+    WINDOWS = 'Windows'
 
 class Quaternion():
     def __init__(self, x, y, z, w):
@@ -40,3 +46,11 @@ def join_threads(*threads):
 def start_threads(*threads):
     for thread in threads:
         thread.start()
+
+def restrict_client_system(system):
+    if isinstance(system, SYSTEMS):
+        system = system.value
+    _system = platform.system()
+    if _system != system:
+        print('This client was intended for %s systems only.' % system)
+        exit(1)

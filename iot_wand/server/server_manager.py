@@ -27,7 +27,6 @@ def mk_server_cmd(dir, module, new_terminal=True):
 def start_subprocess(cmd):
     return subprocess.Popen(cmd, shell=True)
 
-
 def main(dir_top):
     cmd = mk_server_cmd(dir_top, 'server_manager.py')
     start_subprocess(cmd)

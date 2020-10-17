@@ -1,6 +1,8 @@
 from iot_wand import helpers as _h
 import settings as _s
-import time
+
+_h.restrict_client_system(_h.SYSTEMS.WINDOWS)
+
 import win32api
 
 x_dim = win32api.GetSystemMetrics(0)

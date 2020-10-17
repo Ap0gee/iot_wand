@@ -4,19 +4,14 @@ from enum import Enum
 import paho.mqtt.publish as publish
 import uuid
 import json
-import os
 import posixpath
 import timeit
-import time
-import asyncio
-
 
 class TOPICS(Enum):
     SYS = 'iot_wand/+/$SYS/+'
     SPELLS = 'iot_wand/+/spells/+'
     QUATERNIONS = 'iot_wand/+/quaternions/+'
     BUTTON = 'iot_wand/+/button/+'
-
 
 class SYS_LEVELS(Enum):
     PINGREQ = "PINGREQ"
@@ -25,18 +20,15 @@ class SYS_LEVELS(Enum):
     DOWN = "DOWN"
     STATUS = "STATUS"
 
-
 class CONN_STATUS(Enum):
     CONNECTED = 1
     DISCONNECTED = 0
-
 
 class Topic():
     def __init__(self, topic):
         self.top = ClientConnection.topic_level(topic)
         self.sig = ClientConnection.topic_level(topic, 1)
         self.pattern = ClientConnection.topic_pattern(topic)
-
 
 class Profile():
     def __init__(self, data):
@@ -47,7 +39,6 @@ class Profile():
         self.led_color = led['color']
         self.vibrate_on = vibrate['on']
         self.vibrate_pattern = vibrate['pattern']
-
 
 class ClientConnection():
     def __init__(self, config, debug=False):
@@ -95,15 +86,12 @@ class ClientConnection():
 
         identity = self.identity(topic.sig)
 
-        #self.debug(topic.pattern, topic.top, msg.payload, identity)
-
         self.on_message(client, obj, msg, topic, identity)
 
     def on_message(self, client, obj, msg, topic, identity):
         pass
 
     def __on_publish(self, client, obj, mid):
-        #self.debug('published', mid)
         self.on_publish(client, obj, mid)
 
     def on_publish(self, client, obj, mid):
@@ -125,7 +113,6 @@ class ClientConnection():
         pass
 
     def __on_log(self, client, obj, level, string):
-        #self.debug('log', level, string)
         self.on_log(client, obj, level, string)
 
     def on_log(self, client, obj, level, string):
@@ -272,7 +259,6 @@ class ClientConnection():
             return False
         return False
 
-
 class GestureServer(ClientConnection):
     def __init__(self, config, debug=False):
         super(GestureServer, self).__init__(config, debug)
@@ -364,7 +350,6 @@ class GestureServer(ClientConnection):
         self._client_responders = []
         self._t_pingreq_start = timeit.default_timer()
         self._publish_sys(SYS_LEVELS.PINGREQ.value)
-
 
 class GestureClient(ClientConnection):
     def __init__(self, config, debug=False):

@@ -31,7 +31,7 @@ def interactive():
     try:
         while 1:
             del sys.argv[1:]
-            [sys.argv.append(i) for i in input("Enter a command:").split()]
+            [sys.argv.append(i) for i in input("Enter a command: ").split()]
             args = parse_args()
             print(args)
             main(args)

@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import sys
-import os
 
 exit_status = 0
 
@@ -43,5 +42,3 @@ if __name__ == '__main__':
     main()
     input("press Enter to exit.")
     exit(exit_status)
-
-

@@ -3,9 +3,6 @@ import moosegesture
 import timeit
 import time
 import threading
-import os
-import platform
-import subprocess
 import sys
 
 class AsyncServerStateManager:
@@ -247,7 +244,6 @@ class ProfileSelectState(ServerState):
 
         self.interface.vibrate(PATTERN.BURST)
         self.interface.set_led()
-        #self.interface.vibrate_and_led(PATTERN.BURST,'#ffffff', on=True)
 
     def on_quaternion(self, interface, x, y, z, w):
         self.quaternion_state.x = x
@@ -322,6 +318,7 @@ if __name__ == '__main__':
         config = _h.yaml_read(_s.PATH_CONFIG)
         conn = GestureServer(config, debug=_s.DEBUG)
         conn.start(as_async=True, async_callback=lambda _conn: AsyncServerStateManager(_conn, config, _s.DEBUG))
+
     except Exception as e:
         print(e)
         exit(1)

@@ -1,8 +1,6 @@
 from phue import Bridge
 import timeit
 from enum import Enum
-import time
-import math
 
 IP_BRIDGE = '10.0.0.46'
 
