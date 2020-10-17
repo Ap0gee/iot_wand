@@ -24,13 +24,11 @@ class FoggerManager():
     def on(self):
         self.state = True
         GPIO.output(self._on_pin, GPIO.HIGH)
-        time.sleep(self._t_delay)
         GPIO.cleanup()
 
     def off(self):
         self.state = False
         GPIO.output(self._off_pin, GPIO.HIGH)
-        time.sleep(self._t_delay)
         GPIO.cleanup()
 
     @property
@@ -57,7 +55,9 @@ def on_button(pressed):
 
 
 def on_spell(gesture, spell):
-    print(spell)
+    pass
+    #print(spell)
 
 def on_quaternion(x, y, z, w):
-    print(x, y, x, w)
+    pass
+    #print(x, y, x, w)
